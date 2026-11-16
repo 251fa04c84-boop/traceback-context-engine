@@ -92,7 +92,21 @@
 - [ ] Show explicit empty/unavailable states without discarding Jira issue details.
 - [ ] Keep the layout compact for Jira issue-context sidebars.
 
-### Task 5: CI, dependency and platform validation
+### Task 5: Evidence-backed investigation leads
+
+**Files:**
+- Create: `src/domain/investigation.js`
+- Create: `test/investigation.test.js`
+- Modify: `src/frontend/index.jsx`
+
+- [ ] Prioritize failed/in-progress deployments, recent production deployments, open/recently merged pull requests, unresolved Jira work, archived goals, and missing graph connectivity.
+- [ ] Include rationale, priority, and a source link when available.
+- [ ] Explicitly state that a linked record or time proximity does not establish causation.
+- [ ] Ignore invalid timestamps and never fabricate source evidence.
+- [ ] Display the leads in a distinct “Suggested next checks” section.
+- [ ] Run the full suite and JSX compilation.
+
+### Task 6: CI, dependency and platform validation
 
 **Files:**
 - Modify: `.github/workflows/ci.yml` if needed.
@@ -104,7 +118,7 @@
 - [ ] Inspect npm audit findings; do not use `npm audit fix --force`.
 - [ ] Re-check GitHub Actions logs for the latest commit SHA.
 
-### Task 6: Judge readiness and submission evidence
+### Task 7: Judge readiness and submission evidence
 
 **Files:**
 - Modify: `README.md`
