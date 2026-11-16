@@ -6,7 +6,7 @@
 
 ## Intent
 
-Turn a Jira incident/work item into an evidence-backed investigation view that connects the issue to the real development, release, and outcome context available in Atlassian Teamwork Graph. The product helps an engineer answer: which goal does the work support, which deployments are linked to this issue, which pull requests are related, and what is still unknown?
+Turn a Jira incident/work item into an evidence-backed investigation view that connects the issue to the real development, release, and outcome context available in Atlassian Teamwork Graph. The product helps an engineer answer: which Jira work items are related, which goal the work supports, which deployments are linked to this issue, which pull requests are related, and what is still unknown?
 
 ## Current state
 
@@ -21,6 +21,7 @@ The Forge app reads the active Jira issue through a resolver using `api.asUser()
 ## Goals
 
 - Show the active Jira issue's actual title, status, priority, type, description, and provenance.
+- Show existing Jira inward/outward linked work items with their relationship and same-site issue link.
 - Retrieve linked Atlassian goals, deployments, and pull requests through Teamwork Graph as the current user.
 - Display source name, state/status, time, environment where available, and an HTTPS deep link.
 - Show a clear empty state when no links exist and a separate unavailable/partial state when graph access is missing or denied.
@@ -50,11 +51,11 @@ The Forge app reads the active Jira issue through a resolver using `api.asUser()
 
 - Teamwork Graph is a Forge Preview feature and may change before GA.
 - The app needs the minimum granular Graph scopes granted on the test site.
-- The test site must have connected GitHub/DevOps data and Jira-to-goal/deployment/PR links for the demo to show populated evidence; empty results must still be presented honestly.
+- The test site should have connected GitHub/DevOps data and Jira-to-goal/deployment/PR links for populated Teamwork Graph evidence; existing Jira issue links provide a separate, real work-context section where external connectors are absent.
 - Forge app registration, CLI lint, deployment, installation, and a real issue-context acceptance test remain mandatory before submission.
 - `jira:issueContext` works in Jira's new issue view, not the old issue view. The live installation must confirm where the app renders for the judge role.
 - The currently connected Jira site contains a sample JSM service-desk project; the final demo should use a software-team Jira issue with real linked development evidence where available.
 
 ## Success criteria
 
-A judge can open a Jira work item, see its exact Jira fields, inspect linked Atlassian goal/deployment/pull-request evidence with working source links, understand whether evidence is missing or inaccessible, and verify that the product never fabricates a cause or executes a production action.
+A judge can open a Jira work item, see its exact Jira fields and related Jira work, inspect linked Atlassian goal/deployment/pull-request evidence with working source links, understand whether evidence is missing or inaccessible, and verify that the product never fabricates a cause or executes a production action.
