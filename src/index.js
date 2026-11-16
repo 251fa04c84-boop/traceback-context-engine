@@ -15,7 +15,7 @@ resolver.define('getIssueContext', async ({ payload, context }) => {
   }
 
   const response = await api.asUser().requestJira(
-    route`/rest/api/3/issue/${issueKey}?fields=summary,description,status,priority,issuetype,created,updated,project`,
+    route`/rest/api/3/issue/${issueKey}?fields=summary,description,status,priority,issuetype,created,updated,project,issuelinks`,
     { headers: { Accept: 'application/json' } }
   );
 
