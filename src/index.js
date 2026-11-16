@@ -2,6 +2,7 @@
 
 const Resolver = require('@forge/resolver');
 const api = require('@forge/api');
+const { route } = require('@forge/api');
 const { normalizeIssue } = require('./domain/incident');
 
 const resolver = new Resolver();
@@ -13,7 +14,7 @@ resolver.define('getIssueContext', async ({ payload }) => {
   }
 
   const response = await api.asUser().requestJira(
-    api.route`/rest/api/3/issue/${issueKey}?fields=summary,description,status,priority,issuetype,created,updated,project`,
+    route`/rest/api/3/issue/${issueKey}?fields=summary,description,status,priority,issuetype,created,updated,project`,
     { headers: { Accept: 'application/json' } }
   );
 
