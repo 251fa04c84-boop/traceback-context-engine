@@ -14,7 +14,6 @@ import ForgeReconciler, {
 import { invoke } from '@forge/bridge';
 import { getIssueKeyFromProductContext } from '../domain/incident';
 import { buildInvestigationLeads } from '../domain/investigation';
-import { buildInvestigationLeads } from '../domain/investigation';
 
 const EMPTY_GRAPH = {
   source: 'Atlassian Teamwork Graph',
