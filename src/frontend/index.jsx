@@ -8,9 +8,11 @@ import ForgeReconciler, {
   SectionMessage,
   Spinner,
   Stack,
-  Text
+  Text,
+  useProductContext
 } from '@forge/react';
-import { invoke, view } from '@forge/bridge';
+import { invoke } from '@forge/bridge';
+import { getIssueKeyFromProductContext } from '../domain/incident';
 
 const EMPTY_GRAPH = {
   source: 'Atlassian Teamwork Graph',
@@ -27,20 +29,21 @@ function SourceLink({ url, label }) {
 }
 
 function App() {
+  const productContext = useProductContext();
+  const contextReady = Boolean(productContext);
+  const contextIssueKey = getIssueKeyFromProductContext(productContext);
   const [issueKey, setIssueKey] = useState('');
   const [incident, setIncident] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  async function loadIssue() {
+  async function loadIssue(key) {
+    if (!key) return;
     setLoading(true);
     setError('');
     try {
-      const context = await view.getContext();
-      const key = context?.extension?.issue?.key || context?.platformContext?.issueKey;
-      if (!key) throw new Error('Open this panel from a Jira issue to investigate it.');
-      setIssueKey(key);
       const result = await invoke('getIssueContext', { issueKey: key });
+      setIssueKey(key);
       setIncident(result);
     } catch (err) {
       setError(err?.message || 'Unable to load Jira issue context.');
@@ -49,10 +52,18 @@ function App() {
     }
   }
 
-  useEffect(() => { loadIssue(); }, []);
+  useEffect(() => {
+    if (!contextReady) return;
+    if (!contextIssueKey) {
+      setError('Open this panel from a Jira issue to investigate it.');
+      setLoading(false);
+      return;
+    }
+    loadIssue(contextIssueKey);
+  }, [contextIssueKey, contextReady]);
 
   if (loading) return <Stack space="space.200"><Spinner /><Text>Reading issue and linked evidence from Jira…</Text></Stack>;
-  if (error) return <Stack space="space.200"><SectionMessage appearance="error"><Text>{error}</Text></SectionMessage><Button onClick={loadIssue}>Retry</Button></Stack>;
+  if (error) return <Stack space="space.200"><SectionMessage appearance="error"><Text>{error}</Text></SectionMessage><Button onClick={() => loadIssue(issueKey)}>Retry</Button></Stack>;
   if (!incident) return <Text>No issue context is available.</Text>;
 
   const graph = incident.teamworkGraph || EMPTY_GRAPH;
@@ -153,7 +164,7 @@ function App() {
         )) : <Text>No linked pull-request records were returned.</Text>}
       </Stack>
 
-      <Button appearance="subtle" onClick={loadIssue}>Refresh issue and evidence</Button>
+      <Button appearance="subtle" onClick={() => loadIssue(issueKey)}>Refresh issue and evidence</Button>
     </Stack>
   );
 }
