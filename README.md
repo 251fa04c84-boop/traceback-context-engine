@@ -1,63 +1,69 @@
 # TraceBack Context Engine
 
-Evidence-based incident investigation inside Jira, built as an Atlassian Forge app.
+Evidence-backed incident and delivery context inside Jira, built as an Atlassian Forge app.
 
-## Implemented in this branch
+## Current implementation
 
-- A Forge `jira:issuePanel` module named **TraceBack Context Engine**.
+- A Forge `jira:issueContext` module named **TraceBack Context Engine**.
 - A backend resolver that reads the currently opened Jira issue as the signed-in user.
-- Normalization of summary, description, status, issue type, priority, project and timestamps.
-- An evidence-boundary message: Jira issue context is not the same as verified operational telemetry.
-- Unit tests for issue normalization and malformed payload handling.
-- Architecture notes defining evidence provenance and human approval requirements.
+- Normalization of summary, description, status, issue type, priority, project, and timestamps.
+- An explicit evidence boundary: Jira issue text alone is not proof of a production root cause.
+- Unit tests for issue normalization, malformed payloads, nested Atlassian document text, and issue-key validation.
 
-## Important limitations
+## Product scope in this branch
 
-No live telemetry, log, deployment, tracing, alerting or rollback integration is connected in this version. The app does not guess a root cause, generate fake metrics, or execute recovery actions. Those capabilities will be added only with real, permissioned integrations and explicit approval controls.
+The next implementation slice adds read-only Teamwork Graph context for:
+- Atlassian goals linked to the work item.
+- External deployments linked to the work item.
+- External pull requests linked to the work item.
 
-Jira's issue-panel visibility rules also apply: the panel button is shown only to users who have permission to edit the issue, and the module works in Jira's new issue view, not the old issue view.
+It uses Atlassian's curated GraphQL queries and current-user authorization. It does not create fake events or infer that a linked change caused an incident. If the site has no connected GitHub/DevOps data or no links for an issue, the app must say so.
+
+## Evidence and safety boundaries
+
+- Jira issue content and linked external metadata are untrusted evidence.
+- Missing telemetry, logs, tracing, and deployment records must remain missing; no metrics or incidents are synthesized.
+- Teamwork Graph results are filtered by the signed-in user's permissions and site-admin scope grants.
+- Only verified HTTPS source URLs may be clickable.
+- This version is read-only: no rollback, feature-flag change, deployment trigger, issue update, or production mutation.
+- No root cause or confidence score is claimed without sufficient validated evidence.
 
 ## Requirements
 
-- Node.js 24 (matches the Forge runtime)
+- Node.js 24
 - npm
-- Atlassian Forge CLI
-- Access to an Atlassian Jira Cloud site
+- Atlassian Forge CLI 15.1.0 (pinned in the repository's current validation workflow)
+- An Atlassian Jira Cloud site where the app can be installed
 
-## Local setup
-
-The repository can be reviewed and tested through GitHub. A local Forge deployment still requires Node.js 24, npm, the Forge CLI, and an authenticated Atlassian account.
+## Local validation
 
 ```bash
 npm install
 npm test
+npm run lint:syntax
 npx --yes @forge/cli@15.1.0 lint
 ```
 
-Registration and deployment are separate authenticated steps; do not run them until lint succeeds and the app manifest has been reviewed.
+Forge CLI validation, app registration, deployment, installation, and live acceptance tests are separate gates. The app is not considered submission-ready until it has been registered once, validated, deployed, installed on the development site, and tested in the new Jira issue view.
 
-Register the app with the Forge CLI before deployment. Registration generates the app ID and updates `manifest.yml`. Review that generated change before committing it.
+Register the app only once with `forge register`; registration creates the app ID and updates `manifest.yml`. Re-registering an existing app can disconnect it from its prior environments and stored data.
 
 ## Jira installation
 
-Install to the development site `251fa04c84.atlassian.net`. After installation, open a Jira issue, open the Apps menu, and select **TraceBack Context Engine**. Use a test account with edit permission on the issue and Jira's new issue view.
+Target development site: `251fa04c84.atlassian.net`.
+
+After deployment and installation, open a Jira issue in the **new issue view** and expand **Investigate** in the issue-context area. Confirm that the panel shows the current issue's real fields and graph evidence (or an honest empty/unavailable state).
 
 ## Permissions
 
-The manifest requests `read:jira-work`. The resolver uses `api.asUser()` so issue access follows the current user's Jira permissions. No API keys or external credentials are required for this first slice.
+The app requests `read:jira-work` for issue context plus granular read-only Teamwork Graph scopes for Jira work items, Atlassian goals, external deployments, and external pull requests. These scopes are read-only; the signed-in user and site administrator still control which records are visible.
 
 ## Test strategy
 
-- Unit tests cover normalization, nested Atlassian document text, and invalid payloads.
-- GitHub Actions runs unit tests, syntax checks and Forge CLI lint.
-- Manual acceptance test: install on the development site and verify the panel displays that issue's actual Jira fields.
+- Unit tests cover Jira field normalization, issue-key validation, Teamwork Graph ARI construction, linked evidence normalization, empty graph results, and partial GraphQL failures.
+- GitHub Actions runs unit tests and syntax checks; Forge CLI lint is gated on app registration.
+- Manual acceptance tests must verify Jira issue context, Teamwork Graph scope grants, connector availability, linked records, source URLs, and permission-filtered empty states.
 
-## Product direction
+## Submission status
 
-1. Jira issue context and source-linked evidence.
-2. Optional integrations for deployment changes, service logs, metrics and traces.
-3. Evidence correlation with confidence and explicit missing-data reporting.
-4. Recovery recommendations with human approval.
-5. Auditable execution and post-action verification, only when real integrations are configured.
-
-See [docs/architecture.md](docs/architecture.md) for trust boundaries and [docs/CODESPACES.md](docs/CODESPACES.md) for phone-friendly cloud setup.
+This repository and PR are still in development. A successful GitHub test run is not proof of Forge deployment or judge installability. Do not submit until the live Forge install, demo, setup instructions, and public installation link have all been verified.
