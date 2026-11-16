@@ -17,21 +17,22 @@ No live telemetry, log, deployment, tracing, alerting or rollback integration is
 
 ## Requirements
 
-- Node.js 22 or 24
+- Node.js 24 (matches the Forge runtime)
 - npm
 - Atlassian Forge CLI
 - Access to an Atlassian Jira Cloud site
 
 ## Local setup
 
+The repository can be reviewed and tested through GitHub. A local Forge deployment still requires Node.js 24, npm, the Forge CLI, and an authenticated Atlassian account.
+
 ```bash
 npm install
 npm test
 npx @forge/cli lint
-npx @forge/cli register
-npx @forge/cli deploy
-npx @forge/cli install
 ```
+
+Registration and deployment are separate authenticated steps; do not run them until lint succeeds and the app manifest has been reviewed.
 
 Register the app with the Forge CLI before deployment. Registration generates the app ID and updates `manifest.yml`. Review that generated change before committing it.
 
