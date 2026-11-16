@@ -4,7 +4,7 @@ const Resolver = require('@forge/resolver');
 const api = require('@forge/api');
 const { route } = require('@forge/api');
 const { isValidIssueKey, normalizeIssue } = require('./domain/incident');
-const { loadTeamworkGraphEvidence } = require('./teamwork-graph');
+const { fetchTeamworkGraphEvidence } = require('./services/teamwork-graph');
 
 const resolver = new Resolver();
 
@@ -23,15 +23,11 @@ resolver.define('getIssueContext', async ({ payload, context }) => {
   if (!response.ok) throw new Error(`Jira request failed (${response.status}). Please retry.`);
 
   const issue = await response.json();
-  const incident = normalizeIssue(issue);
-  const teamworkGraph = await loadTeamworkGraphEvidence({
-    cloudId: context?.cloudId,
-    issueId: issue.id,
-    requestTeamworkGraph: (query, variables) => api.asUser().requestTeamworkGraph(query, variables)
-  });
+  const normalizedIssue = normalizeIssue(issue);
+  const teamworkGraph = await fetchTeamworkGraphEvidence(api, issue.id, context?.cloudId);
 
   return {
-    ...incident,
+    ...normalizedIssue,
     teamworkGraph
   };
 });
