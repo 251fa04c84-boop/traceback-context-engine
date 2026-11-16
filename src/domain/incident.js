@@ -4,6 +4,13 @@ function isValidIssueKey(value) {
   return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-[1-9]\d{0,9}$/.test(value.trim());
 }
 
+function getIssueKeyFromProductContext(context) {
+  const candidate = context?.extension?.issue?.key || context?.platformContext?.issueKey;
+  if (typeof candidate !== 'string') return null;
+  const issueKey = candidate.trim();
+  return isValidIssueKey(issueKey) ? issueKey : null;
+}
+
 function plainText(value) {
   if (value == null) return '';
   if (typeof value === 'string') return value;
@@ -78,6 +85,7 @@ function normalizeIssue(issue) {
 
 module.exports = {
   isValidIssueKey,
+  getIssueKeyFromProductContext,
   plainText,
   normalizeRelatedIssues,
   normalizeIssue
