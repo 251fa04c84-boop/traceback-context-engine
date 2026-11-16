@@ -1,12 +1,13 @@
 modules:
-  jira:issuePanel:
+  jira:issueContext:
     - key: traceback-context-panel
       resource: main-ui-kit/entry
       resolver:
         function: resolver
       render: native
       title: TraceBack Context Engine
-      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+      description: Evidence-backed incident context for this Jira issue.
+      label: Investigate
   function:
     - key: resolver
       handler: index.handler
