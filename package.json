@@ -8,7 +8,7 @@
     "lint:syntax": "node --check src/index.js && node --check src/domain/incident.js"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "dependencies": {
     "@forge/api": "^6.0.0",
