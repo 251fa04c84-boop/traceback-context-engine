@@ -43,7 +43,7 @@ test('accepts valid Jira issue keys and rejects malformed or unsafe values', () 
   assert.equal(isValidIssueKey('TCE-7'), true);
   assert.equal(isValidIssueKey('TEAM_1-1234567890'), true);
   assert.equal(isValidIssueKey(' tce-7 '), false);
-  assert.equal(isValidIssueKey('TCE-0'), true);
+  assert.equal(isValidIssueKey('TCE-0'), false);
   assert.equal(isValidIssueKey('TCE-12345678901'), false);
   assert.equal(isValidIssueKey('TCE-7?fields=project'), false);
   assert.equal(isValidIssueKey('TCE/7'), false);
