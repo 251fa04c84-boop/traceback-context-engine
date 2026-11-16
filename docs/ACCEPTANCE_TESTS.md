@@ -53,6 +53,16 @@ This record must be completed against an actually deployed Forge app. A successf
 - [ ] Verify a permission denial or failed graph request becomes unavailable while Jira issue details remain visible.
 - [ ] Verify a missing, HTTP, malformed, or credential-bearing URL is never clickable.
 
+## Suggested next checks acceptance
+
+- [ ] A failed deployment produces a high-priority lead with the exact deployment source link.
+- [ ] A recent production deployment produces a timeline-check lead only, with explicit non-causation wording.
+- [ ] An open/draft pull request produces a review lead with its source link.
+- [ ] Unresolved linked Jira work and archived goals produce low-priority leads.
+- [ ] Empty/unavailable Teamwork Graph results suggest verifying connectors and scopes, not inventing evidence.
+- [ ] Invalid timestamps do not create time-proximity leads.
+- [ ] Every lead rationale states what was observed and never claims that the source caused the Jira issue.
+
 ## Evidence honesty and safety
 
 - [ ] No synthetic telemetry, logs, traces, deployment records, pull requests or metrics are presented as real.
