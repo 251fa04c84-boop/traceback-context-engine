@@ -2,12 +2,16 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {
-  buildJiraIssueAri,
-  normalizeTeamworkGraphResponse
-} = require('../src/domain/teamwork-graph');
+let graphDomain = {};
+try {
+  graphDomain = require('../src/domain/teamwork-graph');
+} catch {
+  // The production module is intentionally absent in the RED phase.
+}
+const { buildJiraIssueAri, normalizeTeamworkGraphResponse } = graphDomain;
 
 test('builds the Jira issue ARI from the current site and numeric issue id', () => {
+  assert.equal(typeof buildJiraIssueAri, 'function', 'buildJiraIssueAri must be implemented');
   assert.equal(
     buildJiraIssueAri('c0e47565-a2b1-472f-bd30-5c1e3684bb1e', '10006'),
     'ari:cloud:jira:c0e47565-a2b1-472f-bd30-5c1e3684bb1e:issue/10006'
@@ -15,12 +19,16 @@ test('builds the Jira issue ARI from the current site and numeric issue id', () 
 });
 
 test('rejects missing or malformed identifiers before making a Teamwork Graph request', () => {
+  assert.equal(typeof buildJiraIssueAri, 'function', 'buildJiraIssueAri must be implemented');
   assert.throws(() => buildJiraIssueAri('', '10006'), /cloud id/i);
   assert.throws(() => buildJiraIssueAri('not-a-cloud-id', '10006'), /cloud id/i);
   assert.throws(() => buildJiraIssueAri('c0e47565-a2b1-472f-bd30-5c1e3684bb1e', 'DEMO-7'), /issue id/i);
 });
 
 test('normalizes linked deployments, pull requests and goals with source provenance', () => {
+  assert.equal(typeof normalizeTeamworkGraphResponse, 'function', 'normalizeTeamworkGraphResponse must be implemented');
+  assert.equal(typeof normalizeTeamworkGraphResponse, 'function', 'normalizeTeamworkGraphResponse must be implemented');
+  assert.equal(typeof normalizeTeamworkGraphResponse, 'function', 'normalizeTeamworkGraphResponse must be implemented');
   const result = normalizeTeamworkGraphResponse({
     data: {
       jiraWorkItemGoals: {
@@ -102,6 +110,7 @@ test('preserves usable evidence while marking GraphQL errors as partial', () => 
 });
 
 test('returns a safe unavailable state for a malformed Teamwork Graph response', () => {
+  assert.equal(typeof normalizeTeamworkGraphResponse, 'function', 'normalizeTeamworkGraphResponse must be implemented');
   const result = normalizeTeamworkGraphResponse(null);
 
   assert.equal(result.status, 'unavailable');
