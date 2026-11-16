@@ -120,3 +120,41 @@ test('returns a safe unavailable state for a malformed Teamwork Graph response',
   assert.deepEqual(result.deployments, []);
   assert.deepEqual(result.pullRequests, []);
 });
+
+test('rejects non-HTTPS, malformed, and credential-bearing source URLs', () => {
+  const normalizeTeamworkGraphResponse = productionFunction('normalizeTeamworkGraphResponse');
+  const result = normalizeTeamworkGraphResponse({
+    data: {
+      jiraWorkItemGoals: {
+        edges: [{ node: { id: 'goal-unsafe', name: 'Unsafe goal link', url: 'javascript:alert(1)' } }]
+      },
+      jiraWorkItemLinkedExternalDeployments: {
+        edges: [{ node: { id: 'deployment-unsafe', displayName: 'Unsafe deployment link', url: 'http://example.com/deploy' } }]
+      },
+      jiraWorkItemLinkedExternalPullRequests: {
+        edges: [{ node: { id: 'pr-unsafe', title: 'Unsafe pull request link', url: 'https://user:password@example.com/pull/1' } }]
+      }
+    }
+  });
+
+  assert.equal(result.status, 'available');
+  assert.equal(result.goals[0].url, '');
+  assert.equal(result.deployments[0].url, '');
+  assert.equal(result.pullRequests[0].url, '');
+});
+
+test('ignores graph nodes without immutable item identifiers', () => {
+  const normalizeTeamworkGraphResponse = productionFunction('normalizeTeamworkGraphResponse');
+  const result = normalizeTeamworkGraphResponse({
+    data: {
+      jiraWorkItemGoals: { edges: [{ node: { name: 'Unidentified goal' } }] },
+      jiraWorkItemLinkedExternalDeployments: { edges: [{ node: { displayName: 'Unidentified deployment' } }] },
+      jiraWorkItemLinkedExternalPullRequests: { edges: [{ node: { title: 'Unidentified pull request' } }] }
+    }
+  });
+
+  assert.equal(result.status, 'empty');
+  assert.deepEqual(result.goals, []);
+  assert.deepEqual(result.deployments, []);
+  assert.deepEqual(result.pullRequests, []);
+});
