@@ -6,7 +6,8 @@ function plainText(value) {
   if (Array.isArray(value)) return value.map(plainText).filter(Boolean).join(' ');
   if (typeof value === 'object') {
     if (typeof value.text === 'string') return value.text;
-    return Object.values(value).map(plainText).filter(Boolean).join(' ');
+    if (Array.isArray(value.content)) return value.content.map(plainText).filter(Boolean).join(' ');
+    return '';
   }
   return String(value);
 }
