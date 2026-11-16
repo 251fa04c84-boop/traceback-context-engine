@@ -19,6 +19,7 @@ jobs:
       - run: npm install
       - run: npm test
       - run: npm run lint:syntax
+      - run: npm run lint:frontend
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
       - name: Validate Forge app with CLI when registered
