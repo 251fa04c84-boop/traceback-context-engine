@@ -57,4 +57,4 @@ The manifest requests `read:jira-work`. The resolver uses `api.asUser()` so issu
 4. Recovery recommendations with human approval.
 5. Auditable execution and post-action verification, only when real integrations are configured.
 
-See [docs/architecture.md](docs/architecture.md) for trust boundaries.
+See [docs/architecture.md](docs/architecture.md) for trust boundaries and [docs/CODESPACES.md](docs/CODESPACES.md) for phone-friendly cloud setup.
