@@ -34,8 +34,18 @@ function stringValue(value, fallback = '') {
 }
 
 function safeHttpsUrl(value) {
-  const url = stringValue(value);
-  return /^https:\/\//i.test(url) ? url : '';
+  const raw = stringValue(value);
+  if (!raw) return '';
+
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== 'https:' || !parsed.hostname || parsed.username || parsed.password) {
+      return '';
+    }
+    return parsed.href;
+  } catch {
+    return '';
+  }
 }
 
 function normalizeTeamworkGraphResponse(response) {
@@ -53,46 +63,52 @@ function normalizeTeamworkGraphResponse(response) {
   }
 
   const data = response.data;
-  const goals = connectionNodes(data.jiraWorkItemGoals, 'AtlassianGoal').map((goal) => ({
-    id: stringValue(goal.id),
-    key: stringValue(goal.key),
-    name: stringValue(goal.name, 'Untitled goal'),
-    description: stringValue(goal.description),
-    url: safeHttpsUrl(goal.url),
-    updatedAt: goal.updatedAt || null,
-    archived: typeof goal.archived === 'boolean' ? goal.archived : null
-  }));
+  const goals = connectionNodes(data.jiraWorkItemGoals, 'AtlassianGoal')
+    .map((goal) => ({
+      id: stringValue(goal.id),
+      key: stringValue(goal.key),
+      name: stringValue(goal.name, 'Untitled goal'),
+      description: stringValue(goal.description),
+      url: safeHttpsUrl(goal.url),
+      updatedAt: goal.updatedAt || null,
+      archived: typeof goal.archived === 'boolean' ? goal.archived : null
+    }))
+    .filter((goal) => Boolean(goal.id));
 
   const deployments = connectionNodes(
     data.jiraWorkItemLinkedExternalDeployments,
     'ExternalDeployment'
-  ).map((deployment) => ({
-    id: stringValue(deployment.id),
-    title: stringValue(deployment.displayName || deployment.label, 'Deployment'),
-    description: stringValue(deployment.description),
-    state: stringValue(deployment.state, 'UNKNOWN'),
-    environment: stringValue(deployment.environment?.displayName, 'Unknown environment'),
-    environmentType: stringValue(deployment.environment?.type, 'UNMAPPED'),
-    provider: stringValue(deployment.provider?.name, 'Unknown provider'),
-    url: safeHttpsUrl(deployment.url),
-    region: stringValue(deployment.region),
-    createdAt: deployment.createdAt || null,
-    updatedAt: deployment.lastUpdatedAt || null
-  }));
+  )
+    .map((deployment) => ({
+      id: stringValue(deployment.id),
+      title: stringValue(deployment.displayName || deployment.label, 'Deployment'),
+      description: stringValue(deployment.description),
+      state: stringValue(deployment.state, 'UNKNOWN'),
+      environment: stringValue(deployment.environment?.displayName, 'Unknown environment'),
+      environmentType: stringValue(deployment.environment?.type, 'UNMAPPED'),
+      provider: stringValue(deployment.provider?.name, 'Unknown provider'),
+      url: safeHttpsUrl(deployment.url),
+      region: stringValue(deployment.region),
+      createdAt: deployment.createdAt || null,
+      updatedAt: deployment.lastUpdatedAt || null
+    }))
+    .filter((deployment) => Boolean(deployment.id));
 
   const pullRequests = connectionNodes(
     data.jiraWorkItemLinkedExternalPullRequests,
     'ExternalPullRequest'
-  ).map((pullRequest) => ({
-    id: stringValue(pullRequest.id),
-    title: stringValue(pullRequest.title || pullRequest.displayName, 'Untitled pull request'),
-    displayId: stringValue(pullRequest.displayId || pullRequest.pullRequestId),
-    status: stringValue(pullRequest.status, 'UNKNOWN'),
-    provider: stringValue(pullRequest.provider?.name, 'Unknown provider'),
-    url: safeHttpsUrl(pullRequest.url),
-    createdAt: pullRequest.createdAt || null,
-    updatedAt: pullRequest.lastUpdatedAt || null
-  }));
+  )
+    .map((pullRequest) => ({
+      id: stringValue(pullRequest.id),
+      title: stringValue(pullRequest.title || pullRequest.displayName, 'Untitled pull request'),
+      displayId: stringValue(pullRequest.displayId || pullRequest.pullRequestId),
+      status: stringValue(pullRequest.status, 'UNKNOWN'),
+      provider: stringValue(pullRequest.provider?.name, 'Unknown provider'),
+      url: safeHttpsUrl(pullRequest.url),
+      createdAt: pullRequest.createdAt || null,
+      updatedAt: pullRequest.lastUpdatedAt || null
+    }))
+    .filter((pullRequest) => Boolean(pullRequest.id));
 
   const hasItems = goals.length > 0 || deployments.length > 0 || pullRequests.length > 0;
   const hasErrors = Array.isArray(response.errors) && response.errors.length > 0;
