@@ -76,3 +76,27 @@ test('returns an empty list for missing Jira issue links', () => {
   assert.deepEqual(normalizeRelatedIssues(null), []);
   assert.deepEqual(normalizeRelatedIssues('not-an-array'), []);
 });
+
+test('includes normalized linked work items in the Jira issue context response', () => {
+  const { normalizeIssue } = require('../src/domain/incident');
+  const result = normalizeIssue({
+    key: 'DEMO-7',
+    fields: {
+      summary: 'Linking requests to a Jira work item',
+      status: { name: 'In Progress' },
+      issuetype: { name: 'Task' },
+      issuelinks: [{
+        type: { name: 'Relates', outward: 'relates to' },
+        outwardIssue: {
+          key: 'DEMO-8',
+          fields: { summary: 'Automatically update linked requests' }
+        }
+      }]
+    }
+  });
+
+  assert.equal(result.relatedWorkItems.length, 1);
+  assert.equal(result.relatedWorkItems[0].key, 'DEMO-8');
+  assert.equal(result.relatedWorkItems[0].url, '/browse/DEMO-8');
+  assert.deepEqual(result.connectedOperationalSources, []);
+});
