@@ -3,13 +3,13 @@
 const Resolver = require('@forge/resolver');
 const api = require('@forge/api');
 const { route } = require('@forge/api');
-const { normalizeIssue } = require('./domain/incident');
+const { isValidIssueKey, normalizeIssue } = require('./domain/incident');
 
 const resolver = new Resolver();
 
 resolver.define('getIssueContext', async ({ payload }) => {
   const issueKey = String(payload?.issueKey || '').trim();
-  if (!/^[A-Z][A-Z0-9_]*-\d{1,10}$/.test(issueKey)) {
+  if (!isValidIssueKey(issueKey)) {
     throw new Error('A valid Jira issue key is required.');
   }
 
