@@ -7,18 +7,19 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - A Forge `jira:issueContext` module named **TraceBack Context Engine**.
 - A read-only resolver that reads the active Jira issue as the signed-in user.
 - Normalized Jira issue summary, description, status, type, priority, project, and timestamps.
+- Existing inward/outward Jira issue links, including relationship, status, type, priority and safe same-site issue links.
 - A Teamwork Graph client that retrieves goals, external deployments, and pull requests linked to the Jira work item through Atlassian's curated GraphQL queries.
 - Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
 - Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists.
-- Tests for issue normalization, issue ARI validation, graph evidence normalization, adapter behavior, empty results, and partial GraphQL responses.
+- Tests for issue normalization, related Jira work links, issue ARI validation, graph evidence normalization, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
 
 ## Why TraceBack
 
-An engineer investigating a Jira incident needs more than an issue description. TraceBack assembles the delivery context already connected to that work item: goals, deployments, and pull requests. It shows where each record came from and what is still missing, so the engineer can investigate without confusing correlation with causation.
+An engineer investigating a Jira incident needs more than an issue description. TraceBack assembles existing Jira-linked work plus delivery context already connected to that work item: goals, deployments, and pull requests. It shows where each record came from and what is still missing, so the engineer can investigate without confusing correlation with causation.
 
 ## Evidence and safety boundaries
 
-- Jira issue content and linked external metadata are untrusted evidence.
+- Jira issue content, Jira issue relationships, and linked external metadata are untrusted evidence.
 - Jira and Teamwork Graph reads execute as the current user.
 - The server derives the Jira issue ARI from the fetched issue ID and Forge invocation cloud context; it does not trust a client- or model-supplied ARI.
 - Teamwork Graph records are permission-filtered and may be omitted when a scope or permission is missing. An empty result therefore includes a visible warning.
@@ -69,9 +70,10 @@ After registration, Forge lint, deployment, and installation:
 1. Open a Jira issue in the **new issue view**.
 2. Open the **Investigate** issue-context panel.
 3. Confirm that the displayed Jira fields match the issue.
-4. Confirm that Teamwork Graph evidence is shown when linked goal, deployment, or pull-request records are visible to the current user.
-5. Verify empty, partial, and unavailable states without hiding the Jira issue details.
-6. Open each source link and confirm it points to the expected HTTPS source record.
+4. Confirm that linked Jira work items are shown with the correct relationship, status, type, priority, and same-site link.
+5. Confirm that Teamwork Graph evidence is shown when linked goal, deployment, or pull-request records are visible to the current user.
+6. Verify empty, partial, and unavailable states without hiding the Jira issue details.
+7. Open each source link and confirm it points to the expected Jira or HTTPS source record.
 
 The `jira:issueContext` module does not work in Jira's old issue view.
 
