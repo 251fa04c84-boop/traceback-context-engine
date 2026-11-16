@@ -76,13 +76,15 @@
 - [ ] Add the four minimum granular graph scopes.
 - [ ] Keep the Jira result available if Graph access fails; catch and normalize Graph errors.
 - [ ] Add adapter tests using an injected API client so tests do not need a live Atlassian site.
+- [ ] Keep Jira-linked work items distinct from external operational evidence.
 - [ ] Run the full test suite.
 
-### Task 4: Render linked evidence in the issue-context sidebar
+### Task 4: Render Jira links and Teamwork Graph evidence in the issue-context sidebar
 
 **Files:**
 - Modify: `src/frontend/index.jsx`
 
+- [ ] Display existing inward/outward Jira issue links with safe relative links, relation labels, status, type, and priority.
 - [ ] Display the Teamwork Graph availability state and warning text.
 - [ ] Render linked goals with title, key, and safe HTTPS source link.
 - [ ] Render deployments with state, environment, provider, timestamp, and safe HTTPS link.
