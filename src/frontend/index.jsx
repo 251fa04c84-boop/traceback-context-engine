@@ -74,11 +74,6 @@ function App() {
     relatedWorkItems: incident.relatedWorkItems,
     teamworkGraph: graph
   });
-  const investigationLeads = buildInvestigationLeads({
-    issue: incident,
-    relatedWorkItems: incident.relatedWorkItems,
-    teamworkGraph: graph
-  });
 
   return (
     <Stack space="space.300">
@@ -103,24 +98,6 @@ function App() {
           <Text>Jira links and external delivery records are context only; a relationship does not prove cause.</Text>
         </Stack>
       </SectionMessage>
-
-      <Stack space="space.100">
-        <Heading size="medium">Suggested next checks ({investigationLeads.length})</Heading>
-        <Text>Prioritized follow-ups derived from linked record states and timestamps. These are investigation leads, not root-cause findings.</Text>
-        {investigationLeads.length > 0 ? investigationLeads.map((lead) => (
-          <Stack key={lead.id} space="space.050">
-            <Inline space="space.100" shouldWrap alignBlock="center">
-              <Text>{lead.title}</Text>
-              <Badge appearance={lead.priority === 'high' ? 'danger' : lead.priority === 'medium' ? 'warning' : 'default'}>
-                {lead.priority}
-              </Badge>
-            </Inline>
-            <Text>{lead.sourceLabel}</Text>
-            <Text>{lead.rationale}</Text>
-            {lead.url ? <SourceLink url={lead.url} label="Open supporting source" /> : null}
-          </Stack>
-        )) : <Text>No specific follow-up checks could be derived from the records currently available.</Text>}
-      </Stack>
 
       <Stack space="space.100">
         <Heading size="medium">Suggested next checks ({investigationLeads.length})</Heading>
