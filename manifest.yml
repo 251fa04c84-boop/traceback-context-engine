@@ -24,3 +24,7 @@ app:
 permissions:
   scopes:
     - read:jira-work
+    - read:graph:issue:jira
+    - read:graph:deployment:external
+    - read:graph:pull-request:external
+    - read:graph:goal:atlassian
