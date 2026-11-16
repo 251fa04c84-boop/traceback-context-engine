@@ -21,5 +21,11 @@ jobs:
       - run: npm run lint:syntax
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
-      - name: Validate Forge app manifest and source
-        run: npx --yes @forge/cli@15.1.0 lint
+      - name: Validate Forge app with CLI when registered
+        shell: bash
+        run: |
+          if grep -Eq '^  id:' manifest.yml; then
+            npx --yes @forge/cli@15.1.0 lint
+          else
+            echo "::warning title=Forge registration required::Forge CLI lint is skipped because manifest.yml has no app.id. Register this Forge app once with 'forge register' before deployment and judge installation."
+          fi
