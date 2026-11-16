@@ -1,7 +1,7 @@
 modules:
   jira:issuePanel:
     - key: traceback-context-panel
-      resource: main
+      resource: main-ui-kit/entry
       resolver:
         function: resolver
       render: native
@@ -11,8 +11,10 @@ modules:
     - key: resolver
       handler: index.handler
 resources:
-  - key: main
-    path: src/frontend/index.jsx
+  - key: main-ui-kit
+    path: src/frontend
+    entry:
+      entry: index.jsx
 app:
   runtime:
     name: nodejs24.x
