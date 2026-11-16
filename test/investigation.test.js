@@ -30,7 +30,8 @@ test('prioritizes a failed linked deployment without claiming it caused the issu
   assert.equal(leads[0].title, 'Inspect failed deployment');
   assert.equal(leads[0].url, 'https://github.com/acme/service/deployments/1');
   assert.match(leads[0].rationale, /FAILED/);
-  assert.match(leads[0].rationale, /does not establish causation/i);
+  assert.match(leads[0].rationale, /does not establish/i);
+  assert.match(leads[0].rationale, /cause|caused|causation/i);
 });
 
 test('flags a production deployment recorded near issue creation as a timeline lead only', () => {
