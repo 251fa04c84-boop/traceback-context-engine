@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { normalizeIssue, plainText } = require('../src/domain/incident');
+const { isValidIssueKey, normalizeIssue, plainText } = require('../src/domain/incident');
 
 test('normalizes real Jira issue fields without inventing operational evidence', () => {
   const result = normalizeIssue({
@@ -37,4 +37,15 @@ test('plainText handles null, strings, arrays and nested Atlassian document text
   assert.equal(plainText('hello'), 'hello');
   assert.equal(plainText(['a', 'b']), 'a b');
   assert.equal(plainText({ text: 'nested' }), 'nested');
+});
+
+test('accepts valid Jira issue keys and rejects malformed or unsafe values', () => {
+  assert.equal(isValidIssueKey('TCE-7'), true);
+  assert.equal(isValidIssueKey('TEAM_1-1234567890'), true);
+  assert.equal(isValidIssueKey(' tce-7 '), false);
+  assert.equal(isValidIssueKey('TCE-0'), true);
+  assert.equal(isValidIssueKey('TCE-12345678901'), false);
+  assert.equal(isValidIssueKey('TCE-7?fields=project'), false);
+  assert.equal(isValidIssueKey('TCE/7'), false);
+  assert.equal(isValidIssueKey(null), false);
 });
