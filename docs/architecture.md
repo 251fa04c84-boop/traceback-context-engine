@@ -5,10 +5,14 @@
 1. Jira renders the Forge `jira:issueContext` module in the issue's context area.
 2. The UI obtains the active issue context and sends its key to the resolver.
 3. The resolver validates the issue-key format and fetches the Jira issue with `api.asUser().requestJira()`.
-4. The normalizer converts the actual issue fields into a predictable response.
+4. The normalizer converts the actual issue fields and inward/outward Jira issue links into a predictable response.
 5. The resolver derives the issue ARI from the fetched Jira issue ID and the Forge invocation cloud ID.
 6. The resolver queries Teamwork Graph as the current user for linked goals, external deployments, and external pull requests.
-7. The UI displays source-linked records and clearly distinguishes available, empty, partial, and unavailable states.
+7. The UI displays Jira-linked work items and Teamwork Graph source-linked records, clearly distinguishing available, empty, partial, and unavailable states.
+
+## Jira issue links
+
+The resolver also requests Jira's `issuelinks` field. The backend only normalizes linked issue keys that pass the Jira issue-key validator, deduplicates links, records whether each link is inward or outward, and builds a relative `/browse/ISSUE-KEY` URL so links remain on the current Jira site. This is Jira work context, not external operational evidence.
 
 ## Teamwork Graph queries and permissions
 
@@ -28,7 +32,7 @@ Teamwork Graph is a Forge Preview feature. Results are permission-filtered for t
 ## Trust model
 
 - Jira descriptions and graph metadata are user-controlled or externally sourced input and must be treated as untrusted evidence.
-- A Jira description or a linked PR/deployment is not proof of a production root cause.
+- A Jira description, Jira issue link, or linked PR/deployment is not proof of a production root cause.
 - Missing telemetry, logs, metrics, and traces are reported as missing; they are never synthesized.
 - Graph evidence is limited to fields explicitly selected and normalized by the backend.
 - Only HTTPS source URLs are rendered as clickable links.
