@@ -21,11 +21,13 @@ The Forge app reads the active Jira issue through a resolver using `api.asUser()
 ## Goals
 
 - Show the active Jira issue's actual title, status, priority, type, description, and provenance.
+- Derive prioritized suggested next checks from real Jira-linked and Teamwork Graph records without treating correlation as causation.
 - Show existing Jira inward/outward linked work items with their relationship and same-site issue link.
 - Retrieve linked Atlassian goals, deployments, and pull requests through Teamwork Graph as the current user.
 - Display source name, state/status, time, environment where available, and an HTTPS deep link.
 - Show a clear empty state when no links exist and a separate unavailable/partial state when graph access is missing or denied.
 - Never convert missing data into a root-cause assertion.
+- Each investigation lead must include the observable evidence state, a source link where one exists, and non-causal explanatory wording.
 - Preserve read-only permissions and avoid production actions.
 - Keep the app responsive in the Jira issue-context sidebar and suitable for a short judge demonstration.
 - Add explicit tests for valid records, empty results, partial GraphQL failures, malformed ARIs, and unsafe links.
