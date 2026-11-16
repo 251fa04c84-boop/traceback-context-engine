@@ -1,7 +1,7 @@
 'use strict';
 
 function isValidIssueKey(value) {
-  return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-\\d{1,10}$/.test(value.trim());
+  return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-\d{1,10}$/.test(value.trim());
 }
 
 function plainText(value) {
