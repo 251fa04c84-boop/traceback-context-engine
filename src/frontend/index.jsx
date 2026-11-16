@@ -78,9 +78,25 @@ function App() {
         <Stack space="space.100">
           <Heading size="small">Evidence boundary</Heading>
           <Text>{incident.assessment}</Text>
-          <Text>Linked work and deployments are context only; a relationship does not prove cause.</Text>
+          <Text>Jira links and external delivery records are context only; a relationship does not prove cause.</Text>
         </Stack>
       </SectionMessage>
+
+      <Stack space="space.100">
+        <Heading size="small">Related Jira work ({incident.relatedWorkItems?.length || 0})</Heading>
+        <Text>Existing Jira issue links connected to this work item.</Text>
+        {incident.relatedWorkItems?.length > 0 ? incident.relatedWorkItems.map((item) => (
+          <Stack key={item.key} space="space.050">
+            <Text>{item.summary}</Text>
+            <Inline space="space.100" shouldWrap alignBlock="center">
+              <Badge appearance="default">{item.key}</Badge>
+              <Badge appearance="default">{item.status}</Badge>
+            </Inline>
+            <Text>{item.relationship} · {item.issueType} · Priority: {item.priority}</Text>
+            <Link href={item.url}>Open related Jira issue</Link>
+          </Stack>
+        )) : <Text>No linked Jira work items were returned.</Text>}
+      </Stack>
 
       <Stack space="space.200">
         <Inline alignBlock="center" space="space.100">
