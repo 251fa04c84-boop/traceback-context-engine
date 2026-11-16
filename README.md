@@ -5,34 +5,33 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 ## Current implementation
 
 - A Forge `jira:issueContext` module named **TraceBack Context Engine**.
-- A backend resolver that reads the currently opened Jira issue as the signed-in user.
-- Normalization of summary, description, status, issue type, priority, project, and timestamps.
-- An explicit evidence boundary: Jira issue text alone is not proof of a production root cause.
-- Unit tests for issue normalization, malformed payloads, nested Atlassian document text, and issue-key validation.
+- A read-only resolver that reads the active Jira issue as the signed-in user.
+- Normalized Jira issue summary, description, status, type, priority, project, and timestamps.
+- A Teamwork Graph client that retrieves goals, external deployments, and pull requests linked to the Jira work item through Atlassian's curated GraphQL queries.
+- Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
+- Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists.
+- Tests for issue normalization, issue ARI validation, graph evidence normalization, adapter behavior, empty results, and partial GraphQL responses.
 
-## Product scope in this branch
+## Why TraceBack
 
-The next implementation slice adds read-only Teamwork Graph context for:
-- Atlassian goals linked to the work item.
-- External deployments linked to the work item.
-- External pull requests linked to the work item.
-
-It uses Atlassian's curated GraphQL queries and current-user authorization. It does not create fake events or infer that a linked change caused an incident. If the site has no connected GitHub/DevOps data or no links for an issue, the app must say so.
+An engineer investigating a Jira incident needs more than an issue description. TraceBack assembles the delivery context already connected to that work item: goals, deployments, and pull requests. It shows where each record came from and what is still missing, so the engineer can investigate without confusing correlation with causation.
 
 ## Evidence and safety boundaries
 
 - Jira issue content and linked external metadata are untrusted evidence.
-- Missing telemetry, logs, tracing, and deployment records must remain missing; no metrics or incidents are synthesized.
-- Teamwork Graph results are filtered by the signed-in user's permissions and site-admin scope grants.
-- Only verified HTTPS source URLs may be clickable.
-- This version is read-only: no rollback, feature-flag change, deployment trigger, issue update, or production mutation.
-- No root cause or confidence score is claimed without sufficient validated evidence.
+- Jira and Teamwork Graph reads execute as the current user.
+- The server derives the Jira issue ARI from the fetched issue ID and Forge invocation cloud context; it does not trust a client- or model-supplied ARI.
+- Teamwork Graph records are permission-filtered and may be omitted when a scope or permission is missing. An empty result therefore includes a visible warning.
+- Only verified HTTPS source URLs are clickable.
+- Missing telemetry, service logs, traces, and alert history remain missing; no metrics or incidents are synthesized.
+- Linked changes are context, not proof of incident causation. This version does not claim a root cause or use an uncalibrated confidence score.
+- The app is read-only: no rollback, feature-flag change, deployment trigger, issue update, or production mutation.
 
 ## Requirements
 
 - Node.js 24
 - npm
-- Atlassian Forge CLI 15.1.0 (pinned in the repository's current validation workflow)
+- Atlassian Forge CLI 15.1.0 (pinned in the validation workflow)
 - An Atlassian Jira Cloud site where the app can be installed
 
 ## Local validation
@@ -41,29 +40,47 @@ It uses Atlassian's curated GraphQL queries and current-user authorization. It d
 npm install
 npm test
 npm run lint:syntax
+npm run lint:frontend
 npx --yes @forge/cli@15.1.0 lint
 ```
 
-Forge CLI validation, app registration, deployment, installation, and live acceptance tests are separate gates. The app is not considered submission-ready until it has been registered once, validated, deployed, installed on the development site, and tested in the new Jira issue view.
+The Forge CLI lint command requires a registered app ID in `manifest.yml`. Registration, deployment, installation, and live acceptance testing are separate gates; passing GitHub CI alone does not prove that the app is deployed or judge-installable.
 
-Register the app only once with `forge register`; registration creates the app ID and updates `manifest.yml`. Re-registering an existing app can disconnect it from its prior environments and stored data.
+Register the app only once with `forge register`. Registration generates the app ID and updates `manifest.yml`. Do not re-register an existing app because doing so can disconnect it from its previous environments and stored data.
 
-## Jira installation
+## Required permissions
+
+The manifest requests:
+
+- `read:jira-work` for Jira issue context.
+- `read:graph:issue:jira` for the Jira work item in Teamwork Graph.
+- `read:graph:goal:atlassian` for linked Atlassian goals.
+- `read:graph:deployment:external` for linked deployments.
+- `read:graph:pull-request:external` for linked pull requests.
+
+These are read-only scopes. A site administrator must grant the requested graph scopes, and the signed-in user must still have permission to see the underlying records. A site with no connected GitHub/DevOps provider or no linked records will show an honest empty state.
+
+## Jira installation and acceptance
 
 Target development site: `251fa04c84.atlassian.net`.
 
-After deployment and installation, open a Jira issue in the **new issue view** and expand **Investigate** in the issue-context area. Confirm that the panel shows the current issue's real fields and graph evidence (or an honest empty/unavailable state).
+After registration, Forge lint, deployment, and installation:
 
-## Permissions
+1. Open a Jira issue in the **new issue view**.
+2. Open the **Investigate** issue-context panel.
+3. Confirm that the displayed Jira fields match the issue.
+4. Confirm that Teamwork Graph evidence is shown when linked goal, deployment, or pull-request records are visible to the current user.
+5. Verify empty, partial, and unavailable states without hiding the Jira issue details.
+6. Open each source link and confirm it points to the expected HTTPS source record.
 
-The app requests `read:jira-work` for issue context plus granular read-only Teamwork Graph scopes for Jira work items, Atlassian goals, external deployments, and external pull requests. These scopes are read-only; the signed-in user and site administrator still control which records are visible.
+The `jira:issueContext` module does not work in Jira's old issue view.
 
-## Test strategy
+## Validation
 
-- Unit tests cover Jira field normalization, issue-key validation, Teamwork Graph ARI construction, linked evidence normalization, empty graph results, and partial GraphQL failures.
-- GitHub Actions runs unit tests and syntax checks; Forge CLI lint is gated on app registration.
-- Manual acceptance tests must verify Jira issue context, Teamwork Graph scope grants, connector availability, linked records, source URLs, and permission-filtered empty states.
+- GitHub Actions runs unit tests, JavaScript syntax checks, and a separate JSX compilation check.
+- Forge CLI lint is conditional on the app being registered; until then CI emits a warning instead of claiming Forge validation passed.
+- Live Jira installation, administrator scope grants, and end-to-end Teamwork Graph retrieval still require a registered and deployed Forge app.
 
-## Submission status
+## Codegeist submission status
 
-This repository and PR are still in development. A successful GitHub test run is not proof of Forge deployment or judge installability. Do not submit until the live Forge install, demo, setup instructions, and public installation link have all been verified.
+This branch is still under development and PR #1 remains a draft. Do not submit until app registration, Forge lint, deployment, installation, the live judge journey, and the public demo video have all been verified.
