@@ -32,6 +32,7 @@
 - [ ] A real test issue demonstrates linked goals, deployments, and/or pull requests where available.
 - [ ] The video visibly shows the Teamwork Graph section and explains the source/provenance.
 - [ ] Empty, partial and unavailable cases are shown honestly.
+- [ ] Suggested next checks are visibly derived from actual linked statuses/timestamps, include source links, and explicitly disclaim causation.
 - [ ] Bonus write-up explains what Graph context adds to a software team's investigation workflow.
 
 ## Devpost form
