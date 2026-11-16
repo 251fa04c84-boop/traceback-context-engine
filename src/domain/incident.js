@@ -1,5 +1,9 @@
 'use strict';
 
+function isValidIssueKey(value) {
+  return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-\\d{1,10}$/.test(value.trim());
+}
+
 function plainText(value) {
   if (value == null) return '';
   if (typeof value === 'string') return value;
@@ -33,4 +37,4 @@ function normalizeIssue(issue) {
   };
 }
 
-module.exports = { plainText, normalizeIssue };
+module.exports = { isValidIssueKey, plainText, normalizeIssue };
