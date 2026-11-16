@@ -12,7 +12,8 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - Suggested next checks derived from actual linked record states and timestamps, prioritized and source-linked without making causal claims.
 - Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
 - Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists.
-- Tests for issue normalization, related Jira work links, issue ARI validation, graph evidence normalization, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
+- Suggested next checks prioritized from observed deployment, pull-request and linked Jira-work states/timestamps, with a rationale and source link where available; they are not root-cause findings.
+- Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, graph evidence normalization, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
 
 ## Why TraceBack
 
