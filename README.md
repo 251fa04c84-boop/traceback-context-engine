@@ -9,6 +9,7 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - Normalized Jira issue summary, description, status, type, priority, project, and timestamps.
 - Existing inward/outward Jira issue links, including relationship, status, type, priority and safe same-site issue links.
 - A Teamwork Graph client that retrieves goals, external deployments, and pull requests linked to the Jira work item through Atlassian's curated GraphQL queries.
+- Suggested next checks derived from actual linked record states and timestamps, prioritized and source-linked without making causal claims.
 - Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
 - Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists.
 - Tests for issue normalization, related Jira work links, issue ARI validation, graph evidence normalization, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
@@ -25,7 +26,7 @@ An engineer investigating a Jira incident needs more than an issue description. 
 - Teamwork Graph records are permission-filtered and may be omitted when a scope or permission is missing. An empty result therefore includes a visible warning.
 - Only verified HTTPS source URLs are clickable.
 - Missing telemetry, service logs, traces, and alert history remain missing; no metrics or incidents are synthesized.
-- Linked changes are context, not proof of incident causation. This version does not claim a root cause or use an uncalibrated confidence score.
+- Linked changes are context, not proof of incident causation. Suggested next checks explain the observed state and link to the source record; they are not root-cause findings or probabilities.
 - The app is read-only: no rollback, feature-flag change, deployment trigger, issue update, or production mutation.
 
 ## Requirements
@@ -72,8 +73,9 @@ After registration, Forge lint, deployment, and installation:
 3. Confirm that the displayed Jira fields match the issue.
 4. Confirm that linked Jira work items are shown with the correct relationship, status, type, priority, and same-site link.
 5. Confirm that Teamwork Graph evidence is shown when linked goal, deployment, or pull-request records are visible to the current user.
-6. Verify empty, partial, and unavailable states without hiding the Jira issue details.
-7. Open each source link and confirm it points to the expected Jira or HTTPS source record.
+6. Confirm suggested next checks are derived from actual evidence state/timestamps and each lead links to the supporting record.
+7. Verify empty, partial, and unavailable states without hiding the Jira issue details.
+8. Open each source link and confirm it points to the expected Jira or HTTPS source record.
 
 The `jira:issueContext` module does not work in Jira's old issue view.
 
