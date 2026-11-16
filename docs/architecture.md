@@ -8,7 +8,7 @@
 4. The normalizer converts the actual issue fields and inward/outward Jira issue links into a predictable response.
 5. The resolver derives the issue ARI from the fetched Jira issue ID and the Forge invocation cloud ID.
 6. The resolver queries Teamwork Graph as the current user for linked goals, external deployments, and external pull requests.
-7. The UI displays Jira-linked work items and Teamwork Graph source-linked records, clearly distinguishing available, empty, partial, and unavailable states.
+7. The UI displays Jira-linked work items, Teamwork Graph source-linked records, and evidence-backed suggested next checks, clearly distinguishing available, empty, partial, and unavailable states.
 
 ## Jira issue links
 
@@ -51,6 +51,10 @@ The UI distinguishes:
 - `empty`: the GraphQL query succeeded but returned no linked items. This does not prove that no operational evidence exists elsewhere.
 - `partial`: some evidence was returned while one or more graph query branches reported errors.
 - `unavailable`: the graph query could not be executed or returned no usable data.
+
+## Suggested investigation leads
+
+The lead builder uses only the normalized Jira issue creation time, Jira-linked work-item statuses, and Teamwork Graph deployment/PR/goal records. It can suggest checking failed or in-progress deployments, a production deployment recorded within 24 hours of issue creation, open/draft pull requests, recently merged pull requests, unresolved related Jira work, archived goals, or missing graph connectivity. Each suggestion includes a rationale, priority, and supporting source URL where available. Time proximity and links are treated as triage clues, never proof of causation. Invalid timestamps do not create time-proximity leads.
 
 ## Approval and execution boundary
 
