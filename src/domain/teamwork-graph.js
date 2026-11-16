@@ -98,7 +98,7 @@ function normalizeTeamworkGraphResponse(response) {
   const hasErrors = Array.isArray(response.errors) && response.errors.length > 0;
 
   let status = 'empty';
-  let warning = 'No linked deployment, pull request, or goal records were returned. This can mean no records are linked, an upstream connector is not configured, or the app or user does not have access to those records.';
+  let warning = 'No linked deployment, pull request, or goal records were returned. This can mean no records are linked, an upstream connector is not configured, or required Teamwork Graph scopes or user permissions are missing.';
 
   if (hasErrors) {
     status = hasItems ? 'partial' : 'unavailable';
