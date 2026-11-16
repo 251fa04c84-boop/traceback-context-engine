@@ -15,6 +15,8 @@ Evidence-based incident investigation inside Jira, built as an Atlassian Forge a
 
 No live telemetry, log, deployment, tracing, alerting or rollback integration is connected in this version. The app does not guess a root cause, generate fake metrics, or execute recovery actions. Those capabilities will be added only with real, permissioned integrations and explicit approval controls.
 
+Jira's issue-panel visibility rules also apply: the panel button is shown only to users who have permission to edit the issue, and the module works in Jira's new issue view, not the old issue view.
+
 ## Requirements
 
 - Node.js 24 (matches the Forge runtime)
@@ -29,7 +31,7 @@ The repository can be reviewed and tested through GitHub. A local Forge deployme
 ```bash
 npm install
 npm test
-npx @forge/cli lint
+npx --yes @forge/cli@15.1.0 lint
 ```
 
 Registration and deployment are separate authenticated steps; do not run them until lint succeeds and the app manifest has been reviewed.
@@ -38,7 +40,7 @@ Register the app with the Forge CLI before deployment. Registration generates th
 
 ## Jira installation
 
-Install to the development site `251fa04c84.atlassian.net`. After installation, open a Jira issue, open the Apps menu, and select **TraceBack Context Engine**.
+Install to the development site `251fa04c84.atlassian.net`. After installation, open a Jira issue, open the Apps menu, and select **TraceBack Context Engine**. Use a test account with edit permission on the issue and Jira's new issue view.
 
 ## Permissions
 
@@ -47,7 +49,7 @@ The manifest requests `read:jira-work`. The resolver uses `api.asUser()` so issu
 ## Test strategy
 
 - Unit tests cover normalization, nested Atlassian document text, and invalid payloads.
-- Forge CLI lint/deploy validates the manifest and platform packaging.
+- GitHub Actions runs unit tests, syntax checks and Forge CLI lint.
 - Manual acceptance test: install on the development site and verify the panel displays that issue's actual Jira fields.
 
 ## Product direction
