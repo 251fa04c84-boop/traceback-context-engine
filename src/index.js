@@ -4,10 +4,11 @@ const Resolver = require('@forge/resolver');
 const api = require('@forge/api');
 const { route } = require('@forge/api');
 const { isValidIssueKey, normalizeIssue } = require('./domain/incident');
+const { loadTeamworkGraphEvidence } = require('./teamwork-graph');
 
 const resolver = new Resolver();
 
-resolver.define('getIssueContext', async ({ payload }) => {
+resolver.define('getIssueContext', async ({ payload, context }) => {
   const issueKey = String(payload?.issueKey || '').trim();
   if (!isValidIssueKey(issueKey)) {
     throw new Error('A valid Jira issue key is required.');
@@ -22,7 +23,17 @@ resolver.define('getIssueContext', async ({ payload }) => {
   if (!response.ok) throw new Error(`Jira request failed (${response.status}). Please retry.`);
 
   const issue = await response.json();
-  return normalizeIssue(issue);
+  const incident = normalizeIssue(issue);
+  const teamworkGraph = await loadTeamworkGraphEvidence({
+    cloudId: context?.cloudId,
+    issueId: issue.id,
+    requestTeamworkGraph: (query, variables) => api.asUser().requestTeamworkGraph(query, variables)
+  });
+
+  return {
+    ...incident,
+    teamworkGraph
+  };
 });
 
 exports.handler = resolver.getDefinitions();
