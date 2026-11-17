@@ -59,3 +59,20 @@ Official Atlassian documentation confirms:
 - Jira issue context rendering: **PASS** (DEMO-9).
 - Teamwork Graph data integration: **PARTIAL / NOT ACCEPTED** (runtime error state; no positive linked-record proof).
 - Production release and judge installation: **NOT DONE**.
+
+
+## Connected Apps authorization audit — 17 November 2026
+
+The Jira Manage apps / Connected Apps Authorization view for the installed TraceBack Context Engine app was inspected read-only after the runtime retest.
+
+- App status: Installed.
+- Core permission **View Jira issue data**: enabled.
+- `read:graph:issue:jira`: listed but unchecked/disabled.
+- `read:graph:goal:atlassian`: listed but unchecked/disabled.
+- `read:graph:deployment:external`: listed but unchecked/disabled.
+- `read:graph:pull-request:external`: listed but unchecked/disabled.
+- No authorization settings were changed during this inspection.
+
+This explains the observed split: the Forge panel can fetch and render the Jira issue, while the Teamwork Graph relationship data is unavailable. The app already requests these scopes in `manifest.yml`, but the site installation has not granted them. Per Atlassian's granular-scope model, the site administrator must enable the relevant object scopes in Connected Apps. The next required action is explicit administrator approval of these four read-only scopes, followed by a short propagation wait and a fresh live panel retest.
+
+Until that approval is granted, do not claim Teamwork Graph integration is accepted or that the missing records are genuinely absent.
