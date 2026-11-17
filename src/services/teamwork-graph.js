@@ -210,7 +210,8 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
       for (const [category, config] of Object.entries(CATEGORY_CONFIG)) {
         if (!include[category]) continue;
         const connection = pageData[config.field];
-        if (!connection || typeof connection !== 'object') {
+        if (!connection || typeof connection !== 'object' || !Array.isArray(connection.edges)) {
+          errors.push({ message: 'Teamwork Graph returned an invalid linked-evidence connection.' });
           include[category] = false;
           continue;
         }
@@ -219,7 +220,13 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
         pageCounts[category] += 1;
 
         const pageInfo = connection.pageInfo;
-        if (pageInfo?.hasNextPage !== true) {
+        if (!pageInfo || typeof pageInfo.hasNextPage !== 'boolean') {
+          errors.push({ message: 'Teamwork Graph pagination metadata is missing.' });
+          include[category] = false;
+          continue;
+        }
+
+        if (pageInfo.hasNextPage !== true) {
           include[category] = false;
           continue;
         }
