@@ -42,6 +42,20 @@ The action reuses the app's existing Jira and Teamwork Graph read services. Jira
 
 The focused action-context tests cover valid explicit keys, active-context fallback, malformed and URL-shaped keys, active-context mismatch, invalid active context, and missing keys. Repository CI also runs the existing Jira and Teamwork Graph domain and service tests. Automated tests do not replace Forge manifest lint, MCP connection validation, or live Rovo invocation.
 
+## Reproducible validation commands
+
+Run these from the repository root on Node.js 24:
+
+```bash
+npm ci
+npm test
+npm run lint:syntax
+npm run lint:frontend
+npx --yes @forge/cli@15.1.0 lint
+```
+
+The feature branch's push workflow runs the authenticated Forge CLI lint step but does not deploy this Rovo branch. Pull-request CI validates installation, tests, syntax and frontend compilation; it intentionally skips authenticated Forge CLI operations. A successful lint is still not proof of live Rovo discovery, MCP connectivity, or Teamwork Graph scope access.
+
 ## Acceptance gates
 
 1. Forge CLI manifest lint on the exact branch.
