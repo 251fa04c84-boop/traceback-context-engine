@@ -13,6 +13,11 @@ on:
         required: true
         type: boolean
         default: false
+      confirm_no_existing_registration:
+        description: I confirm this app has not already been registered outside this workflow; if it has, I will stop and recover its existing app ID
+        required: true
+        type: boolean
+        default: false
       confirm_readonly_scopes:
         description: I authorize read-only scopes: read:jira-work, read:graph:issue:jira, read:graph:goal:atlassian, read:graph:deployment:external, and read:graph:pull-request:external
         required: true
@@ -47,6 +52,7 @@ jobs:
       FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
       SOURCE_BRANCH: ${{ inputs.source_branch }}
       ACCEPT_FORGE_TERMS: ${{ inputs.accept_forge_terms }}
+      CONFIRM_NO_EXISTING_REGISTRATION: ${{ inputs.confirm_no_existing_registration }}
       CONFIRM_READONLY_SCOPES: ${{ inputs.confirm_readonly_scopes }}
       INSTALL_MODE: ${{ inputs.install_mode }}
       DEVELOPER_SPACE_ID: ${{ inputs.developer_space_id }}
@@ -92,6 +98,10 @@ jobs:
           if grep -Eq '^  id:' manifest.yml; then
             echo "An app ID already exists in manifest.yml; skipping registration."
           else
+            if [[ "$CONFIRM_NO_EXISTING_REGISTRATION" != "true" ]]; then
+              echo "::error title=Existing registration check required::Confirm this app has not already been registered outside this workflow. If it has, recover the existing app ID instead of registering again."
+              exit 1
+            fi
             if [[ "$ACCEPT_FORGE_TERMS" != "true" ]]; then
               echo "::error title=Forge terms confirmation required::The manifest has no app ID. Confirm Atlassian Forge terms before first-time registration."
               exit 1
