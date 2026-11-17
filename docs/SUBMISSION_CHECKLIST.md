@@ -1,7 +1,8 @@
 # TraceBack Context Engine — Codegeist Submission Checklist
 
 **Target category:** Apps for Software Teams  
-**Target bonus prize:** Best apps with Teamwork Graph integration  
+**Primary bonus target:** Best apps with Teamwork Graph integration  
+**Additional candidate bonus categories:** Best Agents and Best apps with Atlassian MCP (only one bonus prize can be awarded to this submission)  
 **Current state:** Development draft; not ready to submit.
 
 ## Official Codegeist 2026 terms (recheck before final submission)
@@ -53,6 +54,18 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] Empty, partial and unavailable cases are shown honestly.
 - [ ] Suggested next checks are visibly derived from actual linked statuses/timestamps, include source links, and explicitly disclaim causation.
 - [ ] Bonus write-up explains what Graph context adds to a software team's investigation workflow.
+
+## Rovo Agent and Atlassian MCP bonus evidence (feature branch; not yet accepted)
+
+- [ ] Merge the reviewed Rovo Agent/MCP implementation only after CI and dependency remediation pass.
+- [ ] Deploy the exact final build to a dedicated Forge development/test site.
+- [ ] Verify TraceBack Investigator can invoke the shared read-only context action in Rovo chat.
+- [ ] Verify the Rovo Agent's response is grounded in real Jira and Teamwork Graph records and preserves missing/partial evidence warnings.
+- [ ] Verify the `rovo:mcp` module exposes the same action to a customer-created Rovo agent in Rovo Studio.
+- [ ] Verify the tool is administrator-enabled and callable by an authorized test user.
+- [ ] Record the exact live action invocation and returned source links.
+- [ ] Explain that the agent and MCP server reuse the same permission-aware evidence pipeline rather than creating a second, less-restricted data path.
+- [ ] Do not claim Best Agents or Atlassian MCP eligibility solely from manifest declarations or unit tests; live Rovo acceptance is required.
 
 ## Devpost form
 
