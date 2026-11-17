@@ -59,3 +59,8 @@ The lead builder uses only the normalized Jira issue creation time, Jira-linked 
 ## Approval and execution boundary
 
 Any future production action must be separate from analysis. It must require explicit human approval, show the exact target and change, enforce authorization server-side, use idempotency where applicable, and record actor, approval, request, result, and verification evidence. No such action is available in this implementation.
+
+
+## Invocation and outbound-request budgets
+
+Forge UI/resolver invocations have a hard 25-second runtime ceiling ([Atlassian invocation limits](https://developer.atlassian.com/platform/forge/limits-invocation/)). TraceBack caps the Jira issue request at 8 seconds and Teamwork Graph work at 12 seconds total, with a 5-second per-request ceiling. This reserves time for normalization and response serialization instead of allowing a slow upstream request to leave the panel spinning until Forge terminates the invocation. If a Graph page times out or the overall budget expires, already retrieved records are retained, the affected categories are marked incomplete, and the UI reports a partial/unavailable state. A Graph timeout never discards valid Jira issue context.

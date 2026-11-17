@@ -5,7 +5,14 @@ const {
   normalizeTeamworkGraphResponse
 } = require('../domain/teamwork-graph');
 
+const { withTimeout } = require('./request-timeout');
+
 const MAX_PAGES_PER_CATEGORY = 5;
+// Jira issue retrieval has an 8-second cap in the resolver. Keep Graph work
+// below the Forge 25-second invocation ceiling, leaving several seconds for
+// normalization and response serialization.
+const MAX_TOTAL_DURATION_MS = 12_000;
+const MAX_REQUEST_DURATION_MS = 5_000;
 const CATEGORY_CONFIG = {
   goals: {
     field: 'jiraWorkItemGoals',
@@ -203,24 +210,44 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
     const truncated = { goals: false, deployments: false, pullRequests: false };
     const errors = [];
     let requestCount = 0;
+    const startedAt = Date.now();
+
+    function markPendingCategoriesAsTruncated() {
+      for (const category of Object.keys(include)) {
+        if (include[category]) truncated[category] = true;
+      }
+    }
 
     while (Object.values(include).some(Boolean) && requestCount < MAX_PAGES_PER_CATEGORY) {
       let graphResponse;
+      const remainingMs = MAX_TOTAL_DURATION_MS - (Date.now() - startedAt);
+      if (remainingMs <= 0) {
+        markPendingCategoriesAsTruncated();
+        errors.push({ message: 'Teamwork Graph pagination exceeded its time budget.' });
+        break;
+      }
+
       try {
-        // @forge/api requestTeamworkGraph resolves to { data, errors } directly;
-        // it is not a Fetch Response and must not be treated as response.json().
-        const rawResponse = await userApi.requestTeamworkGraph(
-          TEAMWORK_GRAPH_QUERY,
-          makeRequestVariables(issueAri, cursors, include)
+        // @forge/api requestTeamworkGraph may expose a Fetch-like response or
+        // a direct { data, errors } object. Bound the request and body read so
+        // optional Graph evidence cannot consume the entire Forge invocation.
+        graphResponse = await withTimeout(
+          async () => readTeamworkGraphResponse(await userApi.requestTeamworkGraph(
+            TEAMWORK_GRAPH_QUERY,
+            makeRequestVariables(issueAri, cursors, include)
+          )),
+          Math.min(MAX_REQUEST_DURATION_MS, remainingMs),
+          'Teamwork Graph request timed out.'
         );
-        graphResponse = await readTeamworkGraphResponse(rawResponse);
       } catch {
-        errors.push({ message: 'Teamwork Graph request failed.' });
+        markPendingCategoriesAsTruncated();
+        errors.push({ message: 'Teamwork Graph request failed or exceeded its time budget.' });
         break;
       }
       requestCount += 1;
 
       if (!graphResponse || typeof graphResponse !== 'object') {
+        markPendingCategoriesAsTruncated();
         errors.push({ message: 'Teamwork Graph returned an invalid response.' });
         break;
       }
@@ -228,6 +255,7 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
       if (Array.isArray(graphResponse.errors)) errors.push(...graphResponse.errors);
       const pageData = graphResponse.data;
       if (!pageData || typeof pageData !== 'object') {
+        markPendingCategoriesAsTruncated();
         errors.push({ message: 'Teamwork Graph returned no usable data.' });
         break;
       }
@@ -294,5 +322,7 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
 module.exports = {
   fetchTeamworkGraphEvidence,
   TEAMWORK_GRAPH_QUERY,
-  MAX_PAGES_PER_CATEGORY
+  MAX_PAGES_PER_CATEGORY,
+  MAX_TOTAL_DURATION_MS,
+  MAX_REQUEST_DURATION_MS
 };

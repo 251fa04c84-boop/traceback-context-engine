@@ -93,6 +93,7 @@ test('preserves already loaded evidence when a later pagination request throws',
   assert.equal(result.status, 'partial');
   assert.deepEqual(result.goals.map((goal) => goal.id), ['goal-1']);
   assert.match(result.warning, /some connected evidence could not be loaded/i);
+  assert.deepEqual(result.truncatedCategories, ['goals']);
 });
 
 test('bounds pagination and clearly reports categories with more than five pages', async () => {
