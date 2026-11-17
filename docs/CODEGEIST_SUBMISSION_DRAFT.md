@@ -94,6 +94,9 @@ TraceBack Tools exposes the same read-only investigation action through Forge's 
 
 ## Impact statement
 
+The reproducible pilot plan, task wording, counterbalancing method, metrics, and raw-results template are in [docs/USER_VALIDATION_PROTOCOL.md](USER_VALIDATION_PROTOCOL.md). This is a protocol only; no participant results are claimed.
+
+
 **Do not insert an unmeasured time-saved or incident-reduction percentage.** The current repository evidence establishes implementation and automated validation, not a measured customer outcome.
 
 For a defensible impact claim, run a small controlled usability test with engineers:
