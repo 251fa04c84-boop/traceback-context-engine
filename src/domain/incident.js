@@ -11,6 +11,21 @@ function getIssueKeyFromProductContext(context) {
   return isValidIssueKey(issueKey) ? issueKey : null;
 }
 
+function resolveIssueKey(requestedIssueKey, context) {
+  const requested = typeof requestedIssueKey === 'string' ? requestedIssueKey.trim() : '';
+  const active = getIssueKeyFromProductContext(context);
+
+  if (active && requested && requested !== active) {
+    throw new Error('This panel can only load the Jira issue where it is currently open.');
+  }
+
+  const issueKey = active || requested;
+  if (!isValidIssueKey(issueKey)) {
+    throw new Error('A valid active Jira issue key is required.');
+  }
+  return issueKey;
+}
+
 function getRetryIssueKey(context, lastIssueKey) {
   const activeIssueKey = getIssueKeyFromProductContext(context);
   if (activeIssueKey) return activeIssueKey;
@@ -94,6 +109,7 @@ function normalizeIssue(issue) {
 module.exports = {
   isValidIssueKey,
   getIssueKeyFromProductContext,
+  resolveIssueKey,
   getRetryIssueKey,
   plainText,
   normalizeRelatedIssues,
