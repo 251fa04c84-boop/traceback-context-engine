@@ -65,3 +65,34 @@ The latest locked-dependency audit was re-run by GitHub Actions push workflow [#
 The current lockfile resolves `@forge/api 8.5.0`, `@forge/bridge 7.3.0`, `@forge/react 12.5.0`, `@forge/manifest 13.9.0`, `@atlaskit/adf-schema 56.7.3`, `@atlaskit/editor-prosemirror 8.0.3`, `prosemirror-view 1.41.5`, `glob 13.0.7`, and `minimatch 10.2.6`. In particular, the locked `prosemirror-view 1.41.5` remains below the previously identified patched version 1.42.3; this is not cleared by the passing app test suite.
 
 No dependency upgrades were made in this documentation-only change. Do not claim the app is vulnerability-free, and do not use `npm audit fix --force`. Any remediation should be isolated, compatibility-reviewed, and followed by the complete CI, Forge deployment and live acceptance gates.
+
+
+## Isolated remediation investigation — 17 November 2026
+
+This investigation was performed on the separate `security/dependency-remediation` branch, based on the validated application commit `c1fbe07fabadcd6e03f17b993528668609e1b32e`. No production branch dependency versions were changed.
+
+### Findings from the committed lockfile
+
+- `@forge/bridge@7.3.0` depends on `@atlaskit/adf-schema@^56.7.0` and `@forge/manifest@13.9.0`.
+- `@forge/react@12.5.0` depends on `@atlaskit/adf-schema`, `@atlaskit/adf-utils`, and `@atlaskit/forge-react-types`.
+- Five installed copies of `@atlaskit/editor-prosemirror` (versions 8.0.3 and 9.0.0) declare an exact `prosemirror-view@1.41.5` dependency. The fixed version for GHSA-c8x8-7fp4-3x9w is 1.42.3.
+- `@forge/manifest@13.9.0` declares `glob@^13.0.0`; the installed `glob@13.0.7` declares `minimatch@^10.2.2`. The audit's fixed versions are outside those declared major ranges (glob 14.0.2 and minimatch 11.0.1).
+- The Forge UI source imports `@forge/react` and `@forge/bridge`; it does not directly import ProseMirror or an editor component. This narrows direct feature exposure but does not remove the vulnerable packages from the installed dependency tree or establish Marketplace compliance.
+
+### Compatibility decision
+
+No package or lockfile override was committed. Forcing `prosemirror-view@1.42.3` would override an exact upstream Atlaskit dependency declaration; forcing `glob@14.0.2` or `minimatch@11.0.1` would cross upstream major-version ranges. The npm audit's proposed direct Forge package fixes include major downgrades, which are not an acceptable blind remediation.
+
+An Atlassian Developer Community report independently describes the same `prosemirror-view@1.41.5` pin in Forge UI Kit dependency trees and reports that an npm override leads to an `npm ls` dependency problem. This is corroborating community evidence, not an official Atlassian remediation commitment.
+
+### Release impact and required next action
+
+Atlassian's current Marketplace cloud-app security requirements explicitly prohibit known high- or critical-severity third-party dependencies. The current audit therefore remains a release blocker even though this app's own UI does not directly expose a ProseMirror editor and all functional tests pass.
+
+The safe next action is to obtain an upstream patched Forge/Atlaskit dependency release or written Atlassian guidance on a supported mitigation. If Atlassian confirms that the vulnerability is not present in the shipped Forge app artifact or provides an accepted mitigation, retain that evidence and rerun the full dependency audit and Forge validation. Do not describe the issue as resolved solely because an override installs or because the affected editor is not directly used.
+
+References:
+- [GitHub advisory GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w) — fixed in `prosemirror-view@1.42.3`.
+- [Atlassian Marketplace cloud-app security requirements](https://developer.atlassian.com/platform/marketplace/security-requirements/) — known high/critical third-party vulnerabilities are prohibited.
+- [Atlassian Marketplace security enforcement policy](https://developer.atlassian.com/platform/marketplace/marketplace-security-enforcement-policy/) — explains vulnerability handling and remediation expectations.
+- [Atlassian Developer Community report](https://community.developer.atlassian.com/t/forge-react-bridge-dependencies-pin-vulnerable-prosemirror-view-1-41-5-ghsa-c8x8-7fp4-3x9w/103359) — corroborates the upstream exact-version pin and override compatibility issue.
