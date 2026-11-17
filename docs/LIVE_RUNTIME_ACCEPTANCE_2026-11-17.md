@@ -1,31 +1,46 @@
-## Latest verified snapshot — 17 November 2026
+## Latest verified snapshot — 17 November 2026, 19:30 IST
 
 This section supersedes older status statements below. Historical entries are retained as an audit trail.
 
-### Branches and automated validation
+### Current branches and CI
 
-- **Core app / PR #1:** head `d6bee188743bb7afd8b23fc823be9094643a85d2`; GitHub reports the PR mergeable. CI [#548](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44091947403) completed successfully: `npm test`, syntax checks, frontend compilation, and deployment-workflow safety tests passed. Forge CLI validation and deployment were skipped on the PR event.
-- **Dependency remediation / PR #2:** head `6308f8adc72681d4293bda037a0d2be6346b04b4`; 32 commits ahead / 0 behind and mergeable. CI [#555](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092051056) completed successfully: locked install, `npm ls` dependency-tree validation, strict `npm audit --audit-level=low` with zero reported vulnerabilities, tests, syntax and frontend checks passed. Forge CLI validation and deployment were skipped on the PR event.
-- **Rovo Agent/MCP / PR #5:** head `7060075af19f7b11352fab4a34c88d88221336b8`; 31 commits ahead / 0 behind and mergeable. CI [#556](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092055277) completed successfully: locked install, tests, syntax and frontend compilation passed. Forge CLI manifest validation and deployment were skipped on the PR event.
-- All three PRs remain **draft and unmerged**. The dependency branch's zero-audit result applies to its isolated lockfile only. The core application branch still reports **9 high and 4 moderate** npm audit findings until PR #2 is reviewed and integrated.
-- PR #2 keeps `glob@14.0.2` scoped under `@forge/manifest`; that package declares `glob@^13.0.0`. The exact `PackageValidator` call path is covered by a direct integration test and the dependency tree passes `npm ls`, but the override crosses the declared major range and is not an Atlassian support statement. Keep the PR draft pending independent compatibility review and fresh exact-tree deployment acceptance.
-- PR #5 adds a read-only Rovo Agent, GET action and one `rovo:mcp` module. Atlassian documents Rovo MCP as Preview, supported for early adopters but not GA. The latest PR CI does not validate the manifest with Forge CLI; live agent discovery, MCP visibility and action invocation remain unverified.
+- **Core app / PR #1:** the core branch's latest recorded push validation [#44096677263](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44096677263) passed **4,130 tests**, syntax checks, frontend compilation and authenticated Forge CLI lint. It deployed Forge development version **2.38.0** and completed the existing development-install upgrade check. This is a Forge development environment installed on the connected production Jira tenant, not a production Forge environment or judge installation.
+- **Dependency remediation / PR #2:** code/lockfile head `6307671d38b938e478c10787868cd848239f1127` passed [push CI #601](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44096743938): **4,134 tests passed, 0 failed, 0 skipped**, `npm ci`, dependency-tree checks, syntax/frontend checks, strict audit and authenticated Forge CLI lint. Exact-head npm audit reported **0 vulnerabilities**. Documentation-only follow-up head `b42b792d771a134af24b2817f705f8d06700d2fe` records the November 11 minimatch advisory; its push CI [#603](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099908018) and PR CI [#604](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099917882) were still running when this snapshot was prepared. The latest code/lockfile validation remains the exact head #601.
+- **Rovo Agent/MCP / PR #5:** head `00c5ace8cd93379a6e87fdb571e7a3f05b302ab2` passed push CI [#621](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44098614135): **4,146 tests passed, 0 failed, 0 skipped**, syntax/frontend checks and authenticated Forge CLI manifest lint. The feature-branch deployment step was skipped by workflow design. Rovo discovery, MCP tool visibility, live action invocation and permission-boundary acceptance remain unverified.
+- All three PRs remain **draft and unmerged**. Do not combine the test counts: they are separate branch suites and each branch adds different tests.
 
-### Current app behavior and safety work
+### Dependency security and compatibility
 
-- The core Jira issue-context panel reads Jira and Teamwork Graph data as the current user, with bounded pagination, request deadlines, source links, deterministic investigation leads, and explicit evidence-completeness states.
-- Category-level Teamwork Graph messages distinguish unavailable, partial, empty and category-empty responses. Tests ensure unavailable evidence is not described as confirmed absence.
-- Rovo action issue-key resolution validates active Jira context and can safely recover a key from a strict HTTPS Jira `/browse/ISSUE-KEY` context URL; malformed URLs, conflicting context and mismatched keys are rejected.
-- The manual Forge development deployment workflow requires separate confirmation of prior organization-admin scope approval and the target site. It deliberately does **not** use `--confirm-scopes`; push events cannot deploy. Regression tests guard these rules.
-- No current branch changes have been deployed after the earlier Forge development version 2.21.0. That prior deployment used an earlier dependency-tree revision; it is not acceptance evidence for the current core, dependency, or Rovo branch heads.
+- The core application branch without PR #2 still reports **9 high, 4 moderate, 0 critical** npm audit findings.
+- PR #2's isolated lockfile pins `prosemirror-view@1.42.9`, `glob@14.0.2` only under `@forge/manifest`, and `minimatch@11.0.8` only under that scoped glob. Its exact code/lockfile CI reported **0 npm audit vulnerabilities**.
+- Manual upstream advisory review confirms `minimatch@11.0.8` is beyond the affected ranges for the November 2026 minimatch advisories, including the `escape()` correctness/security issue fixed in 11.0.8 ([GHSA-c859-jr93-m5j4](https://github.com/isaacs/minimatch/security/advisories/GHSA-c859-jr93-m5j4)) and the global-cache memory issue fixed in 11.0.8 ([GHSA-hqmv-qgp3-jx75](https://github.com/isaacs/minimatch/security/advisories/GHSA-hqmv-qgp3-jx75)).
+- **PR #2 is not cleared for merge:** `@forge/manifest@13.9.0` declares `glob@^13.0.0`, while the scoped override uses major version 14. Direct `PackageValidator` tests and Forge CLI lint reduce risk but do not establish full compatibility or Atlassian support. Keep the PR draft pending independent review and exact-tree live acceptance.
 
-### Live integration and submission status
+### Current Jira test issue — read-only check
 
-- The only connected Atlassian site remains `251fa04c84.atlassian.net`, a production Jira tenant. There is no separate test organization or representative Jira Software project available through this connection.
-- The four granular Teamwork Graph scopes remain unchecked/disabled: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. No scope was changed or consented to.
-- No genuine linked goal, external deployment or external pull-request record has been verified through the Forge app. Do not fabricate graph data or claim the bonus integration is live.
-- The provisional submission draft is `docs/CODEGEIST_SUBMISSION_DRAFT.md`; it maps the five judging dimensions and includes conditional Teamwork Graph, Best Agents and MCP bonus write-ups. Do not select a bonus until its integration passes acceptance.
-- No judge installation link, accepted public demo video, Marketplace submission, or final Devpost submission is verified.
+- Jira issue [DEMO-9](https://251fa04c84.atlassian.net/browse/DEMO-9) exists and is labelled `acceptance-check`, `temporary`, and `traceback-test`.
+- Jira reports the project as **Demo service space** (`service_desk`), issue type Task, status Open, priority Low, with **zero Jira issue links and zero comments**.
+- The issue description explicitly identifies it as a temporary TraceBack panel acceptance issue with no customer or production incident data. Do not use it for operational work or fabricate linked deployment/PR/goal evidence.
+- This read-only Jira issue lookup verifies the issue metadata only. It does **not** prove that the latest Forge panel loaded in a browser or that the current Rovo/Teamwork Graph integration works.
+
+### Teamwork Graph, live acceptance and submission
+
+- Only one connected Atlassian site is available: `251fa04c84.atlassian.net`, a production Jira tenant. No separate test organization or representative Jira Software project is verified through this connection.
+- The four granular Teamwork Graph scopes remain unchecked/disabled: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. No scope changes or consent were made.
+- Existing connector probes found one Jira-to-Jira relationship (DEMO-7 → DEMO-8), but no verified linked goal, external deployment or external pull request. This does not prove the Forge app's GraphQL path or scope grants.
+- The previous browser retest confirmed an older build rendered the Jira issue-context panel. A fresh browser retest of core version 2.38.0 is not recorded.
+- No judge installation link, accepted public demo under five minutes, Marketplace submission or final Devpost submission is verified.
+
+### Required remaining gates
+
+1. Obtain a separate Atlassian test site and explicit organization-admin approval for the four read-only Teamwork Graph scopes.
+2. Test the Forge panel on a representative Jira Software issue with genuine linked records.
+3. Freshly browser-test core development version 2.38.0, including source links and available/empty/partial/unavailable states.
+4. Independently resolve PR #2's cross-major `glob` override before merging.
+5. Deploy and test the Rovo branch in a controlled test site; verify agent discovery, MCP tool visibility and action invocation.
+6. Complete the judge installation flow, public YouTube demo and final Devpost submission.
+
+No PR was merged, no permissions were changed, no production deployment was made, and no Devpost submission was performed in this update.
 
 # Live runtime acceptance — 17 November 2026
 
