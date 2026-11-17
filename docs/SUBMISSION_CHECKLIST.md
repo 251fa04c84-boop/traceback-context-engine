@@ -1,8 +1,17 @@
 # TraceBack Context Engine — Codegeist Submission Checklist
 
 **Target category:** Apps for Software Teams  
-**Potential bonus prize:** Best apps with Teamwork Graph integration — not yet selected; select only after live data acceptance  
-**Current state:** Development draft; not ready to submit. The app is registered and the scoped dependency tree is deployed to Forge development (version 2.21.0), but fresh live acceptance, admin scope approval, judge sharing, and the public demo remain incomplete.
+**Conditional bonus candidates:** Teamwork Graph integration, Best Agents, or Best app with Atlassian MCP — select at most one, and only after that integration passes live acceptance.  
+**Current state:** Development draft; not ready to submit.
+
+## Latest verified build status — 17 November 2026
+
+- Core app code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` is deployed to Forge development as version **2.38.0**. Latest documentation-only core branch head `388ec1a159e715e9dafe900bcb3eaba925662a8b` passed [CI #44100446606](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100446606): **4,130 tests**, syntax/frontend checks, authenticated Forge CLI lint and development-install upgrade check.
+- PR #2 dependency candidate head `b42b792d771a134af24b2817f705f8d06700d2fe` passed [push CI #603](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099908018) and [PR CI #604](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099917882): **4,134 tests**, strict npm audit with **0 vulnerabilities**, and Forge CLI lint on push. Its `glob@14.0.2` override still crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range; do not merge before independent compatibility review.
+- PR #5 Rovo candidate head `ad0899703d58615462d0119fb34f5d610522a304` passed [push CI #44100957991](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100957991): **4,146 tests**, syntax/frontend checks and authenticated Forge CLI manifest lint. The branch is synchronized with the latest core docs and mergeable, but was not deployed; live Rovo/MCP acceptance remains outstanding.
+- The core dependency audit still reports **9 high and 4 moderate** findings. The zero-finding result applies only to the isolated PR #2 lockfile.
+- All three PRs remain draft and unmerged. The only connected Jira site is a production tenant; there is no verified separate test site. The four granular Teamwork Graph scopes remain disabled, and DEMO-9 is a temporary service-desk test issue with no linked records.
+- **No judge installation link, fresh browser acceptance of v2.38.0, public demo video, or final Devpost submission is verified.**
 
 ## Official Codegeist 2026 terms (recheck before final submission)
 
@@ -30,10 +39,10 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 
 ## Product and Forge readiness
 
-- [x] Product meaningfully addresses the software-team theme: understanding work, delivery and linked context from a Jira issue.
-- [x] App registered in Forge exactly once.
-- [x] Current manifest and source pass Forge CLI lint (`No issues found`).
-- [x] App deployed to a working Forge development environment; scoped dependency branch deployed as app version 2.21.0. Fresh browser acceptance of that version is still pending.
+- [ ] Product meaningfully addresses the software-team theme: understanding work, delivery and linked context from a Jira issue.
+- [ ] App registered in Forge exactly once.
+- [ ] Current manifest and source pass forge lint.
+- [x] Forge development deployment completed (version 2.38.0); fresh browser acceptance of that version remains pending.
 - [ ] App deployed to the Forge production environment before enabling external sharing.
 - [ ] In Atlassian Developer Console → Distribution → Distribution controls, set the unlicensed app to **Sharing**, choose Jira, and copy the generated installation link. See [Atlassian's Forge distribution guide](https://developer.atlassian.com/platform/forge/distribute-your-apps/).
 - [ ] App installed by a Jira site administrator using the official judge installation link.
@@ -45,8 +54,6 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] The project operates consistently and is free for judge evaluation.
 
 ## Teamwork Graph bonus evidence
-
-The Teamwork Graph query implementation exists in the app, but the four granular scopes were observed unchecked/disabled on the connected Jira site. The code and unit tests alone do not establish live bonus eligibility. Keep every evidence checkbox below open until a real issue returns source-verified graph records in the deployed panel.
 
 - [ ] The app consumes real data from the Teamwork Graph API as the current user.
 - [ ] Official curated query usage and granular scopes are documented.
@@ -60,7 +67,7 @@ The Teamwork Graph query implementation exists in the app, but the four granular
 
 - [ ] Register/join the hackathon on Devpost.
 - [ ] Select Apps for Software Teams.
-- [ ] Select Best apps with Teamwork Graph integration only after administrator-approved scopes and real linked-record retrieval are demonstrated live. Do not select it yet.
+- [ ] Select one bonus only after its integration passes live acceptance: Teamwork Graph requires administrator-granted scopes and genuine linked records; Best Agents requires a deployed/discovered agent and successful action; Atlassian MCP requires an enabled MCP tool and successful invocation. If none passes, submit without a bonus.
 - [ ] Provide project title and concise description.
 - [ ] Describe the real problem, target users, workflow, and measurable value.
 - [ ] Explain the Forge implementation and Teamwork Graph API use.
@@ -87,19 +94,6 @@ The detailed, evidence-safe 3:15–3:45 storyboard is in [docs/DEMO_SCRIPT.md](D
 
 Do not narrate a capability that was not shown working in the submitted build.
 
-## Current dependency/security state
-
-- The current application branch before the dependency PR reports 9 high, 4 moderate, 0 critical npm audit findings.
-- Draft PR #2 contains patched overrides for `prosemirror-view@1.42.9`, scoped `glob@14.0.2` under `@forge/manifest`, and `minimatch@11.0.1` as glob's dependency. The rebased tree passed **4,124 tests**, strict npm audit with **0 vulnerabilities**, dependency-tree validation, syntax/frontend checks, and authenticated Forge CLI lint in [PR run #44080696080](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080696080). It also passes direct tests against `@forge/manifest@13.9.0`'s `PackageValidator` glob call site.
-- The exact scoped tree has now been deployed to Forge development as version 2.21.0 in [run #44081294538](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081294538), and Jira confirmed the existing development installation was already at the latest version. This is not browser acceptance; it is a controlled development install on the connected production Jira tenant. The `glob` override still crosses the upstream `@forge/manifest` declared major range. PR #2 remains draft for independent review and live acceptance. The main application branch still has 9 high and 4 moderate findings until the reviewed dependency PR is integrated.
-
 ## Prize verification and payment
 
 The official rules advertise cash awards. Payment is conditional on winner selection and identity/qualification/role verification. Keep entrant and banking/tax information accurate and respond to Required Forms within the stated deadline; the rules say monetary prizes are delivered within 60 days after Sponsor/Devpost receives completed Required Forms. Account for wire/foreign-exchange fees, taxes and applicable Indian banking/foreign-exchange reporting obligations.
-
-
-## Latest engineering baseline — 17 November 2026
-
-The application base commit `fffaef7204d514e10237461f1440e6d904d5dd1b` passed **4,120 automated tests, 0 failures, 0 skips** in PR validation [#44079753736](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079753736). The matching push workflow [#44079747452](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079747452) also passed syntax, frontend compilation, authenticated Forge CLI lint, Forge development deployment and the existing development installation upgrade. This does not clear the app-branch dependency findings; the separate scoped override PR must pass its strict audit and independent compatibility review before it can be integrated.
-
-No browser retest, judge installation link, public YouTube demo, or final Devpost submission is recorded. The app remains a development draft.
