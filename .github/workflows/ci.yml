@@ -29,14 +29,22 @@ jobs:
               direct: item.isDirect,
               range: item.range,
               fixAvailable: item.fixAvailable,
-              advisories: (item.via || []).filter(v => typeof v === "object").map(v => ({
+              via: (item.via || []).map(v => typeof v === "string" ? v : ({
                 title: v.title,
                 url: v.url,
                 range: v.range,
                 severity: v.severity
               }))
             }));
-            console.log(JSON.stringify({ summary: report.metadata?.vulnerabilities, packages: rows }, null, 2));
+            const summary = report.metadata?.vulnerabilities || {};
+            console.log(JSON.stringify({ summary, packages: rows }, null, 2));
+            if ((summary.critical || 0) > 0) {
+              console.error("::error title=Critical dependency vulnerabilities::npm audit found " + summary.critical + " critical vulnerabilities.");
+              process.exit(1);
+            }
+            if ((summary.high || 0) > 0) {
+              console.warn("::warning title=High dependency vulnerabilities::npm audit found " + summary.high + " high and " + (summary.moderate || 0) + " moderate vulnerabilities. Review docs/DEPENDENCY_AUDIT.md; do not apply force upgrades without compatibility tests.");
+            }
           '
       - run: npm test
       - run: npm run lint:syntax
