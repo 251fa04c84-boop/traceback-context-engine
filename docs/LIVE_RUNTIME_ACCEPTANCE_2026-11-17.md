@@ -1,5 +1,56 @@
 # Live runtime acceptance — 17 November 2026
 
+> **Current authoritative snapshot — 17 November 2026.** This section supersedes older status summaries below where they conflict. The dated historical entries are retained as an audit trail.
+
+## Current application and security validation
+
+- Application branch: `codegeist/forge-foundation`
+- Latest application source commit: `ee32378a385666c4c86adb13a43d3f01ce610c31`
+- Application push CI [#44080140312](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080140312) and PR validation [#44080148055](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080148055) passed **4,120 tests, 0 failures, 0 skips**, syntax/frontend checks, and authenticated Forge CLI lint. The push workflow also completed the Forge development deployment/install path.
+- Separate dependency PR [#2](https://github.com/251fa04c84-boop/traceback-context-engine/pull/2), head `fcb5111355c23801cec67fdccadf3bb47a4663fe`, passed latest PR validation [#44081783709](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081783709) and authenticated push validation [#44081776312](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081776312): **4,124 tests, 0 failures, 0 skips; strict npm audit: 0 vulnerabilities; dependency-tree checks, syntax/frontend checks and Forge CLI lint passed**.
+- The dependency branch includes an executable compatibility test against the actual exported `@forge/manifest@13.9.0` `PackageValidator` for a matching and a missing `extraFiles` glob.
+- **Compatibility caveat:** `@forge/manifest@13.9.0` declares `glob@^13.0.0`, while PR #2 scopes `glob@14.0.2` under that package. The direct consumer test passed, but the override crosses the declared major-version range and is not an Atlassian support statement. PR #2 remains draft for independent compatibility review.
+- The application branch without PR #2 still has **9 high and 4 moderate** npm audit findings. Do not describe the app branch itself as vulnerability-free.
+
+## Forge development deployment
+
+- The exact scoped dependency tree from PR #2 was deployed to Forge **development** as app version **2.21.0** by [run #44081294538](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081294538).
+- Forge reported deployment success; Jira reported the existing development installation was already at the latest version.
+- The install command did not use `--confirm-scopes`; CI did not automatically consent to any new permissions.
+- This is a controlled Forge development deployment on `251fa04c84.atlassian.net`, which Forge identifies as a **production Jira tenant**. It is not a production Forge environment deployment, separate test tenant, or judge installation.
+- **Fresh browser acceptance of version 2.21.0 has not been completed.** Earlier browser evidence confirmed that an older deployed build rendered the Jira issue-context panel; it must not be represented as a fresh retest of 2.21.0.
+
+## Teamwork Graph authorization and live-data acceptance
+
+The last read-only Connected Apps authorization inspection found:
+
+- `read:jira-work`: enabled.
+- `read:graph:issue:jira`: unchecked/disabled.
+- `read:graph:goal:atlassian`: unchecked/disabled.
+- `read:graph:deployment:external`: unchecked/disabled.
+- `read:graph:pull-request:external`: unchecked/disabled.
+
+Only one Atlassian site is currently accessible through the connected account: `251fa04c84.atlassian.net`. The visible `DEMO` and `TCE` projects are service-desk projects; no separate test organization or representative Jira Software project is available through this connection.
+
+Read-only connector probes found one existing Jira-to-Jira relationship from DEMO-7 to DEMO-8. They did not establish a linked goal, external deployment, or external pull request, and they do not prove that the Forge app's own GraphQL queries or granular scopes work.
+
+**Required before claiming Teamwork Graph acceptance:**
+1. Use a separate Atlassian test organization/site.
+2. Have its organization administrator explicitly approve the four read-only Teamwork Graph scopes.
+3. Use a representative Jira Software issue with genuine linked graph records and connected providers.
+4. Retest the installed 2.21.0 app in a browser and verify the real source links plus available, empty, partial and unavailable states.
+
+No scope change, permission grant, synthetic evidence creation, or Jira data mutation is recorded.
+
+## Release and submission gates
+
+- PR #1 and PR #2 are both open, draft and unmerged. The current GitHub review and inline-thread listings contain no submitted reviews.
+- No production Forge deployment, Marketplace publication, judge installation link, public YouTube demo, or final Devpost submission is verified.
+- Do not merge PR #2 until the cross-major `glob` override receives independent compatibility review and the deployed app passes fresh live acceptance.
+- Do not merge PR #1 or claim the Teamwork Graph bonus until the administrator, real-data and browser acceptance gates above pass.
+
+---
+
 ## Deployment and CI evidence
 
 - Branch: `codegeist/forge-foundation`
