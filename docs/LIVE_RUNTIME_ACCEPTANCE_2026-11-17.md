@@ -1,3 +1,32 @@
+## Latest verified snapshot — 17 November 2026
+
+This section supersedes older status statements below. Historical entries are retained as an audit trail.
+
+### Branches and automated validation
+
+- **Core app / PR #1:** head `69516f825589454fcd8ad6c685c33bfa3cfeef53`; GitHub reports the PR mergeable. CI [#534](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44091560700) completed successfully: `npm test`, syntax checks, frontend compilation, and the deployment-workflow safety regression tests passed. Forge CLI validation and deployment were skipped on the PR event.
+- **Dependency remediation / PR #2:** head `9354cf40e04ce563ca857afb82ae379269350848`; GitHub reports the PR mergeable. The immediately preceding synchronized head passed CI [#541](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44091646699): installed dependency-tree checks, strict `npm audit --audit-level=low` (zero reported vulnerabilities), tests, syntax and frontend checks passed. The current head adds a documentation-only correction about the earlier development deployment; its CI [#544](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44091837844) is in progress.
+- **Rovo Agent/MCP / PR #5:** head `533774b5732bdbf389dc4f93223d60bffcde445f`; GitHub reports the PR mergeable. CI [#542](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44091652806) completed successfully: locked install, tests, syntax and frontend compilation passed. Forge CLI manifest validation and deployment were skipped on the PR event.
+- All three PRs remain **draft and unmerged**. The dependency branch's zero-audit result applies to its isolated lockfile only. The core application branch still reports **9 high and 4 moderate** npm audit findings until PR #2 is reviewed and integrated.
+- PR #2 keeps `glob@14.0.2` scoped under `@forge/manifest`; that package declares `glob@^13.0.0`. The exact `PackageValidator` call path is covered by a direct integration test and the dependency tree passes `npm ls`, but the override crosses the declared major range and is not an Atlassian support statement. Keep the PR draft pending independent compatibility review and fresh exact-tree deployment acceptance.
+- PR #5 adds a read-only Rovo Agent, GET action and one `rovo:mcp` module. Atlassian documents Rovo MCP as Preview, supported for early adopters but not GA. The latest PR CI does not validate the manifest with Forge CLI; live agent discovery, MCP visibility and action invocation remain unverified.
+
+### Current app behavior and safety work
+
+- The core Jira issue-context panel reads Jira and Teamwork Graph data as the current user, with bounded pagination, request deadlines, source links, deterministic investigation leads, and explicit evidence-completeness states.
+- Category-level Teamwork Graph messages now distinguish unavailable, partial, empty and category-empty responses. Tests ensure unavailable evidence is not described as confirmed absence.
+- Rovo action issue-key resolution now validates active Jira context and can safely recover a key from a strict HTTPS Jira `/browse/ISSUE-KEY` context URL; malformed URLs, conflicting context and mismatched keys are rejected.
+- The manual Forge development deployment workflow requires separate confirmation of prior organization-admin scope approval and the target site. It deliberately does **not** use `--confirm-scopes`; push events cannot deploy. Regression tests guard these rules.
+- No current branch changes have been deployed after the earlier Forge development version 2.21.0. That prior deployment used an earlier dependency-tree revision; it is not acceptance evidence for the current core, dependency, or Rovo branch heads.
+
+### Live integration and submission status
+
+- The only connected Atlassian site remains `251fa04c84.atlassian.net`, a production Jira tenant. There is no separate test organization or representative Jira Software project available through this connection.
+- The four granular Teamwork Graph scopes remain unchecked/disabled: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. No scope was changed or consented to.
+- No genuine linked goal, external deployment or external pull-request record has been verified through the Forge app. Do not fabricate graph data or claim the bonus integration is live.
+- The provisional submission draft is `docs/CODEGEIST_SUBMISSION_DRAFT.md`; it now maps the five judging dimensions and includes conditional Teamwork Graph, Best Agents and MCP bonus write-ups. Do not select a bonus until its integration passes acceptance.
+- No judge installation link, accepted public demo video, Marketplace submission, or final Devpost submission is verified.
+
 # Live runtime acceptance — 17 November 2026
 
 > **Current authoritative snapshot — 17 November 2026.** This section supersedes older status summaries below where they conflict. The dated historical entries are retained as an audit trail.
