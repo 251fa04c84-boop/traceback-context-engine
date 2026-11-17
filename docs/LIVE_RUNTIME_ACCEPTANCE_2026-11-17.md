@@ -103,3 +103,37 @@ These are automated unit/handler tests and build validations. They do not replac
 - Latest push run [#329](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44025809386), commit `9ebc1d73c4cc1d8278789b99141ebaabab0c88d8`: **103 tests passed, 0 failed, 0 skipped**; syntax, frontend compilation, Forge CLI validation and the development deploy/upgrade step all passed.
 - Matching pull-request validation [#330](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44025815560) also completed successfully.
 - After the successful development deployment, the saved-session browser retest [run report](https://agent.tinyfish.ai/runs/151892b3-c5ed-47de-94c7-bea36bab1a96) reopened DEMO-9 and confirmed the TraceBack Context Engine DEV panel is visible and rendered without the previous resolver/runtime error. This browser report did not capture the detailed content of the Graph relationship sections, so it is not counted as Teamwork Graph data acceptance.
+
+
+
+## Latest expanded verification and independent graph probe — 17 November 2026
+
+### Latest CI and development deployment
+
+- Push workflow [#335](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44026413060), commit `fc76243643ccfa991613191cfa4aafb7ec88bfab`: **4,107 tests passed, 0 failed, 0 skipped**.
+- JavaScript syntax checks and frontend JSX compilation passed.
+- Forge CLI lint reported **No issues found**.
+- Forge CLI deployed version 2.10.0 to the development environment and confirmed the Jira development installation was already at the latest version.
+- Matching PR validation [#336](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44026419211) completed successfully.
+- The dependency audit in run #335 still reported **13 findings: 9 high, 4 moderate, 0 critical**. These are unresolved; CI reports them but only fails on critical findings.
+
+### Additional read-only Teamwork Graph connector probe
+
+The connected Atlassian Teamwork Graph context lookup was run against existing Jira issues without editing any issue or relationship:
+
+- `DEMO-9`: only user-created/reported/updated relationships were returned; no linked goal, external deployment or external pull request was present in the returned relationships.
+- `DEMO-7`: returned a real `jira_work_item_links_jira_work_item` relationship to `DEMO-8`.
+- `DEMO-8`: no linked goal, external deployment or external pull request relationship was returned.
+
+This proves that the connected Teamwork Graph connector can resolve Jira work items and at least one existing Jira-to-Jira relationship on this site. It does **not** prove the Forge app's three curated GraphQL connections work, nor that the four granular Graph scopes have been granted. The connected connector and the Forge app use distinct authorization paths.
+
+### Current gate status
+
+- Automated tests/build/Forge lint/development deployment: **PASS**.
+- Jira-to-Jira relationship discoverability through the connected Teamwork Graph connector: **PASS** for DEMO-7 → DEMO-8.
+- Fresh visual acceptance of the newly deployed panel: **NOT VERIFIED** (browser automation wallet is unavailable).
+- Forge app Teamwork Graph goal/deployment/pull-request retrieval: **NOT ACCEPTED**; admin-granted scopes and real linked records are still required.
+- Dependency security: **OPEN** (9 high, 4 moderate, 0 critical).
+- Production release, Marketplace publication and judge installation: **NOT DONE**.
+
+No Jira data, Graph relationships, scopes, or production settings were changed by these probes.
