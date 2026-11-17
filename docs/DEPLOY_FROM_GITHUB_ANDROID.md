@@ -31,10 +31,11 @@ Never put the token in a normal repository variable or commit it to GitHub. Use 
 1. Open [Actions → Forge development deploy](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-dev-deploy.yml).
 2. Select **Run workflow**. Keep the workflow branch set to `main` (the workflow definition is on `main`).
 3. Set **source_branch** to `codegeist/forge-foundation`.
-4. On the first run only, if the manifest has no app ID, select **accept_forge_terms**. This is your explicit approval for the workflow to accept Atlassian's Forge CLI terms and register the app once.
-5. Select **confirm_readonly_scopes** only after reviewing the read-only scopes listed in the workflow. These allow Jira issue and linked Teamwork Graph reads.
-6. Choose **install** if this app has never been installed on `251fa04c84.atlassian.net`; choose **upgrade** only if it is already installed there.
-7. Leave **developer_space_id** empty unless the Forge CLI reports that you must choose a specific Developer Space. If it does, obtain the ID from the Atlassian Developer Console and run again only after checking whether registration already succeeded.
+4. If the manifest has no app ID, select **confirm_no_existing_registration** only after confirming you have not already registered this app in the Atlassian Developer Console. If it was registered before, stop and recover that existing app ID instead of registering a second time.
+5. On the first registration only, select **accept_forge_terms**. This is your explicit approval for the workflow to accept Atlassian's Forge CLI terms and register the app once.
+6. Select **confirm_readonly_scopes** only after reviewing the read-only scopes listed in the workflow. These allow Jira issue and linked Teamwork Graph reads.
+7. Choose **install** if this app has never been installed on `251fa04c84.atlassian.net`; choose **upgrade** only if it is already installed there.
+8. Leave **developer_space_id** empty unless the Forge CLI reports that you must choose a specific Developer Space. If it does, obtain the ID from the Atlassian Developer Console and run again only after checking whether registration already succeeded.
 
 ## 4. What the workflow does
 
