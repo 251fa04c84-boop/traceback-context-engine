@@ -241,3 +241,15 @@ The application base branch now includes:
 Latest app source commit `fffaef7204d514e10237461f1440e6d904d5dd1b` passed **4,120 tests, 0 failed, 0 skipped** in PR workflow [#44079753736](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079753736). The matching push workflow [#44079747452](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079747452) passed syntax, frontend compilation, authenticated Forge CLI lint, development deployment and installation upgrade. The workflow's latest follow-up removes automatic scope consent; it does not alter manifest permissions.
 
 The live acceptance gates in this document remain pending: fresh browser verification on a suitable test site, explicit organization-admin approval for Teamwork Graph scopes, and real linked-record verification.
+
+
+## Scoped dependency validation — 17 November 2026
+
+The separate draft dependency PR #2 is rebased directly onto application commit `ee32378a385666c4c86adb13a43d3f01ce610c31`. The current PR head `e3d6e6c943a18767aa13ee499c4f9165c3e59308` has **4,124 tests passed, 0 failed, 0 skipped**, strict `npm audit --audit-level=low` with **0 vulnerabilities**, successful `npm ls prosemirror-view glob minimatch --all`, syntax checks, frontend compilation and authenticated Forge CLI lint.
+
+- PR validation: [#44080696080](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080696080).
+- Authenticated push validation: [#44080687502](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080687502).
+- Two direct compatibility tests call the actual `@forge/manifest@13.9.0` `PackageValidator` with glob 14: one matching extra file and one missing pattern. Both passed.
+- The current scoped dependency tree was not deployed by these workflows; the push validation deliberately skipped the deployment step on `security/**`.
+- The remaining semver compatibility question is explicit: `@forge/manifest@13.9.0` declares `glob@^13.0.0`, while the scoped override supplies 14.0.2. The direct consumer test reduces practical risk but does not constitute an Atlassian support statement.
+- The app branch itself still reports 9 high and 4 moderate audit findings until the reviewed dependency PR is integrated.

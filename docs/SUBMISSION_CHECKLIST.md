@@ -90,8 +90,8 @@ Do not narrate a capability that was not shown working in the submitted build.
 ## Current dependency/security state
 
 - The current application branch before the dependency PR reports 9 high, 4 moderate, 0 critical npm audit findings.
-- Draft PR #2 contains patched overrides for `prosemirror-view@1.42.9`, `glob@14.0.2`, and `minimatch@11.0.1`; its exact lockfile passed npm audit with 0 findings, 4,110 combined tests, Forge CLI lint, and a Forge development deployment as version 2.16.0.
-- The `glob` and `minimatch` overrides cross upstream major-version ranges. PR #2 remains draft for review. Do not describe the main application branch as vulnerability-free until the reviewed dependency PR is merged and the final base-branch checks pass.
+- Draft PR #2 contains patched overrides for `prosemirror-view@1.42.9`, scoped `glob@14.0.2` under `@forge/manifest`, and `minimatch@11.0.1` as glob's dependency. The rebased tree passed **4,124 tests**, strict npm audit with **0 vulnerabilities**, dependency-tree validation, syntax/frontend checks, and authenticated Forge CLI lint in [PR run #44080696080](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080696080). It also passes direct tests against `@forge/manifest@13.9.0`'s `PackageValidator` glob call site.
+- The scoped tree has not been deployed to Forge development. An earlier broad-override variant was deployed as version 2.16.0; do not treat that as runtime validation of the scoped tree. The `glob` override still crosses the upstream `@forge/manifest` declared major range. PR #2 remains draft for independent review and live acceptance. The main application branch still has 9 high and 4 moderate findings until the reviewed dependency PR is integrated.
 
 ## Prize verification and payment
 

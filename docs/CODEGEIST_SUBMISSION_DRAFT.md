@@ -45,7 +45,7 @@ The application base now has a full 8-second Jira request deadline including res
 - **Jira:** Current-user REST reads for issue fields and existing issue relationships.
 - **Teamwork Graph:** Curated GraphQL relationships for Atlassian goals, external deployments and external pull requests.
 - **Reliability controls:** Bounded cursor pagination, stable-ID de-duplication, input validation, safe HTTPS link validation, partial-error handling and explicit evidence states.
-- **Testing:** The combined application and patched dependency branch has passed 4,120 automated tests, syntax checks, frontend compilation, Forge CLI lint and a zero-finding npm audit. The patched dependency tree has also been deployed to Forge development as version 2.16.0; a fresh browser acceptance retest remains outstanding.
+- **Testing:** The rebased application plus scoped dependency branch has passed **4,124 automated tests, 0 failures, 0 skips**, syntax/frontend checks, authenticated Forge CLI lint, dependency-tree validation and strict npm audit with **0 vulnerabilities** in [PR run #44080696080](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080696080). The exact scoped configuration has not been deployed to Forge development. An earlier broader override variant was deployed as version 2.16.0, but that deployment is not evidence for the current scoped tree. Fresh browser acceptance remains outstanding.
 
 ## What makes TraceBack different
 
