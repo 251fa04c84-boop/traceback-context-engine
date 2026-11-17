@@ -31,7 +31,7 @@ function apiClientFor(responses, captured = []) {
           const body = responses[Math.min(index, responses.length - 1)];
           index += 1;
           if (body instanceof Error) throw body;
-          return { ok: true, async json() { return body; } };
+          return body;
         }
       };
     }
