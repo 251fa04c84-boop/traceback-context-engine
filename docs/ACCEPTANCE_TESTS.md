@@ -4,20 +4,20 @@ This record must be completed against an actually deployed Forge app. A successf
 
 ## Environment under test
 
-- Forge app ID: **Not registered yet**
-- Forge environment: **Not deployed yet**
+- Forge app ID: **`ari:cloud:ecosystem::app/b7cbb6a8-de78-4ba8-91fb-48733c1c2157`**
+- Forge environment: **Development deployed successfully; production not deployed**
 - Jira site: **251fa04c84.atlassian.net**
 - Jira view: New issue view only
-- Test issue: **Choose and record a software-team issue with linked Jira work and, where available, Teamwork Graph records**
+- Test issue: **DEMO-7** (service-desk IT Help; temporary technical test only, not a representative software-team incident)
 - Test user: **Record the Jira account and the permissions used; do not put credentials here**
-- App installation link: **Not generated yet**
+- App installation link: **Not generated; judge sharing not configured**
 
 ## Pre-installation gates
 
-- [ ] App registered once with forge register; review the generated app ID in manifest.yml.
-- [ ] forge lint and current manifest/source validation completed successfully.
-- [ ] Forge app deployed to the development environment.
-- [ ] App installed on the test Jira site.
+- [x] App registered once; generated app ID is present in manifest.yml.
+- [x] Forge CLI lint and manifest/source validation completed successfully in development deployment workflow #6.
+- [x] Forge app deployed to the development environment in workflow #6.
+- [x] Development app installed on `251fa04c84.atlassian.net` by workflow #6. Note: this is the user's production Jira site, so this is a controlled development installation, not a separate test tenant.
 - [ ] Requested Jira and Teamwork Graph scopes are granted by an organization administrator.
 - [ ] Confirm the target Atlassian organization is a test organization with test data only, unless a production deployment has an explicitly approved path.
 - [ ] An organization administrator approves the Teamwork Graph scopes; these scopes can expose organization-wide data and Atlassian requires organization-admin installation.
@@ -26,7 +26,7 @@ This record must be completed against an actually deployed Forge app. A successf
 
 ## Jira issue-context acceptance
 
-- [ ] Open an issue in Jira's new issue view.
+- [ ] Open DEMO-7 in Jira's new issue view and visually confirm the Investigate panel.
 - [ ] Expand Investigate in the issue context area.
 - [ ] Verify the issue key, summary, status, issue type, priority and description match the live issue.
 - [ ] Verify the panel remains read-only.
@@ -80,16 +80,16 @@ This record must be completed against an actually deployed Forge app. A successf
 
 | Test | Result | Evidence / notes |
 | --- | --- | --- |
-| App registered | Not run | |
-| Forge lint | Not run | |
-| Forge deployment | Not run | |
-| App installation | Not run | |
-| Jira issue context | Not run | |
-| Related Jira work | Not run | |
-| Teamwork Graph goals | Not run | |
-| Teamwork Graph deployments | Not run | |
-| Teamwork Graph pull requests | Not run | |
-| Empty / partial / unavailable states | Not run | |
-| Source links | Not run | |
+| App registered | Pass | Forge workflow #6 registered app; app ID recorded in manifest. |
+| Forge lint | Pass | Forge CLI lint reported no issues in workflow #6. |
+| Forge deployment | Pass | Development deployment succeeded in workflow #6; not production. |
+| App installation | Pass | Development app installation completed on 251fa04c84.atlassian.net in workflow #6. |
+| Jira issue context | Pending | App panel has not been visually verified in Jira issue view. |
+| Related Jira work | Partial | Atlassian connector confirms DEMO-7 links to DEMO-8 with relationship `relates to`; Forge panel rendering not yet visually verified. |
+| Teamwork Graph goals | Pending | No live app response recorded. |
+| Teamwork Graph deployments | Pending | No live app response recorded. |
+| Teamwork Graph pull requests | Pending | No live app response recorded. |
+| Empty / partial / unavailable states | Unit tests only | Runtime acceptance not yet performed. |
+| Source links | Partial | Jira API confirms DEMO-7 → DEMO-8 source record; panel link behavior not visually verified. |
 
 Do not change a result to Pass until the corresponding live action has been performed and recorded.
