@@ -263,3 +263,17 @@ After the direct `@forge/manifest@13.9.0` consumer tests passed, the exact scope
 - A fresh browser retest of version 2.21.0 is still outstanding. The four Teamwork Graph scopes and representative real linked-record acceptance remain separate administrator/runtime gates.
 
 The workflow's temporary exact-branch development-deploy condition has been reverted after this one validation run. Future security-branch pushes will not automatically deploy; the normal application branch workflow remains the only automatic development deployment path. It still does not auto-consent to scopes.
+
+
+## Exact synchronized dependency-branch validation — 17 November 2026
+
+The current scoped dependency candidate resolves `prosemirror-view@1.42.9`, `glob@14.0.2` only beneath `@forge/manifest`, and `minimatch@11.0.8` beneath that glob dependency.
+
+GitHub Actions PR validation [#44093045715](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44093045715) on commit `8f2d5e24252f0c1969af38fbb6192825314fb133` completed successfully:
+- `npm ci` and the dependency-tree assertions passed.
+- Strict `npm audit --audit-level=low` reported **0 vulnerabilities**.
+- **4,134 tests passed, 0 failed, 0 skipped**.
+- JavaScript syntax checks and frontend JSX compilation passed.
+- Forge CLI lint and development deployment were skipped on this PR event by workflow design; the exact `minimatch@11.0.8` tree has not yet been deployed or browser-accepted.
+
+The tested commit is the latest package/lockfile revision. Subsequent workflow-only commits were used to inspect the push/deployment guard and then restore its original condition; they did not change package versions, lockfile contents, application source, or manifest scopes. The branch remains draft. Do not merge until an authenticated Forge CLI validation and controlled development deployment/live acceptance of this exact lockfile have been completed, and the `glob@14.0.2` semver override has been independently accepted.
