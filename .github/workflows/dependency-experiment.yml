@@ -5,7 +5,7 @@ on:
     branches: ["security/dependency-remediation"]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   patched-prosemirror:
@@ -41,3 +41,15 @@ jobs:
             dependency-audit.json
           if-no-files-found: error
           retention-days: 7
+
+      - name: Commit the CI-generated lockfile on this isolated branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "Generated lockfile is already committed; no update needed."
+          else
+            git commit -m "fix: lock patched prosemirror-view dependency tree"
+            git push origin HEAD:security/dependency-remediation
+          fi
