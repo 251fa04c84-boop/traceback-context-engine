@@ -41,7 +41,8 @@ The action bounds text fields and limits each returned category to 125 records, 
 - The action never writes to Jira, triggers deployments, rolls back services, toggles feature flags, or performs production actions.
 - The Rovo Agent prompt requires source-backed statements and prohibits fabricated telemetry, causal claims, and treating empty/partial/unavailable results as proof that evidence does not exist.
 - No raw upstream exception details are returned to the agent.
-- The output is bounded to avoid oversized agent payloads.\n- The MCP tool returns explicit untrusted-field metadata, but it does not transfer TraceBack Investigator's system prompt to customer-created agents; those agents must enforce their own policy for treating tool output as untrusted data.
+- The output is bounded to avoid oversized agent payloads.
+- The MCP tool returns explicit untrusted-field metadata, but it does not transfer TraceBack Investigator's system prompt to customer-created agents; those agents must enforce their own policy for treating tool output as untrusted data.
 
 ## How to verify after deployment
 
