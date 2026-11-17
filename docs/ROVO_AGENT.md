@@ -38,6 +38,14 @@ The action reuses the app's existing Jira and Teamwork Graph read services. Jira
 - The existing four granular Teamwork Graph scopes remain unchanged and still require relevant organization-admin approval.
 - This branch is not deployed. Agent discovery, MCP connection, live action invocation, and Teamwork Graph behavior have not yet been browser-accepted.
 
+
+
+## Atlassian action payload contract
+
+The current Forge Rovo Action reference documents action inputs in `payload` and includes active product context under `payload.context` for issue/page contexts. Its Jira example supplies `payload.context.cloudId` and `payload.context.jira.url` (the issue's `/browse/KEY` URL); it does not require a separate `payload.context.jira.issueKey` property. TraceBack therefore treats the URL as the documented context source, validates HTTPS and the exact `/browse/ISSUE-KEY` path, and rejects any requested issue key that conflicts with it. This is context validation, not authorization: Jira and Teamwork Graph reads still execute as the invoking user.
+
+Reference: [Forge Rovo Action module](https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-action/).
+
 ## Automated validation coverage
 
 The focused action-context tests cover valid explicit keys, active-context fallback, malformed and URL-shaped keys, active-context mismatch, invalid active context, and missing keys. Repository CI also runs the existing Jira and Teamwork Graph domain and service tests. Automated tests do not replace Forge manifest lint, MCP connection validation, or live Rovo invocation.
