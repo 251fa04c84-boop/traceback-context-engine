@@ -70,3 +70,17 @@ jobs:
           else
             echo "::warning title=Forge registration required::Forge CLI lint is skipped because manifest.yml has no app.id. Register this Forge app once with 'forge register' before deployment and judge installation."
           fi
+      - name: Deploy and upgrade the development installation after successful push checks
+        if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation'
+        env:
+          FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+          FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$FORGE_EMAIL" || -z "$FORGE_API_TOKEN" ]]; then
+            echo "::error title=Forge credentials missing::Development deployment requires the existing FORGE_EMAIL and FORGE_API_TOKEN repository secrets."
+            exit 1
+          fi
+          npx --yes @forge/cli@15.1.0 deploy --non-interactive -e development
+          npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive --confirm-scopes --upgrade all -e development
