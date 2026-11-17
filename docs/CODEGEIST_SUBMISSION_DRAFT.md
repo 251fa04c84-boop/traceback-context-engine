@@ -36,7 +36,7 @@ The design is deliberately read-only. Jira and Teamwork Graph requests execute a
 
 A separate draft pull request, [PR #5](https://github.com/251fa04c84-boop/traceback-context-engine/pull/5), adds a read-only Rovo Agent and a Rovo MCP module that expose the same investigation action. The action validates issue keys, uses active Jira context when available, and performs reads as the invoking user.
 
-**This extension is not yet part of the accepted core release.** It must pass latest-head CI, Forge manifest validation, controlled test-site deployment, Rovo Agent discovery, MCP tool visibility, action invocation, and permission-boundary tests before the submission may describe it as a working integration. Rovo MCP is a Preview feature, not GA; external MCP use also requires administrator enablement, OAuth consent, and the invoking user's app consent entry for reliable `asUser()` calls.
+**This extension is still a draft candidate, not part of the accepted core release.** Its current head `00c5ace8cd93379a6e87fdb571e7a3f05b302ab2` passed **4,146 automated tests**, syntax/frontend checks, and authenticated Forge CLI manifest lint (push CI [#621](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44098614135)). The feature-branch deployment step was skipped by design. Controlled test-site deployment, Rovo Agent discovery, MCP tool visibility, live action invocation, and permission-boundary tests remain outstanding. Rovo MCP is a Preview feature, not GA; external MCP use also requires administrator enablement, OAuth consent, and the invoking user's app consent entry for reliable `asUser()` calls.
 
 ## Why this is different
 
@@ -141,22 +141,10 @@ Do not show synthetic records as real integrations. Do not record the final vide
 
 These are separate branch results; do not add the counts together or imply that the dependency/Rovo candidate branches are already part of the core app release.
 
-| Branch / purpose | CI run | Test result | Security result | What CI did not prove |
+| Branch / purpose | Exact CI evidence | Test result | Security result | What CI did not prove |
 | --- | --- | --- | --- | --- |
-| `codegeist/forge-foundation` core app | [#564](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092737284) | 4,130 passed; 0 failed; 0 skipped | 9 high and 4 moderate findings remain | PR CI skipped authenticated Forge CLI lint/deployment and live Teamwork Graph acceptance. |
-| `codegeist/rovo-investigator` candidate | [#574](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44093400422) | 4,141 passed; 0 failed; 0 skipped | Same 9 high and 4 moderate findings | Forge CLI validation, deployment, Rovo discovery, MCP connectivity and live invocation remain unverified. |
-| `security/glob-minimatch-experiment` candidate | [#584](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44095954938) | 4,134 passed; 0 failed; 0 skipped | `npm audit --audit-level=low`: 0 vulnerabilities | The synchronized isolated branch passes dependency-tree checks. The `glob@14.0.2` scoped override crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range. The exact `minimatch@11.0.8` tree has not been freshly deployed or browser-accepted. |
+| `codegeist/forge-foundation` core app | Push [#44100063003](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100063003), head `701d56ce153a430b0307c5b6c6fc95835d4a9913` | 4,130 passed; 0 failed; 0 skipped | 9 high, 4 moderate, 0 critical remain | The run passed syntax/frontend checks, authenticated Forge CLI lint and Forge development deployment/install check; no fresh browser acceptance or Teamwork Graph live-data acceptance. |
+| `codegeist/rovo-investigator` candidate | Push [#621](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44098614135), head `00c5ace8cd93379a6e87fdb571e7a3f05b302ab2` | 4,146 passed; 0 failed; 0 skipped | Same 9 high and 4 moderate findings as the core base | Forge CLI manifest lint passed; feature-branch deployment was skipped. Rovo discovery, MCP visibility, live action invocation and permission-boundary acceptance remain unverified. |
+| `security/glob-minimatch-experiment` candidate | Push [#603](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099908018) and PR [#604](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099917882), head `b42b792d771a134af24b2817f705f8d06700d2fe` | 4,134 passed; 0 failed; 0 skipped | Strict `npm audit --audit-level=low`: 0 vulnerabilities | Forge CLI lint passed on push; PR strict audit passed. `glob@14.0.2` still crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range; exact-tree live deployment/browser acceptance is outstanding. |
 
-All three cited PR checks completed successfully on their tested code/dependency revisions. The security PR was synchronized with the latest app base and revalidated in run #584; its package.json and package-lock.json remained unchanged during synchronization. Passing automated tests is not evidence of live integrations, judge access, user impact, or Marketplace security approval.
-
-## Current verified limitations
-
-- The connected Atlassian account has only one available site; no separate test organization or representative Jira Software test project has been verified.
-- The four granular Teamwork Graph scopes were last observed unchecked/disabled. Real linked goal/deployment/pull-request acceptance is outstanding.
-- The current core application branch reports 9 high and 4 moderate npm audit findings. A separate draft dependency PR reports zero audit findings, but its scoped `glob@14.0.2` override crosses the declared `@forge/manifest@13.9.0` semver range and requires independent compatibility review.
-- A prior Forge development deployment succeeded, but fresh browser acceptance of that exact deployed dependency tree is not recorded.
-- No judge installation, final public demo video, Marketplace publication, or final Devpost submission is verified.
-
-## Final positioning
-
-TraceBack is an evidence-first Jira investigation companion. Its promise is not “AI knows the root cause.” Its promise is “the engineer can see the evidence, its provenance, its completeness, and the next thing worth verifying—without being misled by missing data or correlation.”
+The core run's deployment is Forge **development** on the connected production Jira tenant, not a production environment or judge installation. The dependency and Rovo branches remain separate and unmerged. The core app itself is not vulnerability-free; the zero-finding audit applies only to the isolated dependency candidate. Do not select a bonus or claim live integration acceptance until the required end-to-end evidence is recorded.
