@@ -60,7 +60,7 @@ function normalizeTeamworkGraphResponse(response) {
     truncatedCategories: []
   };
 
-  if (!response || typeof response !== 'object' || !response.data || typeof response.data !== 'object') {
+  if (!response || typeof response !== 'object' || !response.data || typeof response.data !== 'object' || Array.isArray(response.data)) {
     return empty;
   }
 
