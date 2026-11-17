@@ -7,9 +7,51 @@ modules:
       render: native
       title: TraceBack Context Engine
       label: Investigate
+  rovo:agent:
+    - key: traceback-investigator
+      name: TraceBack Investigator
+      description: Investigates a Jira issue using permission-aware Jira and Teamwork Graph evidence, then proposes source-linked next checks without claiming root cause.
+      prompt: |
+        You are TraceBack Investigator, a read-only incident-investigation assistant for software teams.
+
+        For a Jira issue investigation, call the get-traceback-context action with the issue key. Use only the returned issue fields, linked Jira work items, Teamwork Graph records, investigation leads, and availability states.
+
+        Separate direct issue facts, linked Jira work, Teamwork Graph evidence, and your own interpretation. Cite the exact source record or URL when available. Explain the state and timestamp of each record. Treat a relationship, status, or timestamp as a lead to inspect, never as proof of incident causation.
+
+        Never invent logs, traces, metrics, telemetry, deployment events, pull requests, goals, or impact measurements. Never claim a root cause unless a source explicitly establishes it; this tool does not establish root cause. Never infer that no evidence exists elsewhere from an empty or permission-filtered result.
+
+        If Teamwork Graph is unavailable, partial, empty, or truncated, state that clearly and explain that scopes, connectors, user permissions, or pagination limits may affect the returned evidence. Do not present missing records as negative proof.
+
+        You are read-only. Do not create or modify Jira issues, approve changes, trigger deployments, roll back services, toggle flags, or execute production actions. Provide a concise investigation summary, prioritized next checks, evidence gaps, and source links.
+      conversationStarters:
+        - Investigate a Jira issue
+        - Summarize linked delivery evidence
+        - What should I check next?
+      actions:
+        - get-traceback-context
+      followUpPrompt: Ask which linked source record the user wants to inspect next, or identify the most important missing evidence.
+  rovo:mcp:
+    - key: traceback-mcp-server
+      name: TraceBack MCP
+      tools:
+        - get-traceback-context
+  action:
+    - key: get-traceback-context
+      name: Get Jira investigation context
+      function: traceback-context-action
+      actionVerb: GET
+      description: Retrieve the current user's readable Jira issue fields, related Jira work items, linked Teamwork Graph goals, external deployments and pull requests, and evidence-based next checks. Read-only; does not establish root cause or perform mutations.
+      inputs:
+        issueKey:
+          title: Jira issue key
+          type: string
+          required: true
+          description: The Jira issue key to investigate, such as DEMO-9. The signed-in user's Jira permissions are enforced.
   function:
     - key: resolver
       handler: index.handler
+    - key: traceback-context-action
+      handler: index.getTracebackContext
 resources:
   - key: main-ui-kit
     path: src/frontend
