@@ -1,3 +1,27 @@
+## Authoritative current snapshot — 17 November 2026
+
+> This section supersedes earlier historical statements below where they list `minimatch@11.0.1` as the current lockfile version or imply that an npm audit alone is sufficient.
+
+The current isolated `security/glob-minimatch-experiment` branch lockfile resolves:
+
+| Package | Locked version | Scope |
+| --- | --- | --- |
+| `prosemirror-view` | `1.42.9` | Root override for exact Atlaskit pins |
+| `glob` | `14.0.2` | Scoped under `@forge/manifest` |
+| `minimatch` | `11.0.8` | Scoped under `@forge/manifest > glob` |
+
+**Why minimatch was refreshed:** the earlier `11.0.1` lockfile passed npm audit, but a new advisory published on 10 November 2026 affects `minimatch@11.0.0–11.0.6` and is fixed in `11.0.7` ([GHSA-cf2h-pxjq-68xw](https://github.com/isaacs/minimatch/security/advisories/GHSA-cf2h-pxjq-68xw)). A second advisory affects `11.0.3–11.0.7` and is fixed in `11.0.8` ([GHSA-hqmv-qgp3-jx75](https://github.com/isaacs/minimatch/security/advisories/GHSA-hqmv-qgp3-jx75)). The current lockfile therefore uses `11.0.8`, not the older `11.0.1`. This is a deliberate manual advisory check in addition to npm audit.
+
+**Latest exact-head validation:**
+- PR validation [#44086974857](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44086974857): **4,124 tests passed, 0 failed, 0 skipped**; strict `npm audit --audit-level=low` passed with **0 vulnerabilities**; syntax and frontend checks passed.
+- Authenticated push validation [#44086962378](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44086962378): same **4,124 tests**, `npm audit` **0 vulnerabilities**, dependency tree validation, syntax/frontend checks and Forge CLI lint (**No issues found**).
+- `npm ls prosemirror-view glob minimatch --all` confirms the intended versions and no invalid tree.
+- Direct integration tests against the actual `@forge/manifest@13.9.0` `PackageValidator` pass for a matching and a missing `extraFiles` glob.
+
+**Remaining compatibility caveat:** `@forge/manifest@13.9.0` declares `glob@^13.0.0`, while the patched glob advisory is fixed in `glob@14.0.2`. The scoped override therefore crosses the declared major range. The inspected consumer call site and direct PackageValidator tests reduce risk but do not establish Atlassian support. Keep this PR draft pending independent compatibility review.
+
+The app branch still has **9 high and 4 moderate** findings until this PR is integrated. The 0-finding audit applies only to this isolated lockfile. Version 2.21.0 was deployed earlier with the prior minimatch lock; the exact 11.0.8 tree has **not** been deployed or browser-accepted. The four Teamwork Graph scopes and fresh live acceptance remain outstanding. No production deployment, scope consent, Marketplace publication or Devpost submission has occurred.
+
 # Dependency audit record
 
 ## Latest locked-dependency report
