@@ -47,7 +47,7 @@ test('loads all Teamwork Graph pages for each relationship while skipping comple
       pullRequests: connection([{ id: 'pr-1', title: 'Retry checkout', status: 'OPEN' }])
     }),
     graphResponse({
-      goals: connection([{ id: 'goal-2', name: 'Reduce incidents' }])
+      goals: connection([{ id: 'goal-1', name: 'Reliable releases' }, { id: 'goal-2', name: 'Reduce incidents' }])
     })
   ], captured);
 
