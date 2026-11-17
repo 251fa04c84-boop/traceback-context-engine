@@ -38,7 +38,7 @@ modules:
   action:
     - key: get-traceback-context
       name: Get Jira investigation context
-      function: traceback-context-action
+      function: tb-context-action
       actionVerb: GET
       description: Retrieve the current user's readable Jira issue fields, related Jira work items, linked Teamwork Graph goals, external deployments and pull requests, and evidence-based next checks. Read-only; does not establish root cause or perform mutations.
       inputs:
@@ -50,7 +50,7 @@ modules:
   function:
     - key: resolver
       handler: index.handler
-    - key: traceback-context-action
+    - key: tb-context-action
       handler: index.getTracebackContext
 resources:
   - key: main-ui-kit
