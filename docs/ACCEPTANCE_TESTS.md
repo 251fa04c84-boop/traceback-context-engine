@@ -47,6 +47,8 @@ This record must be completed against an actually deployed Forge app. A successf
 - [ ] Confirm the site administrator granted read:graph:deployment:external.
 - [ ] Confirm the site administrator granted read:graph:pull-request:external.
 - [ ] Verify linked goals, external deployments and external pull requests when real records exist.
+- [ ] Verify cursor pagination follows later pages for each relationship category and does not duplicate records.
+- [ ] Verify a category with more than 125 records is marked as capped with a visible warning rather than silently appearing complete.
 - [ ] Verify each source URL opens the corresponding Atlassian or external record over HTTPS.
 - [ ] Verify a graph response with no linked items is shown as empty, not as proof that no evidence exists elsewhere.
 - [ ] Verify partial GraphQL errors preserve valid returned records and are labelled partial.
