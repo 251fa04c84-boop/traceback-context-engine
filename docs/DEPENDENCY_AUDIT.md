@@ -286,3 +286,16 @@ The GitHub-reviewed advisory [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories
 The inspected `PackageValidator` call site invokes the named asynchronous `glob(pattern)` API without passing an AbortSignal or timeout option. This means the specific cancellation-bypass precondition is not apparent in that observed call path. It is useful reachability evidence, not proof that every consumer path in the Forge toolchain is unaffected. The scoped override still uses the patched release, and the exact consumer integration tests still exercise matching and missing `extraFiles` patterns.
 
 Decision: keep the override scoped to `@forge/manifest`, preserve the cross-major caveat, and do not describe the combination as Atlassian-supported. No patched 13.x release is identified by the current advisory record. Revisit when Atlassian publishes a compatible `@forge/manifest` release or provides written compatibility guidance.
+
+
+## Latest synchronized dependency candidate validation — 17 November 2026
+
+The branch was synchronized with the latest core acceptance documentation and CI workflow in merge commit `8ceb46e065213c6747aa8fac0ac791694ab9c216`.
+
+- Push CI [#44104766251](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44104766251): **4,134 tests passed, 0 failed, 0 skipped**; locked install, installed dependency-tree assertions, syntax/frontend checks and authenticated Forge CLI lint passed.
+- Matching PR CI [#44104778434](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44104778434): **4,134 tests passed, 0 failed, 0 skipped**; strict `npm audit --audit-level=low` reported **0 vulnerabilities**.
+- The current lockfile still resolves one scoped `glob@14.0.2` beneath `@forge/manifest@13.9.0`, with `minimatch@11.0.8` beneath it. No global glob or minimatch override is used.
+- The direct `PackageValidator` integration tests and the inspected `glob(pattern)` consumer call provide compatibility/reachability evidence, not an Atlassian support guarantee. The declared `^13.0.0` semver range remains incompatible with the overridden major.
+- The synchronized security branch intentionally skips Forge deployment. No new scope consent, production installation, or live browser acceptance occurred.
+
+The candidate remains draft and unmerged pending independent compatibility review. The core app's 9 high and 4 moderate audit findings are not cleared by this isolated zero-finding result.
