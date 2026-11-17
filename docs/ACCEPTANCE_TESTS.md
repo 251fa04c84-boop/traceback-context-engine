@@ -55,7 +55,7 @@ This record must be completed against an actually deployed Forge app. A successf
 
 ## Suggested next checks acceptance
 
-- [ ] A failed deployment produces a high-priority lead with the exact deployment source link.
+- [ ] A failed production deployment produces a high-priority lead with the exact deployment source link; a failed non-production deployment is medium priority.
 - [ ] A recent production deployment produces a timeline-check lead only, with explicit non-causation wording.
 - [ ] An open/draft pull request produces a review lead with its source link.
 - [ ] Unresolved linked Jira work and archived goals produce low-priority leads.
