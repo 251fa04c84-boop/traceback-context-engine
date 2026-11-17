@@ -2,13 +2,13 @@
 
 ## Latest locked-dependency report
 
-- Source: GitHub Actions CI run [#293](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44010313917)
-- Commit inspected: `03faccf15e78e9cc59b941579c41011be4684544`
+- Source: GitHub Actions CI run [#299](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44011667051)
+- Commit inspected: `4aa2af260c66306003b00975ddc359e2590137b6`
 - Date: 17 November 2026 (UTC)
 - Lockfile: `package-lock.json` is committed; CI successfully used `npm ci`.
 - Result: **13 vulnerable package entries — 9 high, 4 moderate, 0 critical**.
 - Automated tests: **38 passed, 0 failed**.
-- Syntax checks, frontend JSX bundle compilation, and authenticated Forge CLI lint all passed in CI run #293. Forge CLI reported **No issues found**.
+- Syntax checks, frontend JSX bundle compilation, and authenticated Forge CLI lint all passed in CI run #293. Forge CLI reported **No issues found**. In the later documentation-only CI run #299, the Forge CLI step was skipped by its workflow condition.
 - The audit command is report-only. No dependency upgrades or `npm audit fix --force` were applied.
 
 | Package | Severity | Direct dependency |
