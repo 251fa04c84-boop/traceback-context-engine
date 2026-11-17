@@ -4,7 +4,7 @@
 
 This is an experimental feature branch, `codegeist/rovo-agent-mcp`. It is not part of the currently deployed Forge development version 2.21.0, and it has not yet been installed or tested in a live Rovo chat or Rovo Studio session.
 
-- CI on commit `047214c29cf55e94768a9c49039776572ccf3d12`: **4,126 tests passed, 0 failed, 0 skipped**.
+- CI on commit `047214c29cf55e94768a9c49039776572ccf3d12`: **4,130 tests passed, 0 failed, 0 skipped**.
 - Forge CLI lint: **No issues found**.
 - The current app branch still reports 9 high and 4 moderate npm audit findings until the separate dependency-remediation PR is integrated.
 - No new OAuth scopes are introduced by these modules; they reuse the existing Jira and Teamwork Graph read scopes.
