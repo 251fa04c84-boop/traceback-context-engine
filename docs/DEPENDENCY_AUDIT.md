@@ -2,8 +2,8 @@
 
 ## Latest inspected report
 
-- Source: GitHub Actions CI run [#225](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/43995744629)
-- Commit inspected: `e20ec60bfd5820e0d9726dc378abd128b79af16e`
+- Source: GitHub Actions CI run [#241](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/43996448504)
+- Commit inspected: `1cb38e2290eae5fe0eba7b9ef1ee62c52d4af61e`
 - Date: 17 November 2026 (UTC)
 - Result: **12 advisories — 8 high, 4 moderate, 0 critical**
 - Automated tests: **34 passed, 0 failed** in the same run.
