@@ -38,12 +38,12 @@ TraceBack adds a read-only **Investigate** panel to Jira issues. It shows the is
 
 ## Current status
 
-The four granular scopes were previously observed as unchecked/disabled on the only Atlassian site currently connected to this ChatGPT account. That site is a production Jira tenant. No scope has been changed. Forge development version 2.21.0 was deployed from an earlier dependency-tree revision. Subsequent application UI, submission, and deployment-workflow changes have not been redeployed, so 2.21.0 is not the current branch head. A fresh development deployment and live Teamwork Graph acceptance remain outstanding; do not install or upgrade against a production tenant or treat the earlier deployment as validation of the current branch.
+The four granular scopes remain unchecked/disabled on the only Atlassian site currently connected to this ChatGPT account. That site is a production Jira tenant. No scope has been changed. Core application code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` was deployed to Forge development as version **2.44.0** by [CI run #44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512); later core pushes were documentation-only and correctly skipped redundant redeployment. This confirms a development deployment, not browser acceptance, Teamwork Graph access, a separate test site, or a judge installation. Do not enable these scopes on the connected production tenant.
 
 
 ## Latest environment verification — 17 November 2026
 
-The connected Atlassian account currently exposes exactly one site, `251fa04c84.atlassian.net`. Its two visible Jira projects are both service-desk projects (`DEMO` and `TCE`); `TCE` has no issues. There is no separate test organization or Jira Software project available through this connection. The site is a production tenant, so this request is **not** permission to enable the scopes there.
+The connected Atlassian account currently exposes exactly one site, `251fa04c84.atlassian.net`. Its two visible Jira projects are both service-desk projects (`DEMO` and `TCE`); `TCE` has no issues. There is no separate test organization or Jira Software project available through this connection. The site is a production tenant, so this request is **not** permission to enable the scopes there. Forge development version 2.44.0 is deployed on that site, but a fresh browser acceptance pass is not recorded.
 
 Read-only Teamwork Graph probes found one existing Jira-to-Jira relationship (DEMO-7 → DEMO-8), but no linked goal, external deployment or external pull request on the checked issues. Do not create artificial relationships or records to make the demo appear populated.
 
