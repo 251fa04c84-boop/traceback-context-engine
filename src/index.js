@@ -1,6 +1,12 @@
 'use strict';
 
-const Resolver = require('@forge/resolver');
+const resolverModule = require('@forge/resolver');
+// Forge resolver 2.x may expose its CommonJS default export under `.default`.
+// Normalize both export shapes so the deployed runtime always receives the constructor.
+const Resolver = resolverModule.default || resolverModule;
+if (typeof Resolver !== 'function') {
+  throw new TypeError('The @forge/resolver package did not expose a Resolver constructor.');
+}
 const api = require('@forge/api');
 const { route } = require('@forge/api');
 const { resolveIssueKey, normalizeIssue } = require('./domain/incident');
