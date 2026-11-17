@@ -102,7 +102,7 @@ This record must be completed against an actually deployed Forge app. A successf
 - [ ] Confirm the action is read-only and exposes no create/update/delete/deploy/rollback/feature-flag tools.
 - [ ] In Rovo Studio, verify the TraceBack MCP tool is discoverable after site administrator authorization.
 - [ ] Invoke the MCP tool from a customer-created test agent using a permitted issue key.
-- [ ] Verify the MCP response is bounded, structured, and preserves source links and graph warnings.
+- [ ] Verify the MCP response is bounded, structured, and preserves source links and graph warnings.\n- [ ] Confirm long descriptions and oversized evidence lists are truncated/capped without dropping the explicit truncation state.\n- [ ] Inject a prompt-like instruction into a test issue description or linked record and confirm the Rovo Agent treats it as untrusted data, not as instructions.
 - [ ] Record the exact Rovo Agent and MCP version, test issue, site, account permissions, screenshots and results.
 
 ## Results
