@@ -52,6 +52,8 @@ The focused action-context tests cover valid explicit keys, active-context fallb
 
 The exact action-contract revision `c8e24b438279df8f26944246e5109ea79864fedf` passed GitHub Actions PR validation run [#616](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44097383767): **4,146 tests passed, 0 failed, 0 skipped**, with syntax checks and frontend compilation passing. Because this was a pull-request event, authenticated Forge CLI manifest lint was skipped; a push-triggered validation is still required.
 
+The current candidate head `767259e10ae5fce58615d2b60f03b751b4d18d35` passed push validation [#619](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44098195787): **4,146 tests passed, 0 failed, 0 skipped**, syntax checks and frontend compilation passed, and authenticated Forge CLI manifest lint reported **No issues found**. The feature-branch deployment step was skipped by workflow design. No separate-site deployment or live Rovo/MCP acceptance is implied.
+
 ## Reproducible validation commands
 
 Run these from the repository root on Node.js 24:
