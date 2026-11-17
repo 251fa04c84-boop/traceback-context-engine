@@ -2,8 +2,8 @@
 
 ## Latest inspected report
 
-- Source: GitHub Actions CI run [#185](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/43993221433)
-- Commit inspected: `11cb58a5bf38df5e5b2a8dee8ed9960ed714305e`
+- Source: GitHub Actions CI run [#203](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/43993989462)
+- Commit inspected: `9fbe7cfdf76295f8b62616c1c7e00143dd1b99d7`
 - Date: 17 November 2026 (UTC)
 - Result: **12 advisories — 8 high, 4 moderate, 0 critical**
 - The audit command did not change dependencies. No `npm audit fix --force` was run.
