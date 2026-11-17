@@ -111,6 +111,24 @@ test('preserves usable evidence while marking GraphQL errors as partial', () => 
   assert.match(result.warning, /some connected evidence/i);
 });
 
+
+test('reports bounded pagination when a category still has more linked records', () => {
+  const normalizeTeamworkGraphResponse = productionFunction('normalizeTeamworkGraphResponse');
+  const result = normalizeTeamworkGraphResponse({
+    data: {
+      jiraWorkItemGoals: { edges: [{ node: { id: 'goal-1', name: 'Reliable releases' } }] },
+      jiraWorkItemLinkedExternalDeployments: { edges: [] },
+      jiraWorkItemLinkedExternalPullRequests: { edges: [] }
+    },
+    truncatedCategories: ['goals', 'unknown', 'goals']
+  });
+
+  assert.equal(result.status, 'available');
+  assert.deepEqual(result.truncatedCategories, ['goals']);
+  assert.match(result.warning, /125 linked records/i);
+  assert.match(result.warning, /additional records may exist.*goals/i);
+});
+
 test('returns a safe unavailable state for a malformed Teamwork Graph response', () => {
   const normalizeTeamworkGraphResponse = productionFunction('normalizeTeamworkGraphResponse');
   const result = normalizeTeamworkGraphResponse(null);
