@@ -130,3 +130,16 @@ A clearly labelled, low-priority temporary Jira Task was created in the existing
 - Browser profile inspection shows the saved TinyFish profile has a Google sign-in only, not an Atlassian sign-in. Therefore visual panel verification is still blocked until an authenticated Atlassian browser session is available.
 
 The temporary test issue is intentionally left in place for inspection and can be removed after acceptance testing.
+
+
+## Live Forge runtime failure and corrective patch — 17 November 2026
+
+The installed development panel was visually inspected on [DEMO-9](https://251fa04c84.atlassian.net/browse/DEMO-9) using the saved browser session.
+
+- The TraceBack Context Engine panel was present under Jira's Automation section and showed a DEV environment label.
+- On expand, the UI displayed its loading message and then failed with `Resolver is not a constructor`. Retrying reproduced the same error. No issue or Teamwork Graph evidence rendered.
+- Root cause was isolated to the backend resolver import interop: `src/index.js` used CommonJS `require('@forge/resolver')` directly as a constructor, without normalizing the package's default-export shape.
+- Corrective patch in commit `53e2226a0143ed83737a6e34beb7bfe7742cab9c` now selects `resolverModule.default || resolverModule` and explicitly validates that the result is constructable.
+- Regression test `test/resolver-runtime.test.js` constructs the actual installed package using the same normalization. CI run [#310](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44018574721) passed tests, syntax, frontend compilation and Forge CLI lint on commit `46f711f82a84ce0420fef5e7f8eb95b2b4dfb131`.
+- The follow-up CI workflow now deploys and upgrades **only the Forge development environment** on pushes to `codegeist/forge-foundation`, after checks succeed. It does not deploy production.
+- **Not yet verified:** the corrected code must complete its development deployment, then the same Jira panel must be reopened to confirm the constructor error is gone and live issue/evidence states render. A green CI run is not proof of runtime success.
