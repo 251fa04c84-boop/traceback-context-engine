@@ -16,7 +16,7 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 
 ## Rovo Agent and MCP interface (feature branch)
 
-The `codegeist/rovo-agent-mcp` branch adds a **TraceBack Investigator** Rovo Agent and a **TraceBack MCP** module. Both call the same read-only `get-traceback-context` Forge action used by the existing Jira evidence pipeline. The action validates issue keys, reads Jira and Teamwork Graph as the invoking user, returns bounded structured evidence and prioritized follow-up leads, and explicitly marks root cause as not established. It introduces no write actions and no additional OAuth scopes.
+The `codegeist/rovo-agent-mcp` branch adds a **TraceBack Investigator** Rovo Agent and a **TraceBack MCP** module. Both call the same read-only `get-traceback-context` Forge action, which reuses the Jira and Teamwork Graph services already used by the existing issue-context resolver. The action validates issue keys, reads Jira and Teamwork Graph as the invoking user, returns bounded structured evidence and prioritized follow-up leads, and explicitly marks root cause as not established. It introduces no write actions and no additional OAuth scopes.
 
 **Important:** these Rovo modules are not yet included in the deployed 2.21.0 development build. The branch passes 4,126 automated tests and Forge CLI lint, but live Rovo chat, Rovo Studio MCP discovery, administrator authorization and judge-site installation remain untested. See [docs/ROVO_AGENT_MCP.md](docs/ROVO_AGENT_MCP.md).
 
