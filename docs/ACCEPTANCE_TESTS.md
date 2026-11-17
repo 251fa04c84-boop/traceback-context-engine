@@ -15,7 +15,7 @@ This record must be completed against an actually deployed Forge app. A successf
 ## Pre-installation gates
 
 - [x] App registered once; generated app ID is present in manifest.yml.
-- [x] Forge CLI lint and manifest/source validation completed successfully in development deployment workflow #6.
+- [x] Forge CLI lint and manifest/source validation completed successfully in development deployment workflow #6 and CI run #279.
 - [x] Forge app deployed to the development environment in workflow #6.
 - [x] Development app installed on `251fa04c84.atlassian.net` by workflow #6. Note: this is the user's production Jira site, so this is a controlled development installation, not a separate test tenant.
 - [ ] Requested Jira and Teamwork Graph scopes are granted by an organization administrator.
@@ -81,7 +81,12 @@ This record must be completed against an actually deployed Forge app. A successf
 | Test | Result | Evidence / notes |
 | --- | --- | --- |
 | App registered | Pass | Forge workflow #6 registered app; app ID recorded in manifest. |
-| Forge lint | Pass | Forge CLI lint reported no issues in workflow #6. |
+| Forge lint | Pass | Forge CLI lint reported no issues in workflow #6 and CI run #279. |
+| Automated tests | Pass | CI run #279: 35 passed, 0 failed. |
+| Syntax checks | Pass | CI run #279: syntax checks passed. |
+| Frontend compilation | Pass | CI run #279: JSX bundle compiled successfully. |
+| Locked dependency install | Pass | CI run #279 used `npm ci` successfully. |
+| Dependency audit | Warning | CI run #279: 9 high, 4 moderate, 0 critical; unresolved upstream dependency findings. |
 | Forge deployment | Pass | Development deployment succeeded in workflow #6; not production. |
 | App installation | Pass | Development app installation completed on 251fa04c84.atlassian.net in workflow #6. |
 | Jira issue context | Pending | App panel has not been visually verified in Jira issue view. |
