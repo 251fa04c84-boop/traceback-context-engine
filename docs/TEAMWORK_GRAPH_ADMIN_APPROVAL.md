@@ -38,7 +38,7 @@ TraceBack adds a read-only **Investigate** panel to Jira issues. It shows the is
 
 ## Current status
 
-The four granular scopes were previously observed as unchecked/disabled on the only Atlassian site currently connected to this ChatGPT account. That site is a production Jira tenant. No scope has been changed. The latest app code is deployed to Forge development, but a live Teamwork Graph acceptance test is still blocked until an organization administrator authorizes the scopes in an appropriate test organization.
+The four granular scopes were previously observed as unchecked/disabled on the only Atlassian site currently connected to this ChatGPT account. That site is a production Jira tenant. No scope has been changed. Forge development version 2.21.0 was deployed from an earlier dependency-tree revision. Subsequent application UI, submission, and deployment-workflow changes have not been redeployed, so 2.21.0 is not the current branch head. A fresh development deployment and live Teamwork Graph acceptance remain outstanding; do not install or upgrade against a production tenant or treat the earlier deployment as validation of the current branch.
 
 
 ## Latest environment verification — 17 November 2026
