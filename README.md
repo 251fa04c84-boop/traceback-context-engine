@@ -68,7 +68,7 @@ Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to 
 
 ## Dependency security
 
-The inspected npm audit reported unresolved high and moderate dependency findings. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the dated report and reproducibility gap. Do not apply `npm audit fix --force` without compatibility testing.
+The inspected npm audit reported unresolved high and moderate dependency findings. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the dated report. The lockfile is committed and `npm ci` is verified; upstream high and moderate advisories remain unresolved. Do not apply `npm audit fix --force` without compatibility testing.
 
 ## Jira installation and acceptance
 
