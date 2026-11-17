@@ -1,3 +1,16 @@
+## Current authoritative dependency validation — 17 November 2026
+
+> This snapshot supersedes older test counts and dependency versions in the historical notes below.
+
+- Current isolated dependency branch: `security/glob-minimatch-experiment`.
+- Lockfile: `prosemirror-view@1.42.9`, `glob@14.0.2` scoped under `@forge/manifest`, and `minimatch@11.0.8` scoped under `@forge/manifest > glob`.
+- [PR validation #44086974857](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44086974857): **4,124 passed, 0 failed, 0 skipped**; `npm audit --audit-level=low` reported **0 vulnerabilities**; syntax and frontend checks passed.
+- [Push validation #44086962378](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44086962378): same **4,124 tests**, zero audit findings, dependency tree checks, syntax/frontend checks and Forge CLI lint (**No issues found**).
+- Manual advisory review caught that the previous `minimatch@11.0.1` lockfile was affected by [GHSA-cf2h-pxjq-68xw](https://github.com/isaacs/minimatch/security/advisories/GHSA-cf2h-pxjq-68xw); the current `11.0.8` version addresses the newer affected ranges.
+- `@forge/manifest@13.9.0` still declares `glob@^13.0.0`; the `glob@14.0.2` scoped override crosses that major range. Direct PackageValidator tests pass, but Atlassian support is not established.
+- The exact `minimatch@11.0.8` tree has not been deployed or browser-accepted. The earlier 2.21.0 development deployment used the prior lockfile.
+- The app branch still reports 9 high and 4 moderate findings until this dependency PR is integrated. Keep the PR draft and unmerged pending independent compatibility review and live acceptance.
+
 # TraceBack Context Engine — Acceptance Test Record
 
 This record must be completed against an actually deployed Forge app. A successful unit-test run is not a substitute for a live Jira installation.
