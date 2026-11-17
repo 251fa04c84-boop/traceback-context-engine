@@ -2,13 +2,25 @@
 
 This record must be completed against an actually deployed Forge app. A successful unit-test run is not a substitute for a live Jira installation.
 
+## Latest deployment and acceptance status — 17 November 2026
+
+- The core Forge app source revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` was deployed successfully as Forge **development version 2.44.0** by [workflow #44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512). The existing development installation on `251fa04c84.atlassian.net` was already at the latest version. Forge explicitly warned that this Jira tenant is a production site; the deployment was to the Forge development environment, not a production app deployment.
+- Comparing the deployed workflow commit with current core branch head `18562db4f372cf064b53d50c119e802e0f0b78a2` shows only workflow, documentation, and test-file changes after the deployment; no runtime source, manifest, or dependency changes were introduced. The current core branch therefore retains the deployed app source.
+- Latest core push/PR CI [#44115665646](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44115665646) / [#44115681024](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44115681024) passed **4,131 tests, 0 failed**, plus syntax/frontend checks and authenticated Forge CLI lint. The core dependency audit still reports **9 high and 4 moderate** findings.
+- The separate dependency candidate PR #2 passes **4,135 tests** and strict npm audit with **0 vulnerabilities** on its isolated branch; its `glob@14.0.2` override remains outside `@forge/manifest@13.9.0`'s declared `^13.0.0` range and is not cleared for merge.
+- The separate Rovo/MCP candidate PR #5 passes **4,147 tests** and Forge CLI lint. Its feature branch has not been deployed or accepted in a test site.
+- CI and deployment workflows now pin checkout/setup-node to verified immutable release commits, disable unnecessary checkout credentials and package-manager caching, and require the committed lockfile for CI.
+- **Not accepted yet:** no fresh browser retest of development v2.44.0; no separate Atlassian test organization; the four granular Teamwork Graph scopes remain disabled; no real linked goal, external deployment or external pull request has been accepted through the Forge app runtime; no judge installation link or public demo video exists.
+- Do not grant the four Teamwork Graph scopes on the connected production tenant without explicit organization/security-owner approval. Do not create synthetic graph records or use production customer data for acceptance.
+
+
 ## Environment under test
 
 - Forge app ID: **`ari:cloud:ecosystem::app/b7cbb6a8-de78-4ba8-91fb-48733c1c2157`**
 - Forge environment: **Development deployed successfully; production not deployed**
 - Jira site: **251fa04c84.atlassian.net**
 - Jira view: New issue view only
-- Test issue: **DEMO-7** (service-desk IT Help; temporary technical test only, not a representative software-team incident)
+- Test issue: **DEMO-9** (temporary service-desk technical probe; not a representative software-team incident and has no linked Jira issue records)
 - Test user: **Record the Jira account and the permissions used; do not put credentials here**
 - App installation link: **Not generated; judge sharing not configured**
 
