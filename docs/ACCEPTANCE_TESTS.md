@@ -1,3 +1,16 @@
+## Current authoritative dependency validation — 17 November 2026
+
+> This snapshot supersedes older test counts and dependency versions in the historical notes below.
+
+- Current isolated dependency branch: `security/glob-minimatch-experiment`.
+- Lockfile: `prosemirror-view@1.42.9`, `glob@14.0.2` scoped under `@forge/manifest`, and `minimatch@11.0.8` scoped under `@forge/manifest > glob`.
+- [PR validation #44086974857](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44086974857): **4,124 passed, 0 failed, 0 skipped**; `npm audit --audit-level=low` reported **0 vulnerabilities**; syntax and frontend checks passed.
+- [Push validation #44086962378](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44086962378): same **4,124 tests**, zero audit findings, dependency tree checks, syntax/frontend checks and Forge CLI lint (**No issues found**).
+- Manual advisory review caught that the previous `minimatch@11.0.1` lockfile was affected by [GHSA-cf2h-pxjq-68xw](https://github.com/isaacs/minimatch/security/advisories/GHSA-cf2h-pxjq-68xw); the current `11.0.8` version addresses the newer affected ranges.
+- `@forge/manifest@13.9.0` still declares `glob@^13.0.0`; the `glob@14.0.2` scoped override crosses that major range. Direct PackageValidator tests pass, but Atlassian support is not established.
+- The exact `minimatch@11.0.8` tree has not been deployed or browser-accepted. The earlier 2.21.0 development deployment used the prior lockfile.
+- The app branch still reports 9 high and 4 moderate findings until this dependency PR is integrated. Keep the PR draft and unmerged pending independent compatibility review and live acceptance.
+
 # TraceBack Context Engine — Acceptance Test Record
 
 This record must be completed against an actually deployed Forge app. A successful unit-test run is not a substitute for a live Jira installation.
@@ -143,3 +156,122 @@ The installed development panel was visually inspected on [DEMO-9](https://251fa
 - Regression test `test/resolver-runtime.test.js` constructs the actual installed package using the same normalization. CI run [#310](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44018574721) passed tests, syntax, frontend compilation and Forge CLI lint on commit `46f711f82a84ce0420fef5e7f8eb95b2b4dfb131`.
 - The follow-up CI workflow now deploys and upgrades **only the Forge development environment** on pushes to `codegeist/forge-foundation`, after checks succeed. It does not deploy production.
 - **Not yet verified:** the corrected code must complete its development deployment, then the same Jira panel must be reopened to confirm the constructor error is gone and live issue/evidence states render. A green CI run is not proof of runtime success.
+
+
+---
+
+## Latest consolidated status snapshot — 17 November 2026
+
+This snapshot supersedes older historical status tables above where they conflict. Earlier entries are retained as dated evidence of how the implementation evolved.
+
+### Automated and deployment verification
+
+- The application branch `codegeist/forge-foundation` at commit `0a3be47e0dcc623d2bb6477d52db7098b6ad8a27` passed push CI [#44068107693](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44068107693): **4,110 tests passed, 0 failed, 0 skipped**; syntax, frontend compilation, authenticated Forge CLI lint, development deployment and existing installation check passed.
+- The combined application + patched dependency PR merge result passed [#44068798362](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44068798362): **4,110 tests passed, 0 failed, 0 skipped**, and npm audit reported **0 vulnerabilities**.
+- The patched dependency branch passed authenticated Forge CLI lint and the isolated dependency validation workflow [#44068789142](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44068789142).
+- The exact patched dependency tree was deployed to Forge **development** as app version **2.16.0** in [#44072061196](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44072061196). The run completed `npm ci`, verified the three patched versions, confirmed zero npm audit findings, passed Forge CLI lint, packaged the app, validated the manifest and deployed successfully.
+- No production Forge environment deployment was performed. The deployment run did not run `forge install --upgrade` and did not change any manifest scopes.
+- PR #1 (application) and PR #2 (dependency remediation) both remain open, draft and unmerged. PR #2 is based on `codegeist/forge-foundation` and includes the dependency audit, README and submission draft documentation.
+
+### Current live acceptance state
+
+- The existing development installation is on `251fa04c84.atlassian.net`, which is a production Jira tenant. It is a controlled development installation, not a separate test organization.
+- The earlier Forge development deployment (2.16.0) was superseded by the scoped dependency deployment (2.21.0). Version 2.21.0 has **not** received a fresh browser/UI retest. An earlier browser retest verified that the panel rendered after the resolver constructor fix, but that is not a retest of the current build.
+- The four Teamwork Graph scopes remain unapproved/unchecked in the previously inspected Connected Apps authorization state: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`.
+- No real linked Teamwork Graph goal, deployment or pull-request record has been accepted through the Forge app's own live GraphQL path. The connected Atlassian Graph connector's Jira-to-Jira relationship probe is not a substitute for this app runtime test.
+- No Jira data, relationships, permissions, scopes, or production Forge settings were changed by the dependency remediation or development deployment.
+- The judge installation link and public YouTube demo video have not been generated.
+
+### Remaining acceptance gates
+
+1. Use a separate Atlassian test organization (preferred) with a real Jira Software project and representative, non-sensitive test data.
+2. Obtain explicit organization-administrator approval for the four read-only Teamwork Graph scopes and connect the relevant external provider(s).
+3. Reopen a real linked Jira issue in the new issue view and visually verify the deployed 2.21.0 panel, issue context, related Jira work, real Teamwork Graph records, pagination, source links and empty/partial/unavailable states.
+4. Capture the browser evidence and record the exact test issue and returned record types without copying secrets or private customer data.
+5. Independently review the cross-major `glob`/`minimatch` overrides in draft PR #2 before merging it into the application branch. The successful development deployment is compatibility evidence, not an Atlassian support statement.
+6. After the dependency PR is reviewed and merged, rerun the final base-branch CI/deploy checks and confirm the installed development version.
+7. Only after the live acceptance gates pass, prepare the production deployment, Forge sharing/judge installation link, and public under-five-minute YouTube demo.
+
+**Acceptance status:** Automated tests, dependency audit on the patched branch, Forge lint, and Forge development deployment are **PASS**. Fresh visual runtime acceptance, administrator-approved Teamwork Graph access, real linked-record retrieval, judge sharing, and public demo are **PENDING**. Production deployment and Marketplace listing are **NOT DONE**.
+
+
+---
+
+## Fresh Atlassian connector and schema verification — 17 November 2026
+
+This is a read-only follow-up using the connected Atlassian account and current official developer references. It does not replace a live Forge app/browser acceptance test.
+
+### Accessible Jira environment
+
+- `getAccessibleAtlassianResources` returned exactly one accessible site: `251fa04c84.atlassian.net`.
+- `listJiraProjects` returned exactly two projects:
+  - `DEMO` — Demo service space, project type `service_desk`, 9 issues.
+  - `TCE` — TraceBack Context Engine, project type `service_desk`, 0 issues.
+- No Jira Software project or separate Atlassian test organization is available through the currently connected account. The accessible site is the production Jira tenant; do not grant new graph scopes there without explicit organization/security-owner approval.
+- Therefore the available issues are not a representative software-team incident environment for final Codegeist acceptance.
+
+### Read-only issue and Teamwork Graph probes
+
+- `DEMO-9`: Jira REST returned the expected issue key, summary, description, Open status and Low priority; `issuelinks` was empty. The connected Teamwork Graph context lookup resolved its JiraWorkItem ARI and returned only user-created/reported/updated relationships. No linked goal, external deployment or external pull request was returned.
+- `DEMO-7`: the connected Teamwork Graph lookup returned a real Jira-to-Jira relationship to `DEMO-8`. No goal, external deployment or external pull request was returned in the result.
+- These are connector-side observations only. They do not prove the Forge resolver's GraphQL query, the Forge installation's granted scopes, or the rendered panel. No artificial graph links or DevOps records were created.
+
+### Official schema and permission cross-check
+
+The current Atlassian developer documentation was checked against `src/services/teamwork-graph.js` and `manifest.yml`:
+
+- The curated query catalog lists `jiraWorkItemGoals`, `jiraWorkItemLinkedExternalDeployments`, and `jiraWorkItemLinkedExternalPullRequests`; each supports `first` and `after` pagination.
+- The selected fields are present on the documented object types: `AtlassianGoal`, `ExternalDeployment`, and `ExternalPullRequest`.
+- The manifest requests the matching read-only object scopes: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`, plus `read:jira-work`.
+- The resolver uses `api.asUser()` for both Jira and Teamwork Graph access, consistent with the documented current-user authorization model.
+- Atlassian documents that a missing/disabled object scope can silently omit unreadable objects and relationships rather than returning a useful error. An empty graph response therefore cannot be treated as proof that no linked evidence exists.
+
+References:
+- [Forge requestTeamworkGraph reference](https://developer.atlassian.com/platform/forge/apis-reference/ui-api-bridge/requestTeamworkGraph/)
+- [Teamwork Graph curated queries](https://developer.atlassian.com/platform/teamwork-graph/curated-queries/)
+- [Teamwork Graph granular scopes](https://developer.atlassian.com/platform/teamwork-graph/scopes/)
+- [Teamwork Graph API tutorial and troubleshooting](https://developer.atlassian.com/platform/teamwork-graph/call-the-teamwork-graph-api/)
+
+### Result and safety boundary
+
+- Connector Jira issue read: **PASS**.
+- Connector Jira-to-Jira graph relationship read (DEMO-7 → DEMO-8): **PASS**.
+- Real goal/deployment/pull-request evidence for the app: **NOT VERIFIED**.
+- Forge app Teamwork Graph scope approval: **NOT VERIFIED / ADMIN ACTION REQUIRED**.
+- Representative Jira Software test issue: **NOT AVAILABLE** on the one accessible site.
+- Fresh browser acceptance of Forge development version 2.21.0: **PENDING**.
+- No Jira issue, project, relationship, permission, scope, or production setting was modified by these checks.
+
+
+## Latest application reliability validation — 17 November 2026
+
+The application base branch now includes:
+- A complete 8-second Jira request deadline that covers both request headers and JSON body parsing.
+- A 12-second total Teamwork Graph budget with a 5-second per-request cap; timed-out later pages preserve earlier evidence and mark unfinished categories partial.
+- Stale UI response protection when issue context changes or a newer refresh supersedes an earlier request.
+- An honest empty Teamwork Graph message rather than a false statement that linked records were returned.
+
+Latest app source commit `fffaef7204d514e10237461f1440e6d904d5dd1b` passed **4,120 tests, 0 failed, 0 skipped** in PR workflow [#44079753736](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079753736). The matching push workflow [#44079747452](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079747452) passed syntax, frontend compilation, authenticated Forge CLI lint, development deployment and installation upgrade. The workflow's latest follow-up removes automatic scope consent; it does not alter manifest permissions.
+
+The live acceptance gates in this document remain pending: fresh browser verification on a suitable test site, explicit organization-admin approval for Teamwork Graph scopes, and real linked-record verification.
+
+
+## Scoped dependency validation — 17 November 2026
+
+The separate draft dependency PR #2 is rebased directly onto application commit `ee32378a385666c4c86adb13a43d3f01ce610c31`. The current PR head `e3d6e6c943a18767aa13ee499c4f9165c3e59308` has **4,124 tests passed, 0 failed, 0 skipped**, strict `npm audit --audit-level=low` with **0 vulnerabilities**, successful `npm ls prosemirror-view glob minimatch --all`, syntax checks, frontend compilation and authenticated Forge CLI lint.
+
+- PR validation: [#44080696080](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080696080).
+- Authenticated push validation: [#44080687502](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080687502).
+- Two direct compatibility tests call the actual `@forge/manifest@13.9.0` `PackageValidator` with glob 14: one matching extra file and one missing pattern. Both passed.
+- The exact scoped dependency tree was subsequently deployed to Forge development as version **2.21.0** in [push run #44081294538](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081294538); Jira confirmed the existing development installation was already at the latest version. This was a controlled development deployment on the connected production Jira tenant, not a production/judge deployment. The workflow did not auto-consent to scopes.
+- The remaining semver compatibility question is explicit: `@forge/manifest@13.9.0` declares `glob@^13.0.0`, while the scoped override supplies 14.0.2. The direct consumer test reduces practical risk but does not constitute an Atlassian support statement.
+- The app branch itself still reports 9 high and 4 moderate audit findings until the reviewed dependency PR is integrated.
+
+
+## Scoped dependency tree development deployment — 17 November 2026
+
+- Exact dependency branch commit: `8f71a4280d5804336e2017c6843256f718af77e8`.
+- [Push workflow #44081294538](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081294538) passed 4,124 tests, dependency-tree validation, syntax/frontend checks and authenticated Forge CLI lint; it deployed TraceBack Context Engine **version 2.21.0** to Forge development.
+- The existing development installation on `251fa04c84.atlassian.net` was confirmed already at the latest version. The command did not use `--confirm-scopes`; no new scope consent was auto-approved.
+- This is not a production deployment, separate test tenant, or judge installation. Forge CLI warns the connected Jira site is a production tenant.
+- **Fresh browser acceptance of 2.21.0 remains pending.** No claim is made that the panel's live UI or Teamwork Graph data has been reverified after this deployment.
