@@ -1,5 +1,17 @@
 # TraceBack Context Engine — Acceptance Test Record
 
+## Current build snapshot — 17 November 2026
+
+> This snapshot supersedes older test counts and statuses in the historical record below.
+
+- Deployed Forge development version **2.21.0** does not include the Rovo Agent/MCP feature.
+- Experimental branch: `codegeist/rovo-agent-mcp`, current validated code commit `047214c29cf55e94768a9c49039776572ccf3d12` before this documentation-only refresh.
+- CI [run #44084902302](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44084902302): **4,126 tests passed, 0 failed, 0 skipped**; syntax checks, frontend compilation and Forge CLI lint passed.
+- The feature branch is based on the application branch, which still reports **9 high and 4 moderate** npm audit findings. The separate dependency-remediation PR #2 has a zero-finding audit but remains draft pending independent review and live acceptance.
+- No Rovo Agent deployment, Rovo chat invocation, MCP discovery, Rovo Studio invocation, or judge-site installation has been performed.
+- The four Teamwork Graph scopes remain unapproved on the connected Jira site. Live Teamwork Graph acceptance is still blocked on a dedicated test site and organization-admin approval.
+- No production deployment, scope consent, Marketplace publication, or final Devpost submission has been performed.
+
 This record must be completed against an actually deployed Forge app. A successful unit-test run is not a substitute for a live Jira installation.
 
 ## Environment under test
@@ -75,6 +87,23 @@ This record must be completed against an actually deployed Forge app. A successf
 - [ ] No uncalibrated probability/confidence percentage is shown.
 - [ ] No production action, rollback, feature-flag change, deployment trigger or Jira mutation is exposed.
 - [ ] The UI clearly distinguishes Jira links from Teamwork Graph external evidence.
+
+## Rovo Agent and MCP acceptance — pending
+
+- [ ] Deploy the feature branch to a dedicated Forge development environment after the dependency branch is reviewed.
+- [ ] Install the app in a dedicated Atlassian test organization.
+- [ ] Verify the TraceBack Investigator agent appears in Rovo chat.
+- [ ] Ask the agent to investigate a permitted Jira issue and confirm it invokes `get-traceback-context`.
+- [ ] Confirm the returned Jira issue fields and linked Jira work items match the source issue.
+- [ ] Confirm Teamwork Graph available, empty, partial, unavailable and truncated states are described accurately.
+- [ ] Confirm the agent cites source links where available and never claims root cause from a relationship or timestamp.
+- [ ] Confirm a malformed issue key is rejected before any Jira or Graph request.
+- [ ] Confirm a user without Jira permission cannot retrieve the issue through the Rovo action.
+- [ ] Confirm the action is read-only and exposes no create/update/delete/deploy/rollback/feature-flag tools.
+- [ ] In Rovo Studio, verify the TraceBack MCP tool is discoverable after site administrator authorization.
+- [ ] Invoke the MCP tool from a customer-created test agent using a permitted issue key.
+- [ ] Verify the MCP response is bounded, structured, and preserves source links and graph warnings.
+- [ ] Record the exact Rovo Agent and MCP version, test issue, site, account permissions, screenshots and results.
 
 ## Results
 
