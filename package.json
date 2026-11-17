@@ -17,5 +17,14 @@
     "@forge/react": "^12.5.0",
     "@forge/resolver": "^2.0.2",
     "react": "^18.2.0"
+  },
+  "overrides": {
+    "prosemirror-view": "1.42.9",
+    "@forge/manifest": {
+      "glob": {
+        ".": "14.0.2",
+        "minimatch": "11.0.8"
+      }
+    }
   }
 }
