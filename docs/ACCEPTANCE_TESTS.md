@@ -15,7 +15,7 @@ This record must be completed against an actually deployed Forge app. A successf
 ## Pre-installation gates
 
 - [x] App registered once; generated app ID is present in manifest.yml.
-- [x] Forge CLI lint and manifest/source validation completed successfully in development deployment workflow #6 and CI run #293.
+- [x] Forge CLI lint and manifest/source validation completed successfully in development deployment workflow #6 and CI run #299.
 - [x] Forge app deployed to the development environment in workflow #6.
 - [x] Development app installed on `251fa04c84.atlassian.net` by workflow #6. Note: this is the user's production Jira site, so this is a controlled development installation, not a separate test tenant.
 - [ ] Requested Jira and Teamwork Graph scopes are granted by an organization administrator.
@@ -81,12 +81,12 @@ This record must be completed against an actually deployed Forge app. A successf
 | Test | Result | Evidence / notes |
 | --- | --- | --- |
 | App registered | Pass | Forge workflow #6 registered app; app ID recorded in manifest. |
-| Forge lint | Pass | Forge CLI lint reported no issues in workflow #6 and CI run #293. |
-| Automated tests | Pass | CI run #293: 38 passed, 0 failed. |
-| Syntax checks | Pass | CI run #293: syntax checks passed. |
-| Frontend compilation | Pass | CI run #293: JSX bundle compiled successfully. |
-| Locked dependency install | Pass | CI run #293 used `npm ci` successfully. |
-| Dependency audit | Warning | CI run #293: 9 high, 4 moderate, 0 critical; unresolved upstream dependency findings. |
+| Forge lint | Pass | Forge CLI lint reported no issues in workflow #6 and CI run #299. |
+| Automated tests | Pass | CI run #299: 38 passed, 0 failed. |
+| Syntax checks | Pass | CI run #299: syntax checks passed. |
+| Frontend compilation | Pass | CI run #299: JSX bundle compiled successfully. |
+| Locked dependency install | Pass | CI run #299 used `npm ci` successfully. |
+| Dependency audit | Warning | CI run #299: 9 high, 4 moderate, 0 critical; unresolved upstream dependency findings. |
 | Forge deployment | Pass | Development deployment succeeded in workflow #6; not production. |
 | App installation | Pass | Development app installation completed on 251fa04c84.atlassian.net in workflow #6. |
 | Jira issue context | Pending | App panel has not been visually verified in Jira issue view. |
@@ -98,3 +98,12 @@ This record must be completed against an actually deployed Forge app. A successf
 | Source links | Partial | Jira API confirms DEMO-7 → DEMO-8 source record; panel link behavior not visually verified. |
 
 Do not change a result to Pass until the corresponding live action has been performed and recorded.
+
+
+## Follow-up verification — 17 November 2026
+
+- Latest branch CI [run #299](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44011667051) completed successfully on commit `4aa2af260c66306003b00975ddc359e2590137b6`.
+- The run confirms `npm ci`, **38/38 tests**, syntax checks, frontend compilation, and dependency-audit reporting. Forge CLI validation was **skipped** by the workflow condition on this run; do not treat it as a fresh Forge CLI lint result. The earlier successful Forge CLI lint remains recorded in development deployment workflow #6 and CI run #293.
+- Atlassian Jira connector read verified the available projects: `DEMO` and `TCE`; both are `service_desk` projects. `TCE` currently has zero issues. There is no Jira Software project or representative software-team incident available on this site for acceptance testing.
+- Atlassian Teamwork Graph connector query on `DEMO-7` returned no related goal, external deployment, or external pull-request relationships. A query on the `TCE` project ARI also returned no relationships. This is a connector-side observation only; it does not prove the Forge app's own Teamwork Graph scopes or UI are working.
+- No Jira issues, projects, relationships, permissions, or production settings were modified during this follow-up.
