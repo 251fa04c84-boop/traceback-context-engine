@@ -8,7 +8,7 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - A read-only resolver that reads the active Jira issue as the signed-in user.
 - Normalized Jira issue summary, description, status, type, priority, project, and timestamps.
 - Existing inward/outward Jira issue links, including relationship, status, type, priority and safe same-site issue links.
-- A Teamwork Graph client that retrieves up to 10 goals, external deployments, and pull requests linked to the Jira work item through Atlassian's curated GraphQL queries; pagination beyond the first page is not yet implemented.
+- A Teamwork Graph client that retrieves linked goals, external deployments, and pull requests through Atlassian's curated GraphQL queries, following cursors for up to five pages (125 records) per category and reporting when the safety cap is reached.
 - Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
 - Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists.
 - Suggested next checks prioritized from observed deployment, pull-request and linked Jira-work states/timestamps, with a rationale and source link where available; they are not root-cause findings.
