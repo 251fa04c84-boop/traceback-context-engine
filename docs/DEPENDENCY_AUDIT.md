@@ -1,3 +1,5 @@
+> **Exact-head refresh — 17 November 2026, 21:55 IST:** Current security branch head is `cc5998be9c0c6e24882e1b5a51d91b8399c46e2b`. Its exact-head push CI [#44124219779](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44124219779) passed **4,135 tests, 0 failed**, strict npm audit reported **0 vulnerabilities**, dependency-tree assertions passed, and authenticated Forge CLI lint passed. The branch remains isolated and draft; GitHub reports its PR not mergeable against the latest core branch. The `glob@14.0.2` override remains outside `@forge/manifest@13.9.0`'s declared `^13.0.0` range, so passing tests do not prove Atlassian compatibility. Do not merge or deploy this dependency tree until an independent compatibility review and fresh Forge deployment/acceptance are completed. The core branch continues to report 9 high and 4 moderate findings.
+
 ## Authoritative current snapshot — 17 November 2026
 
 > This section supersedes earlier historical statements below where they list `minimatch@11.0.1` as the current lockfile version or imply that an npm audit alone is sufficient.
