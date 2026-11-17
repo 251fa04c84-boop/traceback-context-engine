@@ -277,3 +277,12 @@ GitHub Actions PR validation [#44093045715](https://github.com/251fa04c84-boop/t
 - Forge CLI lint and development deployment were skipped on this PR event by workflow design; the exact `minimatch@11.0.8` tree has not yet been deployed or browser-accepted.
 
 The tested commit is the latest package/lockfile revision. Subsequent workflow-only commits were used to inspect the push/deployment guard and then restore its original condition; they did not change package versions, lockfile contents, application source, or manifest scopes. The branch remains draft. Do not merge until an authenticated Forge CLI validation and controlled development deployment/live acceptance of this exact lockfile have been completed, and the `glob@14.0.2` semver override has been independently accepted.
+
+
+### Advisory reachability review — 17 November 2026
+
+The GitHub-reviewed advisory [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4) / [OSV record](https://osv.dev/vulnerability/GHSA-3g3m-2fjr-6pw4) describes an availability flaw when a glob walk is cancelled through `AbortSignal` or `AbortSignal.timeout()`: traversal can continue after cancellation. The advisory identifies the patched release as `glob@14.0.2`; the current `@forge/manifest@13.9.0` metadata still declares `glob@^13.0.0` ([npm package record](https://www.npmjs.com/package/%40forge/manifest)).
+
+The inspected `PackageValidator` call site invokes the named asynchronous `glob(pattern)` API without passing an AbortSignal or timeout option. This means the specific cancellation-bypass precondition is not apparent in that observed call path. It is useful reachability evidence, not proof that every consumer path in the Forge toolchain is unaffected. The scoped override still uses the patched release, and the exact consumer integration tests still exercise matching and missing `extraFiles` patterns.
+
+Decision: keep the override scoped to `@forge/manifest`, preserve the cross-major caveat, and do not describe the combination as Atlassian-supported. No patched 13.x release is identified by the current advisory record. Revisit when Atlassian publishes a compatible `@forge/manifest` release or provides written compatibility guidance.
