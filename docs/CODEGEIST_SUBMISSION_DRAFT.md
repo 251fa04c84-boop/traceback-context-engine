@@ -36,7 +36,7 @@ The design is deliberately read-only. Jira and Teamwork Graph requests execute a
 
 A separate draft pull request, [PR #5](https://github.com/251fa04c84-boop/traceback-context-engine/pull/5), adds a read-only Rovo Agent and a Rovo MCP module that expose the same investigation action. The action validates issue keys, uses active Jira context when available, and performs reads as the invoking user.
 
-**This extension is still a draft candidate, not part of the accepted core release.** Its current head `ad0899703d58615462d0119fb34f5d610522a304` is synchronized with the latest core documentation and passed **4,146 automated tests**, syntax/frontend checks, and authenticated Forge CLI manifest lint (push CI [#44100957991](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100957991)). The feature-branch deployment step was skipped by design. Controlled test-site deployment, Rovo Agent discovery, MCP tool visibility, live action invocation, and permission-boundary tests remain outstanding. Rovo MCP is a Preview feature, not GA; external MCP use also requires administrator enablement, OAuth consent, and the invoking user's app consent entry for reliable `asUser()` calls.
+**This extension is still a draft candidate, not part of the accepted core release.** Its current head `18357a3433c17633f6295c9e6f8e21d39fd22d08` is synchronized with the latest core documentation and passed **4,146 automated tests** in both push CI [#44102276569](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102276569) and PR CI [#44102289313](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102289313); authenticated Forge CLI manifest lint passed on the push run. The feature-branch deployment step was skipped by design. Controlled test-site deployment, Rovo Agent discovery, MCP tool visibility, live action invocation, and permission-boundary tests remain outstanding. Rovo MCP is a Preview feature, not GA; external MCP use also requires administrator enablement, OAuth consent, and the invoking user's app consent entry for reliable `asUser()` calls.
 
 ## Why this is different
 
@@ -72,19 +72,19 @@ The official judging dimensions are equally weighted. This is an honest evidence
 
 These are prepared for the submission form, but **select a bonus only after the corresponding integration is deployed and demonstrated end-to-end**.
 
-### Best apps with Teamwork Graph integration — primary bonus candidate
+### Best Agents — preferred bonus candidate, pending live acceptance
 
-TraceBack consumes Atlassian Teamwork Graph context for the active Jira work item. It queries linked Atlassian goals, external deployments, and external pull requests, preserves the source record and relationship context, and makes permission-limited, partial, empty, and unavailable results explicit. The app uses this context to suggest evidence-backed follow-up checks without claiming that a linked record caused the incident. The integration is read-only and respects the invoking user's access.
+TraceBack Investigator is the preferred bonus candidate because the Forge app includes a reusable `rovo:agent` module and a read-only GET action. The agent is designed to assemble Jira and Teamwork Graph evidence, separate observed facts from missing/partial evidence and hypotheses, reject issue-key mismatches, and avoid unsupported root-cause claims or production mutations.
 
-**Acceptance evidence required before selecting:** [Insert the accepted test-site issue key, real linked record types, source URLs, and browser-test evidence. Do not claim this bonus if the four granular scopes remain unapproved or the app's GraphQL path has not returned genuine linked records.]
+**Acceptance evidence required before selecting:** [Deploy the candidate to a controlled test site; record agent discovery, a successful live action invocation, source links, and permission-boundary tests. Do not select the bonus based on manifest declarations or automated tests alone.]
 
-### Best Agents — conditional extension candidate
+### Best apps with Teamwork Graph integration — alternative candidate
 
 TraceBack Investigator is a read-only Rovo Agent that invokes a Forge GET action to assemble the same Jira and Teamwork Graph investigation snapshot. It distinguishes observed facts, missing or partial evidence, and hypotheses; rejects issue-key mismatches with the active Jira context; and never offers production mutations or unsupported root-cause claims.
 
-**Acceptance evidence required before selecting:** [Insert the Rovo agent discovery screenshot, live action invocation, returned evidence/source links, and permission-boundary test results after the rebased PR #5 is validated and deployed.]
+**Acceptance evidence required before selecting:** [Insert the Rovo agent discovery screenshot, live action invocation, returned evidence/source links, and permission-boundary test results after PR #5 is synchronized, validated, deployed and accepted.]
 
-### Best app with Atlassian MCP — conditional extension candidate
+### Best app with Atlassian MCP — alternative candidate
 
 TraceBack Tools exposes the same read-only investigation action through Forge's `rovo:mcp` module. It is designed for Rovo Studio custom agents and, after explicit administrator enablement and OAuth 2.1 consent, third-party MCP-compatible clients. External MCP calls remain user-scoped and require the invoking user's app consent entry for reliable `asUser()` execution.
 
@@ -139,12 +139,12 @@ Do not show synthetic records as real integrations. Do not record the final vide
 
 ## Automated validation snapshot — 17 November 2026
 
-These are separate branch results; do not add the counts together or imply that the dependency/Rovo candidate branches are already part of the core app release.
+These are separate branch results; do not add the counts together or imply that dependency/Rovo candidates are already part of the accepted core release.
 
 | Branch / purpose | Exact CI evidence | Test result | Security result | What CI did not prove |
 | --- | --- | --- | --- | --- |
-| `codegeist/forge-foundation` core app | Push [#44100446606](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100446606), head `388ec1a159e715e9dafe900bcb3eaba925662a8b` | 4,130 passed; 0 failed; 0 skipped | 9 high, 4 moderate, 0 critical remain | The run passed syntax/frontend checks, authenticated Forge CLI lint and Forge development deployment/install check; no fresh browser acceptance or Teamwork Graph live-data acceptance. |
-| `codegeist/rovo-investigator` candidate | Push [#44100957991](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100957991), head `ad0899703d58615462d0119fb34f5d610522a304` | 4,146 passed; 0 failed; 0 skipped | Same 9 high and 4 moderate findings as the core base | Forge CLI manifest lint passed; feature-branch deployment was skipped. Rovo discovery, MCP visibility, live action invocation and permission-boundary acceptance remain unverified. |
-| `security/glob-minimatch-experiment` candidate | Push [#603](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099908018) and PR [#604](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099917882), head `b42b792d771a134af24b2817f705f8d06700d2fe` | 4,134 passed; 0 failed; 0 skipped | Strict `npm audit --audit-level=low`: 0 vulnerabilities | Forge CLI lint passed on push; PR strict audit passed. `glob@14.0.2` still crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range; exact-tree live deployment/browser acceptance is outstanding. |
+| `codegeist/forge-foundation` core app / PR #1 | Push [#44103953125](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103953125), head `4a2b3c3bec8e7773463dd71a4ba483ba6da65e7b` | 4,130 passed; 0 failed; 0 skipped | 9 high, 4 moderate, 0 critical remain | Authenticated Forge CLI lint passed. The docs/workflow-only push correctly skipped redeployment; app code remains deployed as Forge development v2.44.0 from [#44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512). Fresh browser acceptance, judge install and live Teamwork Graph data remain unverified. |
+| `security/glob-minimatch-experiment` / PR #2 | Push [#44101730325](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44101730325) and PR [#44101743851](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44101743851), head `e290c6e8f76fcfde23c7f375f2ee3a77d18528d2` | 4,134 passed; 0 failed; 0 skipped | Strict audit: 0 vulnerabilities | Forge CLI validation passed on push; PR strict audit passed. `glob@14.0.2` is outside `@forge/manifest@13.9.0`'s declared `^13.0.0` range. Direct PackageValidator tests reduce but do not remove compatibility risk. |
+| `codegeist/rovo-investigator` / PR #5 | Push [#44102276569](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102276569) and PR [#44102289313](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102289313), head `18357a3433c17633f6295c9e6f8e21d39fd22d08` | 4,146 passed; 0 failed; 0 skipped | 9 high, 4 moderate, 0 critical remain | Forge CLI lint passed on push; feature deployment skipped. Rovo discovery, MCP visibility, live invocation and permission-boundary acceptance remain unverified. |
 
-The core run's deployment is Forge **development** on the connected production Jira tenant, not a production environment or judge installation. The dependency and Rovo branches remain separate and unmerged. The core app itself is not vulnerability-free; the zero-finding audit applies only to the isolated dependency candidate. Do not select a bonus or claim live integration acceptance until the required end-to-end evidence is recorded.
+The core deployment is Forge **development** on the connected production Jira tenant, not a production environment or judge installation. The dependency and Rovo branches remain separate and unmerged. The core app itself is not vulnerability-free; the zero-finding audit applies only to the isolated dependency candidate. Do not select a bonus or claim live integration acceptance until the required end-to-end evidence is recorded.
