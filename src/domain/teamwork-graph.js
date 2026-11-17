@@ -2,6 +2,7 @@
 
 const CLOUD_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ISSUE_ID_PATTERN = /^[1-9][0-9]{0,19}$/;
+const TRUNCATABLE_CATEGORIES = new Set(['goals', 'deployments', 'pullRequests']);
 
 function buildJiraIssueAri(cloudId, issueId) {
   const normalizedCloudId = typeof cloudId === 'string' ? cloudId.trim() : '';
@@ -55,7 +56,8 @@ function normalizeTeamworkGraphResponse(response) {
     goals: [],
     deployments: [],
     pullRequests: [],
-    warning: 'Connected Atlassian context is temporarily unavailable.'
+    warning: 'Connected Atlassian context is temporarily unavailable.',
+    truncatedCategories: []
   };
 
   if (!response || typeof response !== 'object' || !response.data || typeof response.data !== 'object') {
@@ -112,6 +114,9 @@ function normalizeTeamworkGraphResponse(response) {
 
   const hasItems = goals.length > 0 || deployments.length > 0 || pullRequests.length > 0;
   const hasErrors = Array.isArray(response.errors) && response.errors.length > 0;
+  const truncatedCategories = Array.isArray(response.truncatedCategories)
+    ? [...new Set(response.truncatedCategories.filter((category) => TRUNCATABLE_CATEGORIES.has(category)))]
+    : [];
 
   let status = 'empty';
   let warning = 'No linked deployment, pull request, or goal records were returned. This can mean no records are linked, an upstream connector is not configured, or required Teamwork Graph scopes or user permissions are missing.';
@@ -124,13 +129,24 @@ function normalizeTeamworkGraphResponse(response) {
     warning = '';
   }
 
+  if (truncatedCategories.length > 0) {
+    const labels = truncatedCategories.map((category) => ({
+      goals: 'goals',
+      deployments: 'deployments',
+      pullRequests: 'pull requests'
+    }[category]));
+    const paginationWarning = `Showing up to 125 linked records per category. Additional records may exist for: ${labels.join(', ')}.`;
+    warning = warning ? `${warning} ${paginationWarning}` : paginationWarning;
+  }
+
   return {
     source: 'Atlassian Teamwork Graph',
     status,
     goals,
     deployments,
     pullRequests,
-    warning
+    warning,
+    truncatedCategories
   };
 }
 
