@@ -3,16 +3,13 @@
 const Resolver = require('@forge/resolver');
 const api = require('@forge/api');
 const { route } = require('@forge/api');
-const { isValidIssueKey, normalizeIssue } = require('./domain/incident');
+const { resolveIssueKey, normalizeIssue } = require('./domain/incident');
 const { fetchTeamworkGraphEvidence } = require('./services/teamwork-graph');
 
 const resolver = new Resolver();
 
 resolver.define('getIssueContext', async ({ payload, context }) => {
-  const issueKey = String(payload?.issueKey || '').trim();
-  if (!isValidIssueKey(issueKey)) {
-    throw new Error('A valid Jira issue key is required.');
-  }
+  const issueKey = resolveIssueKey(payload?.issueKey, context);
 
   const response = await api.asUser().requestJira(
     route`/rest/api/3/issue/${issueKey}?fields=summary,description,status,priority,issuetype,created,updated,project,issuelinks`,
