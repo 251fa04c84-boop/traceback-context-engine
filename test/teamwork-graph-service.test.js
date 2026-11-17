@@ -10,9 +10,9 @@ test('queries all curated issue-context relationships as the current Atlassian u
   let requestCount = 0;
   const graphResponse = {
     data: {
-      jiraWorkItemGoals: { edges: [{ node: { id: 'goal-1', key: 'REL-1', name: 'Reliable releases', url: 'https://example.atlassian.net/goals/1' } }] },
-      jiraWorkItemLinkedExternalDeployments: { edges: [{ node: { id: 'deployment-1', displayName: 'Production rollout', state: 'SUCCESSFUL' } }] },
-      jiraWorkItemLinkedExternalPullRequests: { edges: [{ node: { id: 'pr-1', title: 'Handle checkout retries', status: 'MERGED' } }] }
+      jiraWorkItemGoals: { edges: [{ node: { id: 'goal-1', key: 'REL-1', name: 'Reliable releases', url: 'https://example.atlassian.net/goals/1' } }], pageInfo: { hasNextPage: false, endCursor: null } },
+      jiraWorkItemLinkedExternalDeployments: { edges: [{ node: { id: 'deployment-1', displayName: 'Production rollout', state: 'SUCCESSFUL' } }], pageInfo: { hasNextPage: false, endCursor: null } },
+      jiraWorkItemLinkedExternalPullRequests: { edges: [{ node: { id: 'pr-1', title: 'Handle checkout retries', status: 'MERGED' } }], pageInfo: { hasNextPage: false, endCursor: null } }
     }
   };
   const apiClient = {
