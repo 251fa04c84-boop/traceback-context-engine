@@ -50,7 +50,7 @@ test('1,000 generated hostile issue identifiers are rejected', async (t) => {
     `${index}.0`,
     `${index}e2`,
     `DEMO-${index}`,
-    ` ${index} `
+    ` ${index}x `
   ][index % 10];
 
   for (let index = 1; index <= CASES_PER_PROPERTY; index += 1) {
