@@ -1,0 +1,43 @@
+name: Isolated dependency remediation experiment
+
+on:
+  push:
+    branches: ["security/dependency-remediation"]
+
+permissions:
+  contents: read
+
+jobs:
+  patched-prosemirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Regenerate lockfile with the patched ProseMirror override
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Install exactly the regenerated lockfile
+        run: npm ci --ignore-scripts
+      - name: Verify every installed ProseMirror view version
+        run: |
+          npm ls prosemirror-view --all
+          node -e "const l=require('./package-lock.json'); const rows=Object.entries(l.packages).filter(([k])=>k.endsWith('node_modules/prosemirror-view')); if (!rows.length || rows.some(([,v])=>v.version !== '1.42.9')) { console.error(rows); process.exit(1); } console.log('All locked prosemirror-view copies are 1.42.9');"
+      - name: Capture dependency audit without hiding findings
+        shell: bash
+        run: |
+          npm audit --json > dependency-audit.json || true
+          node -e "const r=require('./dependency-audit.json'); console.log(JSON.stringify(r.metadata?.vulnerabilities || {}, null, 2));"
+      - run: npm test
+      - run: npm run lint:syntax
+      - run: npm run lint:frontend
+      - name: Preserve generated lockfile and audit as CI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: prosemirror-remediation-evidence
+          path: |
+            package-lock.json
+            dependency-audit.json
+          if-no-files-found: error
+          retention-days: 7
