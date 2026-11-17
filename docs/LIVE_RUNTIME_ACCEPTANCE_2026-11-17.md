@@ -137,3 +137,27 @@ This proves that the connected Teamwork Graph connector can resolve Jira work it
 - Production release, Marketplace publication and judge installation: **NOT DONE**.
 
 No Jira data, Graph relationships, scopes, or production settings were changed by these probes.
+
+
+## Backend Teamwork Graph transport hardening and latest redeployment — 17 November 2026
+
+A review of the current Atlassian Forge documentation identified two transport shapes that must not be conflated: the backend `@forge/api` method is documented with an HTTP response whose body is read with `.json()`, while the frontend bridge exposes a direct `{ data, errors }` result. The backend adapter now accepts both shapes, preserves GraphQL errors, marks non-2xx HTTP responses unavailable, and safely handles malformed JSON.
+
+Regression coverage added:
+- HTTP 200 response with a JSON GraphQL body.
+- HTTP 403 response with GraphQL errors.
+- Invalid JSON response body.
+- Existing direct `{ data, errors }` responses remain supported.
+
+CI and development deployment evidence:
+- Push run [#44067547334](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44067547334), commit `739cd08c96f747d7c72197b8ceb11156f44412cd`: **4,110 tests passed, 0 failed, 0 skipped**; syntax checks, frontend compilation, authenticated Forge CLI validation and development deployment/installation upgrade all succeeded.
+- Matching PR validation [#44067552155](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44067552155) completed successfully on the same commit.
+- Forge CLI reported **No issues found**; the development deployment completed and Jira confirmed the development installation was already at the latest version.
+- This deployment remains the development environment on `251fa04c84.atlassian.net`; Forge CLI explicitly warned that this is a production Jira site. No production environment deployment was performed.
+
+Acceptance boundary:
+- The new transport tests validate both documented response shapes at unit level; they do not prove the site's disabled Teamwork Graph scopes have been granted.
+- The last inspected Connected Apps authorization state still had all four granular Teamwork Graph scopes unchecked. No permission changes were made.
+- A fresh authenticated browser retest of the newly deployed panel is still not available. The earlier visual retest proves the resolver UI rendered before this transport patch, not after it.
+- Teamwork Graph goal/deployment/pull-request evidence remains **NOT ACCEPTED** until an organization administrator grants the scopes and a real linked-record issue is tested.
+- The app-branch dependency audit remains **OPEN** at 9 high, 4 moderate, 0 critical. The zero-finding dependency override experiment is isolated on a separate security branch and is not yet merged.
