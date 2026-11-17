@@ -54,7 +54,7 @@
 - Deployment shape: `id, title, state, environment, environmentType, provider, url, createdAt, updatedAt`.
 - Pull request shape: `id, title, displayId, status, provider, url, createdAt, updatedAt`.
 
-- [ ] Run `npm test` and verify the new tests fail because the module/functions are absent.
+- [x] Verify the new pagination tests fail before implementation: CI run [#210](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/43995561155) reported 31 pass / 2 fail; the adapter made only one request where two and five were expected.
 - [x] Implement ARI validation and safe HTTPS URL normalization.
 - [x] Normalize only whitelisted graph fields, including valid data when GraphQL errors are partial.
 - [x] Distinguish `available`, `empty`, `partial`, and `unavailable` graph states.
