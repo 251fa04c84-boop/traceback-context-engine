@@ -68,6 +68,10 @@ These are read-only scopes. An organization administrator must approve and grant
 
 See [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md) for the administrator scope request and the current test-site/production-tenant acceptance boundary.
 
+## Safe test-site deployment
+
+Use [docs/DEPLOY_TO_TEST_SITE_ANDROID.md](docs/DEPLOY_TO_TEST_SITE_ANDROID.md) to create a separate free Atlassian developer site and deploy the Rovo candidate to the isolated Forge staging environment from GitHub Actions. This does not touch the connected production Jira tenant and does not auto-consent to Teamwork Graph scopes.
+
 ## Deploy without Codespaces
 
 Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register, lint, deploy, and install through a consent-gated GitHub Actions workflow. It uses repository secrets; never put an Atlassian API token in chat or source control. See [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the evidence-safe under-five-minute demo storyboard; it is a plan, not a recorded video.
