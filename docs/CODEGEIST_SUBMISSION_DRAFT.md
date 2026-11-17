@@ -140,11 +140,11 @@ These are separate branch results; do not add the counts together or imply that 
 
 | Branch / purpose | CI run | Test result | Security result | What CI did not prove |
 | --- | --- | --- | --- | --- |
-| `codegeist/forge-foundation` core app | [#558](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092307770) | 4,130 passed; 0 failed; 0 skipped | 9 high and 4 moderate findings remain | PR CI skipped authenticated Forge CLI lint/deployment and live Teamwork Graph acceptance. |
-| `codegeist/rovo-investigator` candidate | [#562](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092333838) | 4,141 passed; 0 failed; 0 skipped | Same 9 high and 4 moderate findings | Forge CLI validation, deployment, Rovo discovery, MCP connectivity and live invocation remain unverified. |
-| `security/glob-minimatch-experiment` candidate | [#561](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092327279) | 4,134 passed; 0 failed; 0 skipped | `npm audit --audit-level=low`: 0 vulnerabilities | This is an isolated branch. The `glob@14.0.2` scoped override crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range and has not been independently accepted or deployed. |
+| `codegeist/forge-foundation` core app | [#564](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092737284) | 4,130 passed; 0 failed; 0 skipped | 9 high and 4 moderate findings remain | PR CI skipped authenticated Forge CLI lint/deployment and live Teamwork Graph acceptance. |
+| `codegeist/rovo-investigator` candidate | [#574](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44093400422) | 4,141 passed; 0 failed; 0 skipped | Same 9 high and 4 moderate findings | Forge CLI validation, deployment, Rovo discovery, MCP connectivity and live invocation remain unverified. |
+| `security/glob-minimatch-experiment` candidate | [#570](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44093045715) | 4,134 passed; 0 failed; 0 skipped | `npm audit --audit-level=low`: 0 vulnerabilities | This is an isolated branch. The `glob@14.0.2` scoped override crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range. The latest `minimatch@11.0.8` tree has not been freshly deployed or browser-accepted. |
 
-All three latest observed PR checks completed successfully. Passing automated tests is not evidence of live integrations, judge access, user impact, or Marketplace security approval.
+All three cited PR checks completed successfully on their tested code/dependency revisions. The security PR received a later documentation-only update after run #570; package.json and package-lock.json were unchanged, but that documentation-only head has not generated a separate CI run. Passing automated tests is not evidence of live integrations, judge access, user impact, or Marketplace security approval.
 
 ## Current verified limitations
 
