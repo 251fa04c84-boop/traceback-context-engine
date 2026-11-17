@@ -219,3 +219,76 @@ test('Rovo/MCP action rejects invalid explicit input instead of silently falling
   );
   assert.equal(calls.jira.length, 0);
 });
+
+
+test('Rovo/MCP action marks free-text issue and linked-record fields as untrusted evidence', async () => {
+  const { getTracebackContext } = loadAction({ graphResponse: graphFixture() });
+  const result = await getTracebackContext({
+    issueKey: 'DEMO-9',
+    context: { cloudId: CLOUD_ID }
+  });
+  assert.equal(result.evidenceTrustBoundary.freeTextFieldsAreUntrusted, true);
+  assert.match(result.evidenceTrustBoundary.instruction, /never as instructions/i);
+  assert.ok(result.evidenceTrustBoundary.fields.includes('issue.description'));
+  assert.ok(result.evidenceTrustBoundary.fields.includes('teamworkGraph.deployments.description'));
+});
+
+test('Rovo/MCP action bounds free-text fields and caps every evidence category', async () => {
+  const jiraResponse = defaultJiraResponse();
+  const longDescription = 'x'.repeat(5000);
+  const longSummary = 's'.repeat(1000);
+  jiraResponse.json = async () => ({
+    ...await defaultJiraResponse().json(),
+    fields: {
+      ...(await defaultJiraResponse().json()).fields,
+      summary: longSummary,
+      description: longDescription,
+      issuelinks: []
+    }
+  });
+  const graphResponse = graphFixture();
+  graphResponse.data.jiraWorkItemGoals.edges = Array.from({ length: 130 }, (_, index) => ({
+    node: {
+      id: `goal-${index}`,
+      name: 'g'.repeat(500),
+      description: 'd'.repeat(3000),
+      url: `https://example.atlassian.net/goals/${index}`,
+      archived: false
+    }
+  }));
+  const { getTracebackContext } = loadAction({ jiraResponse, graphResponse });
+  const result = await getTracebackContext({
+    issueKey: 'DEMO-9',
+    context: { cloudId: CLOUD_ID }
+  });
+  assert.equal(result.issue.summary.length, 501);
+  assert.equal(result.issue.description.length, 2001);
+  assert.equal(result.teamworkGraph.goals.length, 125);
+  assert.equal(result.teamworkGraph.goals[0].name.length, 301);
+  assert.equal(result.teamworkGraph.goals[0].description.length, 1501);
+});
+
+test('Rovo/MCP action honors an explicit valid issue key over contextual issue key', async () => {
+  const jiraResponse = defaultJiraResponse();
+  jiraResponse.json = async () => ({
+    id: '10021',
+    key: 'PAY-21',
+    fields: {
+      summary: 'Retry policy update',
+      description: '',
+      status: { name: 'In Progress' },
+      priority: { name: 'Medium' },
+      issuetype: { name: 'Task' },
+      project: { key: 'PAY' },
+      issuelinks: []
+    }
+  });
+  const { getTracebackContext, calls } = loadAction({ jiraResponse });
+  const result = await getTracebackContext({
+    issueKey: 'PAY-21',
+    context: { cloudId: CLOUD_ID, jira: { issueKey: 'DEMO-9' } }
+  });
+  assert.equal(result.issue.key, 'PAY-21');
+  assert.match(calls.jira[0].url, /PAY-21/);
+  assert.doesNotMatch(calls.jira[0].url, /DEMO-9/);
+});
