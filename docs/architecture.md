@@ -21,7 +21,7 @@ The current graph integration uses Atlassian's published curated queries:
 - `jiraWorkItemLinkedExternalDeployments(id: $id)`
 - `jiraWorkItemLinkedExternalPullRequests(id: $id)`
 
-These curated queries avoid custom Cypher registration. The app requests only the granular read scopes required for the start and result object types:
+These curated queries avoid custom Cypher registration. The current request fetches the first 10 records from each connection and does not yet paginate. The app requests only the granular read scopes required for the start and result object types:
 - `read:graph:issue:jira`
 - `read:graph:goal:atlassian`
 - `read:graph:deployment:external`
