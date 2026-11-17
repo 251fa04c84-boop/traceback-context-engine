@@ -59,7 +59,7 @@ jobs:
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
       - name: Validate Forge app with CLI when registered
-        if: ${{ github.event_name != 'pull_request' || (secrets.FORGE_EMAIL != '' && secrets.FORGE_API_TOKEN != '') }}
+        if: github.event_name != 'pull_request'
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
