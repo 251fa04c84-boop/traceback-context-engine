@@ -72,7 +72,9 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] Include the Teamwork Graph bonus-prize write-up.
 - [ ] Submit the entire form before the official deadline; save Devpost's submission receipt and final snapshot.
 
-## Five-minute demo outline
+## Demo outline
+
+The detailed, evidence-safe 3:15–3:45 storyboard is in [docs/DEMO_SCRIPT.md](DEMO_SCRIPT.md). Record only after live acceptance passes; the public YouTube video must remain under five minutes.
 
 1. **Problem (0:00–0:35):** incident investigations are fragmented across Jira work, delivery records and goals.
 2. **Jira issue (0:35–1:10):** open a real issue and show its title, status, priority and description.
