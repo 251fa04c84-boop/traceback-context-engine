@@ -33,6 +33,7 @@ The action reuses the app's existing Jira and Teamwork Graph read services. Jira
 - Atlassian's current Forge reference marks `rovo:mcp` as **Preview** (Oct 29, 2026), fully supported for early adopters in production, but still under active development and potentially subject to shorter deprecation windows. It is not described as GA.
 - A site administrator must have Rovo enabled for users to discover and use the Rovo Agent.
 - External MCP exposure is disabled by default. A site or organization administrator must explicitly enable the app's MCP tools in Atlassian Administration for each app installation/site. A connected external client then uses Atlassian OAuth 2.1 consent.
+- For third-party MCP clients, Atlassian documents a further `asUser()` prerequisite: the invoking user needs an app consent entry for this app in Connected apps. Without it, Jira `asUser()` requests can fail. Keep the action user-scoped; do not silently switch to `asApp()` to hide this authorization limitation. Verify the consent path on the target test site before claiming external MCP acceptance.
 - App-based agents and tools are limited to data in the workspace where the app is installed. Multi-product access requires appropriate Forge app compatibility.
 - The existing four granular Teamwork Graph scopes remain unchanged and still require relevant organization-admin approval.
 - This branch is not deployed. Agent discovery, MCP connection, live action invocation, and Teamwork Graph behavior have not yet been browser-accepted.
