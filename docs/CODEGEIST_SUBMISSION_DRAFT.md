@@ -2,6 +2,10 @@
 
 > **Status: draft only.** This copy is prepared from the current repository implementation and recorded acceptance evidence. Do not submit it as final until the release gates at the end are complete. Replace bracketed fields only with verified facts. Never present the Rovo/MCP branch as live until it has been deployed and accepted.
 
+## Official submission timing
+
+The official Devpost rules list the submission deadline as **22 December 2026 at 12:00 p.m. Pacific Time** (20:00 UTC / **23 December 2026 at 1:30 a.m. India Standard Time**). Confirm the live Devpost portal before submitting: https://codegeist2026.devpost.com/rules.
+
 ## Suggested category
 
 **Apps for Software Teams**
