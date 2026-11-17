@@ -6,7 +6,6 @@ modules:
         function: resolver
       render: native
       title: TraceBack Context Engine
-      description: Evidence-backed incident context for this Jira issue.
       label: Investigate
   function:
     - key: resolver
