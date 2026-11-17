@@ -16,7 +16,7 @@ Official sources: [Devpost listing](https://codegeist2026.devpost.com/) · [Offi
 - **Payment:** Winners are subject to identity, eligibility and role verification. Required Forms are due within 10 business days after they are sent. Cash prizes are delivered within 60 days after the Sponsor/Devpost receives completed Required Forms. Winners are responsible for applicable taxes and wire/foreign-exchange fees.
 - **Intellectual property and publicity:** The entrant retains ownership of the submission and grants the Sponsor a fully paid, non-exclusive license to use it for judging. The publicity rights in the rules apply during the Hackathon Period and for three years afterward. Ensure all included code, libraries, images, audio and other assets are original or used under compatible licenses.
 
-These are advertised awards, not a guarantee of winning or payment. Re-read the official rules in case the Sponsor or Devpost has amended them before you submit.
+These are advertised awards, not a guarantee of winning or payment. Historical cross-check: Atlassian published official Codegeist 2025 and 2024 winner announcements ([2025](https://www.atlassian.com/blog/development/meet-the-winners-of-codegeist-2025-atlassian-williams-racing-edition), [2024](https://www.atlassian.com/blog/developers/codegeist-2024-winners)), but those announcements do not prove that individual bank transfers occurred. I have not found independent public proof of past payouts; treat the 2026 cash as conditional rules-based awards, not guaranteed income. Re-read the official rules in case the Sponsor or Devpost has amended them before you submit.
 
 ## Competition terms verified
 
@@ -24,6 +24,8 @@ These are advertised awards, not a guarantee of winning or payment. Re-read the 
 - [ ] Confirm the current official rules again immediately before submitting; rules may be amended.
 - [ ] Record the entrant name and individual/team status accurately.
 - [ ] Ensure all code and assets submitted are original work or used under compatible licenses.
+- [x] Confirm the repository was created on 16 November 2026, after the 27 October 2026 submission-period start; the Forge manifest and module are present. Keep the project original and do not rely on any previously published project version.
+- [ ] Confirm the entrant has clicked **Join Hackathon** on Devpost; creating a project repository alone does not register the entrant.
 - [ ] Keep a copy of the final submitted version and evidence of receipt.
 
 ## Product and Forge readiness
@@ -62,8 +64,9 @@ These are advertised awards, not a guarantee of winning or payment. Re-read the 
 - [ ] Provide public repository link if intended for reviewers.
 - [ ] Provide the working Forge judge installation link.
 - [ ] Provide complete setup, installation, scope-grant and testing instructions.
-- [ ] Provide public YouTube video link under five minutes.
+- [ ] Provide a public YouTube video under five minutes; judges are not required to watch beyond five minutes.
 - [ ] Ensure video shows the working app on the actual Atlassian UI and demonstrates real end-to-end behavior.
+- [ ] Use only original or properly licensed audio, visuals and marks; the rules prohibit third-party trademarks and copyrighted music/material unless permission is held.
 - [ ] Explain how the app meets the main technology requirement.
 - [ ] Include the Teamwork Graph bonus-prize write-up.
 - [ ] Submit the entire form before the official deadline; save Devpost's submission receipt and final snapshot.
