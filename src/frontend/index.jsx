@@ -24,6 +24,19 @@ const EMPTY_GRAPH = {
   warning: 'Teamwork Graph evidence was not returned.'
 };
 
+function noEvidenceMessage(graph, category) {
+  if (graph.status === 'unavailable') {
+    return `${category} could not be loaded because Teamwork Graph was unavailable. Check app scopes, site configuration, and current-user access.`;
+  }
+  if (graph.status === 'partial') {
+    return `No ${category.toLowerCase()} records were returned in the partial response. Other records may be missing; check the warning and source permissions.`;
+  }
+  if (graph.status === 'empty') {
+    return `No linked ${category.toLowerCase()} records were returned for this issue to the current user. This does not prove no related evidence exists elsewhere.`;
+  }
+  return `No linked ${category.toLowerCase()} records were returned for this issue.`;
+}
+
 function SourceLink({ url, label }) {
   if (!url) return <Text>{label} (source URL unavailable)</Text>;
   return <Link href={url} openNewTab>{label}</Link>;
@@ -164,7 +177,7 @@ function App() {
             <SourceLink url={goal.url} label="Open goal" />
             {goal.archived ? <Badge appearance="default">Archived</Badge> : null}
           </Stack>
-        )) : <Text>No linked goal records were returned.</Text>}
+        )) : <Text>{noEvidenceMessage(graph, 'Goal')}</Text>}
       </Stack>
 
       <Stack space="space.100">
@@ -181,7 +194,7 @@ function App() {
             {deployment.createdAt ? <Text>Created: {deployment.createdAt}</Text> : null}
             <SourceLink url={deployment.url} label="Open deployment" />
           </Stack>
-        )) : <Text>No linked deployment records were returned.</Text>}
+        )) : <Text>{noEvidenceMessage(graph, 'Deployment')}</Text>}
       </Stack>
 
       <Stack space="space.100">
@@ -197,7 +210,7 @@ function App() {
             <Text>{pullRequest.provider}{pullRequest.createdAt ? ` · ${pullRequest.createdAt}` : ''}</Text>
             <SourceLink url={pullRequest.url} label="Open pull request" />
           </Stack>
-        )) : <Text>No linked pull-request records were returned.</Text>}
+        )) : <Text>{noEvidenceMessage(graph, 'Pull request')}</Text>}
       </Stack>
 
       <Button appearance="subtle" onClick={() => loadIssue(issueKey)}>Refresh issue and evidence</Button>
