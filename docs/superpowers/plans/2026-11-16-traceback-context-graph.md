@@ -37,9 +37,9 @@
 - Create: `docs/superpowers/specs/2026-11-16-traceback-codegeist-design.md`
 - Create: `docs/superpowers/plans/2026-11-16-traceback-context-graph.md`
 
-- [ ] Replace issue-panel references with issue-context references.
-- [ ] Document the Teamwork Graph evidence objective and explicit non-goals.
-- [ ] State that Forge registration, deployment, installation, and live acceptance testing remain incomplete.
+- [x] Replace issue-panel references with issue-context references.
+- [x] Document the Teamwork Graph evidence objective and explicit non-goals.
+- [x] State that Forge registration, deployment, installation, and live acceptance testing remain incomplete.
 
 ### Task 2: Implement the Teamwork Graph evidence model from the existing RED tests
 
@@ -55,10 +55,10 @@
 - Pull request shape: `id, title, displayId, status, provider, url, createdAt, updatedAt`.
 
 - [ ] Run `npm test` and verify the new tests fail because the module/functions are absent.
-- [ ] Implement ARI validation and safe HTTPS URL normalization.
-- [ ] Normalize only whitelisted graph fields, including valid data when GraphQL errors are partial.
-- [ ] Distinguish `available`, `empty`, `partial`, and `unavailable` graph states.
-- [ ] Run the full `npm test` suite and verify all tests pass.
+- [x] Implement ARI validation and safe HTTPS URL normalization.
+- [x] Normalize only whitelisted graph fields, including valid data when GraphQL errors are partial.
+- [x] Distinguish `available`, `empty`, `partial`, and `unavailable` graph states.
+- [x] Run the full `npm test` suite and verify all tests pass.
 
 ### Task 3: Add the user-scoped Teamwork Graph adapter
 
@@ -72,25 +72,25 @@
 - The adapter builds the Jira ARI only from the fetched Jira issue ID and Forge invocation context.
 - Resolver response adds `teamworkGraph` without removing valid normalized Jira fields.
 
-- [ ] Add the three curated GraphQL queries with exact, whitelisted fields.
-- [ ] Add the four minimum granular graph scopes.
-- [ ] Keep the Jira result available if Graph access fails; catch and normalize Graph errors.
-- [ ] Add adapter tests using an injected API client so tests do not need a live Atlassian site.
-- [ ] Keep Jira-linked work items distinct from external operational evidence.
-- [ ] Run the full test suite.
+- [x] Add the three curated GraphQL queries with exact, whitelisted fields.
+- [x] Add the four minimum granular graph scopes.
+- [x] Keep the Jira result available if Graph access fails; catch and normalize Graph errors.
+- [x] Add adapter tests using an injected API client so tests do not need a live Atlassian site.
+- [x] Keep Jira-linked work items distinct from external operational evidence.
+- [x] Run the full test suite.
 
 ### Task 4: Render Jira links and Teamwork Graph evidence in the issue-context sidebar
 
 **Files:**
 - Modify: `src/frontend/index.jsx`
 
-- [ ] Display existing inward/outward Jira issue links with safe relative links, relation labels, status, type, and priority.
-- [ ] Display the Teamwork Graph availability state and warning text.
-- [ ] Render linked goals with title, key, and safe HTTPS source link.
-- [ ] Render deployments with state, environment, provider, timestamp, and safe HTTPS link.
-- [ ] Render pull requests with title, status, provider, timestamp, and safe HTTPS link.
-- [ ] Show explicit empty/unavailable states without discarding Jira issue details.
-- [ ] Keep the layout compact for Jira issue-context sidebars.
+- [x] Display existing inward/outward Jira issue links with safe relative links, relation labels, status, type, and priority.
+- [x] Display the Teamwork Graph availability state and warning text.
+- [x] Render linked goals with title, key, and safe HTTPS source link.
+- [x] Render deployments with state, environment, provider, timestamp, and safe HTTPS link.
+- [x] Render pull requests with title, status, provider, timestamp, and safe HTTPS link.
+- [x] Show explicit empty/unavailable states without discarding Jira issue details.
+- [x] Keep the layout compact for Jira issue-context sidebars.
 
 ### Task 5: Evidence-backed investigation leads
 
@@ -99,24 +99,24 @@
 - Create: `test/investigation.test.js`
 - Modify: `src/frontend/index.jsx`
 
-- [ ] Prioritize failed/in-progress deployments, recent production deployments, open/recently merged pull requests, unresolved Jira work, archived goals, and missing graph connectivity.
-- [ ] Include rationale, priority, and a source link when available.
-- [ ] Explicitly state that a linked record or time proximity does not establish causation.
-- [ ] Ignore invalid timestamps and never fabricate source evidence.
-- [ ] Display the leads in a distinct “Suggested next checks” section.
-- [ ] Run the full suite and JSX compilation.
+- [x] Prioritize failed/in-progress deployments, recent production deployments, open/recently merged pull requests, unresolved Jira work, archived goals, and missing graph connectivity.
+- [x] Include rationale, priority, and a source link when available.
+- [x] Explicitly state that a linked record or time proximity does not establish causation.
+- [x] Ignore invalid timestamps and never fabricate source evidence.
+- [x] Display the leads in a distinct “Suggested next checks” section.
+- [x] Run the full suite and JSX compilation.
 
 ### Task 6: CI, dependency and platform validation
 
 **Files:**
 - Modify: `.github/workflows/ci.yml` if needed.
 
-- [ ] Run `npm install`.
-- [ ] Run `npm test`.
-- [ ] Run `npm run lint:syntax`.
-- [ ] Run Forge CLI lint with the pinned CLI version; if app registration is required, document the blocker instead of claiming lint passed.
-- [ ] Inspect npm audit findings; do not use `npm audit fix --force`.
-- [ ] Re-check GitHub Actions logs for the latest commit SHA.
+- [x] Run `npm install`.
+- [x] Run `npm test`.
+- [x] Run `npm run lint:syntax`.
+- [ ] Run Forge CLI lint with the pinned CLI version; blocked until the app is registered and `app.id` exists in `manifest.yml`.
+- [x] Inspect npm audit findings; do not use `npm audit fix --force`.
+- [x] Re-check GitHub Actions logs for the latest commit SHA.
 
 ### Task 7: Judge readiness and submission evidence
 
@@ -125,16 +125,16 @@
 - Create: `docs/ACCEPTANCE_TESTS.md`
 - Create: `docs/SUBMISSION_CHECKLIST.md`
 
-- [ ] Record the live Jira test issue, site, user permissions, UI view mode, and observed results.
-- [ ] Record Teamwork Graph scope grants, connector availability, and whether linked PR/deployment/goal records actually returned.
-- [ ] Prepare a concise under-five-minute demo script with no unverified claims.
-- [ ] Keep the app draft until Forge deployment and installation are verified.
+- [ ] Record the live Jira test issue, site, user permissions, UI view mode, and observed results (blocked until development installation).
+- [ ] Record Teamwork Graph scope grants, connector availability, and whether linked PR/deployment/goal records actually returned (requires organization-admin approval and live install).
+- [x] Prepare a concise under-five-minute demo script with no unverified claims.
+- [x] Keep the app draft until Forge deployment and installation are verified.
 
 ## Self-review checklist
 
-- [ ] Implementation matches the design goals and does not invent operational evidence.
-- [ ] Every graph field rendered by the UI is explicitly selected and whitelisted.
-- [ ] Permission failures and empty graph results are distinguishable.
-- [ ] ARI and source-link validation is covered.
-- [ ] The Jira resolver remains read-only and uses current-user authorization.
-- [ ] The README and submission claims match what was actually deployed and tested.
+- [x] Implementation matches the design goals and does not invent operational evidence.
+- [x] Every graph field rendered by the UI is explicitly selected and whitelisted.
+- [x] Empty/unavailable states are explicit; the UI does not claim it can distinguish an unlinked issue from a missing connector or ungranted scope when the API omits inaccessible records without an error.
+- [x] ARI and source-link validation is covered.
+- [x] The Jira resolver remains read-only and uses current-user authorization.
+- [x] The README and submission claims match what was actually deployed and tested.
