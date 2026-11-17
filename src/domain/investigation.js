@@ -61,8 +61,8 @@ function buildInvestigationLeads({
         sourceId: deployment.id || deployment.title || 'failed-deployment',
         sourceLabel: deployment.title || 'Linked deployment',
         title: 'Inspect failed deployment',
-        priority: 'high',
-        rationale: 'The linked deployment record reports FAILED. Inspect its source record; this status does not establish that the deployment caused the Jira issue.',
+        priority: production ? 'high' : 'medium',
+        rationale: 'The linked ' + (production ? 'production ' : '') + 'deployment record reports FAILED. Inspect its source record; this status does not establish that the deployment caused the Jira issue.',
         url: deployment.url || ''
       });
     } else if (state === 'IN_PROGRESS') {
