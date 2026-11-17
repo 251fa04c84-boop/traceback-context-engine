@@ -14,6 +14,17 @@ This record must be completed against an actually deployed Forge app. A successf
 - Do not grant the four Teamwork Graph scopes on the connected production tenant without explicit organization/security-owner approval. Do not create synthetic graph records or use production customer data for acceptance.
 
 
+### Exact-head validation refresh — 17 November 2026
+
+The following latest branch heads and CI runs were rechecked directly against GitHub Actions. They are independent candidates and their test counts must not be added together:
+
+- Core / PR #1 head `aa8fd3c5c1612d98dac8edfbf220f3aa0940dfa7`: push [#44116688179](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44116688179) and PR [#44116699650](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44116699650) both succeeded with **4,131 passed, 0 failed**. The authenticated Forge CLI lint reported `No issues found`. The core lockfile audit still reports **9 high, 4 moderate, 0 critical**.
+- Dependency candidate / PR #2 head `56a6c12e62d324bc4c5a6462acbec04ff90b1200`: push [#44117469209](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44117469209) and PR [#44117483740](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44117483740) both succeeded with **4,135 passed, 0 failed**; strict `npm audit --audit-level=low` reported **0 vulnerabilities**, and authenticated Forge CLI lint reported `No issues found` on push. This candidate remains draft because its scoped `glob@14.0.2` override crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range; the passing tests and CLI lint do not replace independent compatibility approval.
+- Rovo/MCP candidate / PR #5 head `8f3b840baaba80c118781291fbf4cad292c1b6ed`: push [#44116281155](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44116281155) and PR [#44116292798](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44116292798) both succeeded with **4,147 passed, 0 failed**; authenticated Forge CLI lint reported `No issues found` on push. The core dependency findings remain on this branch; the zero-finding audit applies only to PR #2.
+
+No fresh browser acceptance, isolated developer-site installation, Teamwork Graph scope approval, live Rovo discovery/invocation, or judge installation was completed by these CI runs. All three PRs remain draft and unmerged. The latest development deployment remains version 2.44.0; CI success is not a new deployment.
+
+
 ## Environment under test
 
 - Forge app ID: **`ari:cloud:ecosystem::app/b7cbb6a8-de78-4ba8-91fb-48733c1c2157`**
