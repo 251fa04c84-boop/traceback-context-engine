@@ -134,3 +134,29 @@ test('does not infer time proximity when issue or evidence timestamps are invali
 
   assert.deepEqual(leads, []);
 });
+
+test('does not assign production-level priority to a failed non-production deployment', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00Z' },
+    teamworkGraph: {
+      status: 'available',
+      deployments: [{
+        id: 'deployment-staging',
+        title: 'Staging rollout',
+        state: 'FAILED',
+        environment: 'Staging',
+        environmentType: 'STAGING',
+        provider: 'GitHub',
+        url: 'https://github.com/acme/service/deployments/staging-1',
+        createdAt: '2026-11-16T09:30:00Z'
+      }],
+      pullRequests: [],
+      goals: []
+    }
+  });
+
+  assert.equal(leads.length, 1);
+  assert.equal(leads[0].priority, 'medium');
+  assert.match(leads[0].rationale, /FAILED/);
+  assert.match(leads[0].rationale, /does not establish/i);
+});
