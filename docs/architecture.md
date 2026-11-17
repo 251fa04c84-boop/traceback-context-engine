@@ -21,13 +21,13 @@ The current graph integration uses Atlassian's published curated queries:
 - `jiraWorkItemLinkedExternalDeployments(id: $id)`
 - `jiraWorkItemLinkedExternalPullRequests(id: $id)`
 
-These curated queries avoid custom Cypher registration. The current request fetches the first 10 records from each connection and does not yet paginate. The app requests only the granular read scopes required for the start and result object types:
+These curated queries avoid custom Cypher registration. The adapter follows Relay cursors, requesting 25 records per page and up to five pages (125 records) per category. It skips completed categories, deduplicates nodes by immutable ID, preserves partial results after request errors, and reports when pagination cannot complete. The app requests only the granular read scopes required for the start and result object types:
 - `read:graph:issue:jira`
 - `read:graph:goal:atlassian`
 - `read:graph:deployment:external`
 - `read:graph:pull-request:external`
 
-Teamwork Graph is a Forge Preview feature. Results are permission-filtered for the signed-in user and can be absent when a site administrator has not granted a scope, an external connector is not configured, or the Jira issue has no relevant link.
+Teamwork Graph is a Forge Preview feature. Results are permission-filtered for the signed-in user and can be absent when an organization administrator has not granted a scope, an external connector is not configured, or the Jira issue has no relevant link. Atlassian requires organization-admin installation for Teamwork Graph scopes because they can expose organization-wide data.
 
 ## Trust model
 
