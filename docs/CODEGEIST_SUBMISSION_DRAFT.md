@@ -68,6 +68,30 @@ The official judging dimensions are equally weighted. This is an honest evidence
 - Node.js 24 runtime.
 - Bounded asynchronous requests and pagination, deterministic normalization and ranking, source URL validation, and automated Node.js tests.
 
+## Conditional bonus-prize write-ups
+
+These are prepared for the submission form, but **select a bonus only after the corresponding integration is deployed and demonstrated end-to-end**.
+
+### Best apps with Teamwork Graph integration — primary bonus candidate
+
+TraceBack consumes Atlassian Teamwork Graph context for the active Jira work item. It queries linked Atlassian goals, external deployments, and external pull requests, preserves the source record and relationship context, and makes permission-limited, partial, empty, and unavailable results explicit. The app uses this context to suggest evidence-backed follow-up checks without claiming that a linked record caused the incident. The integration is read-only and respects the invoking user's access.
+
+**Acceptance evidence required before selecting:** [Insert the accepted test-site issue key, real linked record types, source URLs, and browser-test evidence. Do not claim this bonus if the four granular scopes remain unapproved or the app's GraphQL path has not returned genuine linked records.]
+
+### Best Agents — conditional extension candidate
+
+TraceBack Investigator is a read-only Rovo Agent that invokes a Forge GET action to assemble the same Jira and Teamwork Graph investigation snapshot. It distinguishes observed facts, missing or partial evidence, and hypotheses; rejects issue-key mismatches with the active Jira context; and never offers production mutations or unsupported root-cause claims.
+
+**Acceptance evidence required before selecting:** [Insert the Rovo agent discovery screenshot, live action invocation, returned evidence/source links, and permission-boundary test results after the rebased PR #5 is validated and deployed.]
+
+### Best app with Atlassian MCP — conditional extension candidate
+
+TraceBack Tools exposes the same read-only investigation action through Forge's `rovo:mcp` module. It is designed for Rovo Studio custom agents and, after explicit administrator enablement and OAuth 2.1 consent, third-party MCP-compatible clients. External MCP calls remain user-scoped and require the invoking user's app consent entry for reliable `asUser()` execution.
+
+**Acceptance evidence required before selecting:** [Insert the enabled MCP tool screenshot, OAuth consent result, successful external client invocation, and evidence/permission checks. Rovo MCP is Preview, not GA; disclose this clearly.]
+
+**Not currently targeted:** Best Marketplace published app. TraceBack is not yet published or submitted for Marketplace listing.
+
 ## Impact statement
 
 **Do not insert an unmeasured time-saved or incident-reduction percentage.** The current repository evidence establishes implementation and automated validation, not a measured customer outcome.
