@@ -40,7 +40,7 @@ Never put the token in a normal repository variable or commit it to GitHub. Use 
 ## 4. What the workflow does
 
 - Verifies the two repository secrets are present.
-- Installs the Node 24 project dependencies.
+- Installs the Node 24 project dependencies and commits the generated `package-lock.json` so later CI runs can use reproducible `npm ci` installs.
 - Registers the Forge app only when `manifest.yml` has no `app.id`.
 - Immediately commits the generated app ID back to `codegeist/forge-foundation`.
 - Runs `forge lint`.
