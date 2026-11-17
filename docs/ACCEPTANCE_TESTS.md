@@ -163,7 +163,7 @@ This snapshot supersedes older historical status tables above where they conflic
 ### Current live acceptance state
 
 - The existing development installation is on `251fa04c84.atlassian.net`, which is a production Jira tenant. It is a controlled development installation, not a separate test organization.
-- The latest Forge development deployment (2.16.0) has **not** received a fresh browser/UI retest. An earlier browser retest verified that the panel rendered after the resolver constructor fix, but that is not a retest of the latest backend transport and dependency deployment.
+- The earlier Forge development deployment (2.16.0) was superseded by the scoped dependency deployment (2.21.0). Version 2.21.0 has **not** received a fresh browser/UI retest. An earlier browser retest verified that the panel rendered after the resolver constructor fix, but that is not a retest of the current build.
 - The four Teamwork Graph scopes remain unapproved/unchecked in the previously inspected Connected Apps authorization state: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`.
 - No real linked Teamwork Graph goal, deployment or pull-request record has been accepted through the Forge app's own live GraphQL path. The connected Atlassian Graph connector's Jira-to-Jira relationship probe is not a substitute for this app runtime test.
 - No Jira data, relationships, permissions, scopes, or production Forge settings were changed by the dependency remediation or development deployment.
@@ -173,7 +173,7 @@ This snapshot supersedes older historical status tables above where they conflic
 
 1. Use a separate Atlassian test organization (preferred) with a real Jira Software project and representative, non-sensitive test data.
 2. Obtain explicit organization-administrator approval for the four read-only Teamwork Graph scopes and connect the relevant external provider(s).
-3. Reopen a real linked Jira issue in the new issue view and visually verify the deployed 2.16.0 panel, issue context, related Jira work, real Teamwork Graph records, pagination, source links and empty/partial/unavailable states.
+3. Reopen a real linked Jira issue in the new issue view and visually verify the deployed 2.21.0 panel, issue context, related Jira work, real Teamwork Graph records, pagination, source links and empty/partial/unavailable states.
 4. Capture the browser evidence and record the exact test issue and returned record types without copying secrets or private customer data.
 5. Independently review the cross-major `glob`/`minimatch` overrides in draft PR #2 before merging it into the application branch. The successful development deployment is compatibility evidence, not an Atlassian support statement.
 6. After the dependency PR is reviewed and merged, rerun the final base-branch CI/deploy checks and confirm the installed development version.
@@ -226,7 +226,7 @@ References:
 - Real goal/deployment/pull-request evidence for the app: **NOT VERIFIED**.
 - Forge app Teamwork Graph scope approval: **NOT VERIFIED / ADMIN ACTION REQUIRED**.
 - Representative Jira Software test issue: **NOT AVAILABLE** on the one accessible site.
-- Fresh browser acceptance of Forge development version 2.16.0: **PENDING**.
+- Fresh browser acceptance of Forge development version 2.21.0: **PENDING**.
 - No Jira issue, project, relationship, permission, scope, or production setting was modified by these checks.
 
 

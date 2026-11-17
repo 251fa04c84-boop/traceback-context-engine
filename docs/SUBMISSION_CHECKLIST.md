@@ -2,7 +2,7 @@
 
 **Target category:** Apps for Software Teams  
 **Potential bonus prize:** Best apps with Teamwork Graph integration — not yet selected; select only after live data acceptance  
-**Current state:** Development draft; not ready to submit. The app is registered and deployed to Forge development (version 2.16.0 on the isolated dependency branch), but fresh live acceptance, admin scope approval, judge sharing, and the public demo remain incomplete.
+**Current state:** Development draft; not ready to submit. The app is registered and the scoped dependency tree is deployed to Forge development (version 2.21.0), but fresh live acceptance, admin scope approval, judge sharing, and the public demo remain incomplete.
 
 ## Official Codegeist 2026 terms (recheck before final submission)
 
@@ -33,7 +33,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [x] Product meaningfully addresses the software-team theme: understanding work, delivery and linked context from a Jira issue.
 - [x] App registered in Forge exactly once.
 - [x] Current manifest and source pass Forge CLI lint (`No issues found`).
-- [x] App deployed to a working Forge development environment; patched dependency branch deployed as app version 2.16.0. Fresh browser acceptance of that version is still pending.
+- [x] App deployed to a working Forge development environment; scoped dependency branch deployed as app version 2.21.0. Fresh browser acceptance of that version is still pending.
 - [ ] App deployed to the Forge production environment before enabling external sharing.
 - [ ] In Atlassian Developer Console → Distribution → Distribution controls, set the unlicensed app to **Sharing**, choose Jira, and copy the generated installation link. See [Atlassian's Forge distribution guide](https://developer.atlassian.com/platform/forge/distribute-your-apps/).
 - [ ] App installed by a Jira site administrator using the official judge installation link.
