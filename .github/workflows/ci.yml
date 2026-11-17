@@ -70,7 +70,7 @@ jobs:
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
         run: npx --yes @forge/cli@15.1.0 lint
       - name: Deploy and upgrade the development installation after successful push checks (never auto-consent to scopes)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/codegeist/forge-foundation' || github.ref == 'refs/heads/security/glob-minimatch-experiment')
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
