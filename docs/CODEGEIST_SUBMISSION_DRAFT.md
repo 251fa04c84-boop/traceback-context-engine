@@ -134,6 +134,18 @@ Do not show synthetic records as real integrations. Do not record the final vide
 - [ ] Final Devpost description, category, bonus write-up, screenshots, source repository, and video link are reviewed for accuracy.
 - [ ] Eligibility, prize terms, and submission status are checked in the official Codegeist portal before final submission.
 
+## Automated validation snapshot — 17 November 2026
+
+These are separate branch results; do not add the counts together or imply that the dependency/Rovo candidate branches are already part of the core app release.
+
+| Branch / purpose | CI run | Test result | Security result | What CI did not prove |
+| --- | --- | --- | --- | --- |
+| `codegeist/forge-foundation` core app | [#558](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092307770) | 4,130 passed; 0 failed; 0 skipped | 9 high and 4 moderate findings remain | PR CI skipped authenticated Forge CLI lint/deployment and live Teamwork Graph acceptance. |
+| `codegeist/rovo-investigator` candidate | [#562](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092333838) | 4,141 passed; 0 failed; 0 skipped | Same 9 high and 4 moderate findings | Forge CLI validation, deployment, Rovo discovery, MCP connectivity and live invocation remain unverified. |
+| `security/glob-minimatch-experiment` candidate | [#561](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44092327279) | 4,134 passed; 0 failed; 0 skipped | `npm audit --audit-level=low`: 0 vulnerabilities | This is an isolated branch. The `glob@14.0.2` scoped override crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range and has not been independently accepted or deployed. |
+
+All three latest observed PR checks completed successfully. Passing automated tests is not evidence of live integrations, judge access, user impact, or Marketplace security approval.
+
 ## Current verified limitations
 
 - The connected Atlassian account has only one available site; no separate test organization or representative Jira Software test project has been verified.
