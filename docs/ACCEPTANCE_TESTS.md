@@ -107,3 +107,11 @@ Do not change a result to Pass until the corresponding live action has been perf
 - Atlassian Jira connector read verified the available projects: `DEMO` and `TCE`; both are `service_desk` projects. `TCE` currently has zero issues. There is no Jira Software project or representative software-team incident available on this site for acceptance testing.
 - Atlassian Teamwork Graph connector query on `DEMO-7` returned no related goal, external deployment, or external pull-request relationships. A query on the `TCE` project ARI also returned no relationships. This is a connector-side observation only; it does not prove the Forge app's own Teamwork Graph scopes or UI are working.
 - No Jira issues, projects, relationships, permissions, or production settings were modified during this follow-up.
+
+
+## CI refresh — 17 November 2026
+
+- Latest push CI [run #301](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44012419499) completed successfully on commit `516d101cc6fb676daf3571a857e83e22278bbbaa`.
+- Verified steps: `npm ci`, report-only dependency audit, **38/38 tests**, syntax checks, frontend JSX compilation, and authenticated Forge CLI validation. Forge CLI validation completed successfully.
+- PR CI [run #302](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44012423027) also passed its applicable checks; Forge CLI validation was skipped by the PR-event workflow condition.
+- The dependency audit remains **9 high, 4 moderate, 0 critical**. CI success is not a vulnerability remediation or a live Jira/Teamwork Graph acceptance result.
