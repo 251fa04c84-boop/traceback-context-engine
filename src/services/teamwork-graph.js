@@ -171,6 +171,7 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
     const include = { goals: true, deployments: true, pullRequests: true };
     const pageCounts = { goals: 0, deployments: 0, pullRequests: 0 };
     const seenCursors = { goals: new Set(), deployments: new Set(), pullRequests: new Set() };
+    const truncated = { goals: false, deployments: false, pullRequests: false };
     const errors = [];
     let requestCount = 0;
 
@@ -186,7 +187,14 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
         break;
       }
 
-      const graphResponse = await response.json();
+      let graphResponse;
+      try {
+        graphResponse = await response.json();
+      } catch {
+        errors.push({ message: 'Teamwork Graph returned an unreadable response.' });
+        break;
+      }
+
       if (!graphResponse || typeof graphResponse !== 'object') {
         errors.push({ message: 'Teamwork Graph returned an invalid response.' });
         break;
@@ -211,21 +219,34 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
         pageCounts[category] += 1;
 
         const pageInfo = connection.pageInfo;
-        const nextCursor = typeof pageInfo?.endCursor === 'string'
+        if (pageInfo?.hasNextPage !== true) {
+          include[category] = false;
+          continue;
+        }
+
+        const nextCursor = typeof pageInfo.endCursor === 'string'
           ? pageInfo.endCursor.trim()
           : '';
 
-        if (pageInfo?.hasNextPage === true && nextCursor && !seenCursors[category].has(nextCursor)) {
-          seenCursors[category].add(nextCursor);
-          cursors[category] = nextCursor;
-          include[category] = pageCounts[category] < MAX_PAGES_PER_CATEGORY;
-        } else {
+        if (!nextCursor || seenCursors[category].has(nextCursor)) {
+          truncated[category] = true;
           include[category] = false;
+          continue;
         }
+
+        if (pageCounts[category] >= MAX_PAGES_PER_CATEGORY) {
+          truncated[category] = true;
+          include[category] = false;
+          continue;
+        }
+
+        seenCursors[category].add(nextCursor);
+        cursors[category] = nextCursor;
+        include[category] = true;
       }
     }
 
-    const truncatedCategories = Object.keys(include).filter((category) => include[category]);
+    const truncatedCategories = Object.keys(truncated).filter((category) => truncated[category]);
     return normalizeTeamworkGraphResponse({
       data,
       errors,
