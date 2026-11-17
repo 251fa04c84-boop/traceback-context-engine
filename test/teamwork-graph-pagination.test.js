@@ -145,3 +145,27 @@ test('preserves first-page evidence and marks pending categories partial when a 
   assert.deepEqual(result.truncatedCategories, ['goals']);
   assert.match(result.warning, /some connected evidence could not be loaded/i);
 });
+
+
+test('advances all active evidence categories together for five bounded pages', async () => {
+  const captured = [];
+  const responses = Array.from({ length: 5 }, (_, page) => {
+    const hasNextPage = page < 4;
+    const cursor = (category) => hasNextPage ? `${category}-cursor-${page + 1}` : null;
+    return graphResponse({
+      goals: connection([{ id: `goal-${page + 1}`, name: `Goal ${page + 1}` }], hasNextPage, cursor('goal')),
+      deployments: connection([{ id: `deployment-${page + 1}`, displayName: `Deployment ${page + 1}`, state: 'SUCCESSFUL' }], hasNextPage, cursor('deployment')),
+      pullRequests: connection([{ id: `pr-${page + 1}`, title: `Pull request ${page + 1}`, status: 'MERGED' }], hasNextPage, cursor('pr'))
+    });
+  });
+  const client = apiClientFor(responses, captured);
+
+  const result = await fetchTeamworkGraphEvidence(client, '10006', CLOUD_ID);
+
+  assert.equal(captured.length, 5);
+  assert.deepEqual(result.goals.map((item) => item.id), ['goal-1', 'goal-2', 'goal-3', 'goal-4', 'goal-5']);
+  assert.deepEqual(result.deployments.map((item) => item.id), ['deployment-1', 'deployment-2', 'deployment-3', 'deployment-4', 'deployment-5']);
+  assert.deepEqual(result.pullRequests.map((item) => item.id), ['pr-1', 'pr-2', 'pr-3', 'pr-4', 'pr-5']);
+  assert.deepEqual(result.truncatedCategories, []);
+  assert.notEqual(result.status, 'partial');
+});
