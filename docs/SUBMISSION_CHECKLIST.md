@@ -6,12 +6,12 @@
 
 ## Latest verified build status — 17 November 2026
 
-- Core app code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` is deployed to Forge development as version **2.38.0**. Latest documentation-only core branch head `388ec1a159e715e9dafe900bcb3eaba925662a8b` passed [CI #44100446606](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100446606): **4,130 tests**, syntax/frontend checks, authenticated Forge CLI lint and development-install upgrade check.
-- PR #2 dependency candidate head `b42b792d771a134af24b2817f705f8d06700d2fe` passed [push CI #603](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099908018) and [PR CI #604](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099917882): **4,134 tests**, strict npm audit with **0 vulnerabilities**, and Forge CLI lint on push. Its `glob@14.0.2` override still crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range; do not merge before independent compatibility review.
-- PR #5 Rovo candidate head `ad0899703d58615462d0119fb34f5d610522a304` passed [push CI #44100957991](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100957991): **4,146 tests**, syntax/frontend checks and authenticated Forge CLI manifest lint. The branch is synchronized with the latest core docs and mergeable, but was not deployed; live Rovo/MCP acceptance remains outstanding.
-- The core dependency audit still reports **9 high and 4 moderate** findings. The zero-finding result applies only to the isolated PR #2 lockfile.
-- All three PRs remain draft and unmerged. The only connected Jira site is a production tenant; there is no verified separate test site. The four granular Teamwork Graph scopes remain disabled, and DEMO-9 is a temporary service-desk test issue with no linked records.
-- **No judge installation link, fresh browser acceptance of v2.38.0, public demo video, or final Devpost submission is verified.**
+- Core app / PR #1: branch head `4a2b3c3bec8e7773463dd71a4ba483ba6da65e7b`; push CI [#44103953125](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103953125) passed **4,130 tests**, syntax/frontend checks and authenticated Forge CLI lint. The docs/workflow-only commit correctly skipped deployment. Core app code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` is deployed as Forge development version **2.44.0** by [#44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512). Fresh browser acceptance is not recorded.
+- Dependency remediation / PR #2: head `e290c6e8f76fcfde23c7f375f2ee3a77d18528d2`; push CI [#44101730325](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44101730325) and PR CI [#44101743851](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44101743851) passed **4,134 tests** and strict audit with **0 vulnerabilities**. It pins `prosemirror-view@1.42.9`, `glob@14.0.2` scoped to `@forge/manifest`, and `minimatch@11.0.8`. The `glob` override crosses the declared `@forge/manifest@13.9.0` `^13.0.0` range. Keep unmerged pending independent compatibility review; direct PackageValidator tests do not prove Atlassian support.
+- Rovo/MCP / PR #5: head `18357a3433c17633f6295c9e6f8e21d39fd22d08`; push CI [#44102276569](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102276569) and PR CI [#44102289313](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102289313) passed **4,146 tests**. Authenticated Forge CLI manifest lint passed on push; feature-branch deployment was skipped. Live Rovo/MCP acceptance remains outstanding.
+- The core dependency audit remains **9 high and 4 moderate**. The zero-finding audit result applies only to PR #2's isolated lockfile.
+- All three PRs remain open, draft and unmerged. The connected Jira tenant is a production site; there is no verified separate test site. Four granular Teamwork Graph scopes remain disabled, and DEMO-9 has no linked evidence records.
+- **No judge installation link, fresh browser acceptance of v2.44.0, public demo video, or final Devpost submission is verified.**
 
 ## Official Codegeist 2026 terms (recheck before final submission)
 
@@ -53,7 +53,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] No paid service, secret, or recurring service requirement blocks judge access.
 - [ ] The project operates consistently and is free for judge evaluation.
 
-## Teamwork Graph bonus evidence
+## Teamwork Graph bonus evidence (optional; complete only if this is the one selected bonus)
 
 - [ ] The app consumes real data from the Teamwork Graph API as the current user.
 - [ ] Official curated query usage and granular scopes are documented.
@@ -67,7 +67,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 
 - [ ] Register/join the hackathon on Devpost.
 - [ ] Select Apps for Software Teams.
-- [ ] Select one bonus only after its integration passes live acceptance: Teamwork Graph requires administrator-granted scopes and genuine linked records; Best Agents requires a deployed/discovered agent and successful action; Atlassian MCP requires an enabled MCP tool and successful invocation. If none passes, submit without a bonus.
+- [ ] Preferred bonus: Best Agents, but only after the Rovo agent is deployed, discovered, and a live action invocation plus permission-boundary test passes. Teamwork Graph and Atlassian MCP are alternatives only; MCP additionally requires administrator enablement and OAuth consent. Select at most one bonus. If no candidate passes live acceptance, submit without a bonus.
 - [ ] Provide project title and concise description.
 - [ ] Describe the real problem, target users, workflow, and measurable value.
 - [ ] Explain the Forge implementation and Teamwork Graph API use.
@@ -78,7 +78,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] Ensure video shows the working app on the actual Atlassian UI and demonstrates real end-to-end behavior.
 - [ ] Use only original or properly licensed audio, visuals and marks; the rules prohibit third-party trademarks and copyrighted music/material unless permission is held.
 - [ ] Explain how the app meets the main technology requirement.
-- [ ] Include the Teamwork Graph bonus-prize write-up.
+- [ ] Include a write-up for exactly the one bonus selected (if any); do not include or claim multiple bonus categories.
 - [ ] Submit the entire form before the official deadline; save Devpost's submission receipt and final snapshot.
 
 ## Demo outline
