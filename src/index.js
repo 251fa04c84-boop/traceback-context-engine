@@ -37,3 +37,4 @@ resolver.define('getIssueContext', async ({ payload, context }) => {
 });
 
 exports.handler = resolver.getDefinitions();
+exports.getTracebackContext = require('./rovo-action').getTracebackContext;
