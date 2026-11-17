@@ -1,4 +1,4 @@
-## Latest verified snapshot — 17 November 2026, 18:xx IST
+## Latest verified snapshot — 17 November 2026
 
 This section supersedes older status statements below. Historical entries are retained as an audit trail.
 
