@@ -1,17 +1,3 @@
-# Authoritative follow-up — 17 November 2026, 15:38 UTC
-
-This entry supersedes older build/version summaries below; older entries remain as history.
-
-- **Last deployed core runtime:** source revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde`, Forge development version **2.44.0**, successfully deployed in [#44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512). The existing development installation was already current. The target Jira site `251fa04c84.atlassian.net` is a production tenant; only its Forge **development** environment was deployed.
-- **Runtime code comparison:** current core branch head `18562db4f372cf064b53d50c119e802e0f0b78a2` is 14 commits ahead of the deployment workflow commit. The exact diff contains workflow, documentation, and test changes only; no `src/`, `manifest.yml`, `package.json`, or `package-lock.json` changes. The deployed runtime source therefore still matches the current core app source.
-- **Core validation:** [push CI #44115665646](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44115665646) and [PR CI #44115681024](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44115681024) passed **4,131 tests, 0 failures**; syntax, frontend compilation and authenticated Forge CLI lint passed. The core dependency audit still reports **9 high and 4 moderate** findings.
-- **Dependency candidate PR #2:** head `e4af8f67050094f4a73d6bb88d6ef05e74269b6c`, [push CI #44115675013](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44115675013), **4,135 tests, 0 failures**, strict audit **0 vulnerabilities**, dependency-tree checks and Forge CLI lint passed. Keep draft: `glob@14.0.2` remains outside `@forge/manifest@13.9.0`'s declared `^13.0.0` range.
-- **Rovo/MCP candidate PR #5:** head `8f3b840baaba80c118781291fbf4cad292c1b6ed`, [push CI #44116281155](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44116281155) and [PR CI #44116292798](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44116292798), **4,147 tests, 0 failures**; authenticated Forge CLI lint passed on push. Live Rovo/MCP acceptance remains pending.
-- All three branches now use verified immutable GitHub Actions release commits, no unnecessary package-manager cache, least-privilege checkout credential settings, and a required committed lockfile.
-- **Still blocked:** fresh browser acceptance, separate Atlassian test site, explicit organization-admin approval for the four Teamwork Graph scopes, genuine linked goal/deployment/pull-request evidence, Rovo/MCP live invocation, judge installation link, and public under-five-minute YouTube demo. No production app deployment or scope consent was performed.
-
----
-
 ## Latest verified snapshot — 17 November 2026
 
 This section supersedes older status statements below. Historical entries are retained as an audit trail.

@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, "codegeist/**"]
+    branches: [main, "codegeist/**", "security/**"]
   pull_request:
 
 permissions:
@@ -29,6 +29,8 @@ jobs:
             exit 1
           fi
           npm ci
+      - name: Verify the installed transitive dependency tree
+        run: npm ls prosemirror-view glob minimatch --all
       - name: Report dependency audit findings without applying automatic upgrades
         shell: bash
         run: |
@@ -58,23 +60,20 @@ jobs:
               console.warn("::warning title=High dependency vulnerabilities::npm audit found " + summary.high + " high and " + (summary.moderate || 0) + " moderate vulnerabilities. Review docs/DEPENDENCY_AUDIT.md; do not apply force upgrades without compatibility tests.");
             }
           '
+      - name: Require a clean dependency audit for the remediation pull request
+        if: github.event.pull_request.number == 2
+        run: npm audit --audit-level=low
       - run: npm test
       - run: npm run lint:syntax
       - run: npm run lint:frontend
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
-      - name: Validate Forge app with CLI when registered
+      - name: Validate registered Forge app with CLI
         if: github.event_name != 'pull_request'
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        shell: bash
-        run: |
-          if grep -Eq '^  id:' manifest.yml; then
-            npx --yes @forge/cli@15.1.0 lint
-          else
-            echo "::warning title=Forge registration required::Forge CLI lint is skipped because manifest.yml has no app.id. Register this Forge app once with 'forge register' before deployment and judge installation."
-          fi
+        run: npx --yes @forge/cli@15.1.0 lint
       - name: Detect app changes for safe development deployment
         id: app-changes
         if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation'

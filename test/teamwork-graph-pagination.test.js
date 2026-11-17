@@ -151,11 +151,11 @@ test('advances all active evidence categories together for five bounded pages', 
   const captured = [];
   const responses = Array.from({ length: 5 }, (_, page) => {
     const hasNextPage = page < 4;
-    const cursor = (category) => hasNextPage ? `${category}-cursor-${page + 1}` : null;
+    const cursor = (category) => hasNextPage ? category + '-cursor-' + (page + 1) : null;
     return graphResponse({
-      goals: connection([{ id: `goal-${page + 1}`, name: `Goal ${page + 1}` }], hasNextPage, cursor('goal')),
-      deployments: connection([{ id: `deployment-${page + 1}`, displayName: `Deployment ${page + 1}`, state: 'SUCCESSFUL' }], hasNextPage, cursor('deployment')),
-      pullRequests: connection([{ id: `pr-${page + 1}`, title: `Pull request ${page + 1}`, status: 'MERGED' }], hasNextPage, cursor('pr'))
+      goals: connection([{ id: 'goal-' + (page + 1), name: 'Goal ' + (page + 1) }], hasNextPage, cursor('goal')),
+      deployments: connection([{ id: 'deployment-' + (page + 1), displayName: 'Deployment ' + (page + 1), state: 'SUCCESSFUL' }], hasNextPage, cursor('deployment')),
+      pullRequests: connection([{ id: 'pr-' + (page + 1), title: 'Pull request ' + (page + 1), status: 'MERGED' }], hasNextPage, cursor('pr'))
     });
   });
   const client = apiClientFor(responses, captured);
