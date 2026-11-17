@@ -104,6 +104,20 @@ jobs:
       - name: Install app dependencies
         run: npm install
 
+      - name: Commit the generated npm lockfile for reproducible builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f package-lock.json ]]; then
+            git add package-lock.json
+            if ! git diff --cached --quiet; then
+              git config user.name "github-actions[bot]"
+              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              git commit -m "build: lock Forge dependencies"
+              git push origin "HEAD:$SOURCE_BRANCH"
+            fi
+          fi
+
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
 
