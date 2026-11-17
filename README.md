@@ -62,6 +62,14 @@ The manifest requests:
 
 These are read-only scopes. A site administrator must grant the requested graph scopes, and the signed-in user must still have permission to see the underlying records. A site with no connected GitHub/DevOps provider or no linked records will show an honest empty state.
 
+## Deploy without Codespaces
+
+Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register, lint, deploy, and install through a consent-gated GitHub Actions workflow. It uses repository secrets; never put an Atlassian API token in chat or source control.
+
+## Dependency security
+
+The inspected npm audit reported unresolved high and moderate dependency findings. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the dated report and reproducibility gap. Do not apply `npm audit fix --force` without compatibility testing.
+
 ## Jira installation and acceptance
 
 Target development site: `251fa04c84.atlassian.net`.
@@ -77,7 +85,7 @@ After registration, Forge lint, deployment, and installation:
 7. Verify empty, partial, and unavailable states without hiding the Jira issue details.
 8. Open each source link and confirm it points to the expected Jira or HTTPS source record.
 
-The `jira:issueContext` module does not work in Jira's old issue view.
+The `jira:issueContext` module does not work in Jira's old issue view. Teamwork Graph is currently a Forge Preview feature, so its schema and availability may change under Atlassian's published preview policy.
 
 ## Validation
 
