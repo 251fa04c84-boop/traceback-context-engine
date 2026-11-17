@@ -12,7 +12,7 @@ import ForgeReconciler, {
   useProductContext
 } from '@forge/react';
 import { invoke } from '@forge/bridge';
-import { getIssueKeyFromProductContext } from '../domain/incident';
+import { getIssueKeyFromProductContext, getRetryIssueKey } from '../domain/incident';
 import { buildInvestigationLeads } from '../domain/investigation';
 
 const EMPTY_GRAPH = {
@@ -40,11 +40,11 @@ function App() {
 
   async function loadIssue(key) {
     if (!key) return;
+    setIssueKey(key);
     setLoading(true);
     setError('');
     try {
       const result = await invoke('getIssueContext', { issueKey: key });
-      setIssueKey(key);
       setIncident(result);
     } catch (err) {
       setError(err?.message || 'Unable to load Jira issue context.');
@@ -64,7 +64,7 @@ function App() {
   }, [contextIssueKey, contextReady]);
 
   if (loading) return <Stack space="space.200"><Spinner /><Text>Reading issue and linked evidence from Jira…</Text></Stack>;
-  if (error) return <Stack space="space.200"><SectionMessage appearance="error"><Text>{error}</Text></SectionMessage><Button onClick={() => loadIssue(issueKey)}>Retry</Button></Stack>;
+  if (error) return <Stack space="space.200"><SectionMessage appearance="error"><Text>{error}</Text></SectionMessage><Button onClick={() => loadIssue(getRetryIssueKey(productContext, issueKey))}>Retry</Button></Stack>;
   if (!incident) return <Text>No issue context is available.</Text>;
 
   const graph = incident.teamworkGraph || EMPTY_GRAPH;
