@@ -2,7 +2,7 @@ name: Forge development deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, "codegeist/**"]
     paths:
       - .github/workflows/forge-dev-deploy.yml
   workflow_dispatch:
@@ -22,8 +22,13 @@ on:
         required: true
         type: boolean
         default: false
-      confirm_readonly_scopes:
-        description: "I authorize read-only scopes: read:jira-work, read:graph:issue:jira, read:graph:goal:atlassian, read:graph:deployment:external, and read:graph:pull-request:external"
+      confirm_admin_scope_approval:
+        description: I confirm an Atlassian organization administrator has already approved the listed read-only scopes in Connected Apps for the target site
+        required: true
+        type: boolean
+        default: false
+      confirm_development_site_install:
+        description: I authorize installing or upgrading the Forge development environment on 251fa04c84.atlassian.net (the connected Jira site)
         required: true
         type: boolean
         default: false
@@ -69,7 +74,8 @@ jobs:
       SOURCE_BRANCH: ${{ inputs.source_branch }}
       ACCEPT_FORGE_TERMS: ${{ inputs.accept_forge_terms }}
       CONFIRM_NO_EXISTING_REGISTRATION: ${{ inputs.confirm_no_existing_registration }}
-      CONFIRM_READONLY_SCOPES: ${{ inputs.confirm_readonly_scopes }}
+      CONFIRM_ADMIN_SCOPE_APPROVAL: ${{ inputs.confirm_admin_scope_approval }}
+      CONFIRM_DEVELOPMENT_SITE_INSTALL: ${{ inputs.confirm_development_site_install }}
       INSTALL_MODE: ${{ inputs.install_mode }}
       DEVELOPER_SPACE_ID: ${{ inputs.developer_space_id }}
     steps:
@@ -96,26 +102,36 @@ jobs:
             echo "::error title=Forge credentials missing::Add FORGE_EMAIL and FORGE_API_TOKEN as GitHub Actions repository secrets before running this workflow."
             exit 1
           fi
-          if [[ "$CONFIRM_READONLY_SCOPES" != "true" ]]; then
-            echo "::error title=Scope approval required::Confirm the read-only Jira and Teamwork Graph scopes before installing the app."
+          if [[ "$CONFIRM_ADMIN_SCOPE_APPROVAL" != "true" ]]; then
+            echo "::error title=Organization administrator approval required::An Atlassian organization administrator must grant the read-only Jira and Teamwork Graph scopes in Connected Apps before this workflow runs."
+            exit 1
+          fi
+          if [[ "$CONFIRM_DEVELOPMENT_SITE_INSTALL" != "true" ]]; then
+            echo "::error title=Development-site installation confirmation required::Confirm the target Jira site before installing or upgrading."
             exit 1
           fi
 
-      - name: Install app dependencies
-        run: npm install
-
-      - name: Commit the generated npm lockfile for reproducible builds
+      - name: Install app dependencies reproducibly
         shell: bash
         run: |
           set -euo pipefail
           if [[ -f package-lock.json ]]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Commit a lockfile only when this repository has none
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f package-lock.json ]]; then
+            npm install --package-lock-only
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add package-lock.json
-            if ! git diff --cached --quiet; then
-              git config user.name "github-actions[bot]"
-              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-              git commit -m "build: lock Forge dependencies"
-              git push origin "HEAD:$SOURCE_BRANCH"
-            fi
+            git commit -m "build: lock Forge dependencies"
+            git push origin "HEAD:$SOURCE_BRANCH"
           fi
 
       - name: Disable interactive Forge CLI analytics prompt
@@ -158,12 +174,12 @@ jobs:
       - name: Deploy to Forge development environment
         run: npx --yes @forge/cli@15.1.0 deploy --non-interactive -e development
 
-      - name: Install on the development Jira site
+      - name: Install on the development Jira site without automatic scope consent
         shell: bash
         run: |
           set -euo pipefail
           if [[ "$INSTALL_MODE" == "upgrade" ]]; then
-            npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive --confirm-scopes --upgrade all -e development
+            npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive --upgrade all -e development
           else
-            npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive --confirm-scopes -e development
+            npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive -e development
           fi
