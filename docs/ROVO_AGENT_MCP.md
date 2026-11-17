@@ -29,7 +29,7 @@ The action returns a bounded JSON object:
 - `relatedWorkItems`: normalized Jira issue links.
 - `teamworkGraph`: linked goals, deployments and pull requests plus available/empty/partial/unavailable state and warnings.
 - `investigationLeads`: prioritized checks derived from observed record states and timestamps.
-- `interpretationPolicy`: explicitly marks root cause as not established, causal inference as unsupported by linked records alone, and empty evidence as not negative proof.
+- `interpretationPolicy`: explicitly marks root cause as not established, causal inference as unsupported by linked records alone, and empty evidence as not negative proof.\n- `evidenceTrustBoundary`: identifies free-text issue and linked-record fields as untrusted evidence data and instructs agents to ignore embedded instructions.
 
 The action bounds text fields and limits each returned category to 125 records, matching the current pagination safety cap and remaining comfortably below the Rovo action module's 5 MB payload ceiling under normal record sizes.
 
