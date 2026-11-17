@@ -212,3 +212,16 @@ The isolated dependency configuration remains:
 The exact prior scoped tree passed `npm ci`, `npm ls prosemirror-view glob minimatch --all`, strict `npm audit --audit-level=low` with zero findings, 4,112 merge-result tests, syntax/frontend checks and authenticated Forge CLI lint. That prior result is not a substitute for CI on the newly rebased head. The rebased PR is configured to rerun the dependency-tree check and strict audit against the full 4,120-test application base. Keep it draft until those exact checks pass and independent compatibility review is complete.
 
 The app-branch push workflow no longer passes `--confirm-scopes` to Forge installation. CI must not automatically consent to new scopes; any scope addition must be approved explicitly by an Atlassian organization administrator.
+
+
+## Exact Forge manifest glob call-site compatibility test — 17 November 2026
+
+The published `@forge/manifest@13.9.0` package source was inspected directly at [its `PackageValidator` implementation](https://npmfs.com/package/@forge/manifest/13.9.0/out/validators/package-validator.js). Its only observed `glob` call site is:
+
+```js
+return (await (0, glob_1.glob)(pattern)).some((file) => fs_1.default.lstatSync(file).isFile());
+```
+
+It uses the named asynchronous `glob(pattern)` API with no special options, classes, or internal exports. The upstream glob 14 package retains the named `glob()` API. To turn that source review into executable evidence, this PR adds a test that invokes the actual exported `PackageValidator` from `@forge/manifest@13.9.0` against a temporary matching file and a missing-file pattern while the lockfile resolves glob 14. This tests the exact consumer path rather than only testing `glob` in isolation.
+
+This narrows the practical compatibility concern but does not erase the declared semver mismatch: the Atlassian package still specifies `glob@^13.0.0`. Retain the explicit override, its source review, the integration test, and the CI result for reviewer visibility. Do not call this an Atlassian-supported combination unless Atlassian confirms it.
