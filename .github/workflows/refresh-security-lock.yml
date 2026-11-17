@@ -1,0 +1,49 @@
+name: Refresh dependency lockfile
+
+on:
+  push:
+    branches:
+      - security/glob-minimatch-experiment
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out security branch
+        uses: actions/checkout@v7
+        with:
+          ref: security/glob-minimatch-experiment
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Regenerate package lock from scoped overrides
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Install exact lockfile
+        run: npm ci
+      - name: Verify dependency tree
+        run: npm ls prosemirror-view glob minimatch --all
+      - name: Run tests
+        run: npm test
+      - name: Run syntax checks
+        run: npm run lint:syntax
+      - name: Compile frontend
+        run: npm run lint:frontend
+      - name: Run strict dependency audit
+        run: npm audit --audit-level=low
+      - name: Run Forge CLI lint
+        run: npx --yes @forge/cli@15.1.0 lint
+      - name: Commit regenerated lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfile already current"
+            exit 0
+          fi
+          git commit -m "Fix minimatch advisory with patched 11.0.8"
+          git push origin HEAD:security/glob-minimatch-experiment

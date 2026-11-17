@@ -22,7 +22,7 @@ test('pins every installed ProseMirror view copy to a patched release', () => {
 });
 
 test('limits the glob major override to Forge manifest and resolves patched minimatch through glob 14', () => {
-  assert.deepEqual(packageJson.overrides['@forge/manifest'], { glob: '14.0.2' });
+  assert.deepEqual(packageJson.overrides['@forge/manifest'], { glob: { '.': '14.0.2', minimatch: '11.0.8' } });
   assert.equal(packageJson.overrides.glob, undefined, 'glob must not be overridden globally');
   assert.equal(packageJson.overrides.minimatch, undefined, 'minimatch must not be overridden globally');
 
@@ -36,5 +36,5 @@ test('limits the glob major override to Forge manifest and resolves patched mini
   assert.equal(globCopies[0].version, '14.0.2');
   assert.equal(glob.version, '14.0.2');
   assert.equal(glob.dependencies.minimatch, '^11.0.0');
-  assert.equal(minimatch.version, '11.0.1');
+  assert.equal(minimatch.version, '11.0.8');
 });
