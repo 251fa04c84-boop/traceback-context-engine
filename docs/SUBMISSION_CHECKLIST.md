@@ -37,6 +37,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] App deployed to the Forge production environment before enabling external sharing.
 - [ ] In Atlassian Developer Console → Distribution → Distribution controls, set the unlicensed app to **Sharing**, choose Jira, and copy the generated installation link. See [Atlassian's Forge distribution guide](https://developer.atlassian.com/platform/forge/distribute-your-apps/).
 - [ ] App installed by a Jira site administrator using the official judge installation link.
+- [ ] An organization administrator approves and grants the Teamwork Graph scopes; Atlassian requires organization-admin installation for these organization-wide data scopes.
 - [ ] All judge instructions and required scope grants are clear and complete.
 - [ ] App works in Jira's new issue view.
 - [ ] Live acceptance tests are completed and recorded in docs/ACCEPTANCE_TESTS.md.
