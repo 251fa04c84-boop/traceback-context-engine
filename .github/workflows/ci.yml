@@ -84,20 +84,8 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "App source, manifest, or dependency files changed; deployment is eligible."
           fi
-      - name: Detect app changes for safe development deployment
-        id: app-changes
-        if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation'
-        shell: bash
-        run: |
-          if git diff --quiet HEAD^ HEAD -- manifest.yml package.json package-lock.json src; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "Documentation/workflow-only commit; skipping app deployment."
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "App source, manifest, or dependency files changed; deployment is eligible."
-          fi
       - name: Deploy and upgrade the development installation after successful push checks (never auto-consent to scopes)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation' && steps.app-changes.outputs.changed == 'true' && steps.app-changes.outputs.changed == 'true'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation' && steps.app-changes.outputs.changed == 'true'
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
