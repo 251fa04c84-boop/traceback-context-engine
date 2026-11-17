@@ -19,7 +19,7 @@ on:
         type: boolean
         default: false
       confirm_readonly_scopes:
-        description: I authorize read-only scopes: read:jira-work, read:graph:issue:jira, read:graph:goal:atlassian, read:graph:deployment:external, and read:graph:pull-request:external
+        description: "I authorize read-only scopes: read:jira-work, read:graph:issue:jira, read:graph:goal:atlassian, read:graph:deployment:external, and read:graph:pull-request:external"
         required: true
         type: boolean
         default: false
