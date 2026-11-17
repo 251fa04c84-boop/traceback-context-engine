@@ -31,10 +31,14 @@ resolver.define('getIssueContext', async ({ payload, context }) => {
 });
 
 // Rovo action: all reads run as the invoking user; action input never grants
-// authorization. An issue context, when supplied by Atlassian, is authoritative.
+// authorization. Active issue context is authoritative when Atlassian supplies it.
 exports.getTracebackInvestigation = async (payload = {}) => {
   const actionContext = payload.context || {};
-  const issueKey = resolveActionIssueKey(payload.issueKey, actionContext.jira?.issueKey);
+  const issueKey = resolveActionIssueKey(
+    payload.issueKey,
+    actionContext.jira?.issueKey,
+    actionContext.jira?.url
+  );
   const issue = await fetchJiraIssue(
     () => api.asUser().requestJira(
       route`/rest/api/3/issue/${issueKey}?fields=summary,description,status,priority,issuetype,created,updated,project,issuelinks`,
