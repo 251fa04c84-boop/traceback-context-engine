@@ -2,7 +2,11 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { getIssueKeyFromProductContext, getRetryIssueKey } = require('../src/domain/incident');
+const {
+  getIssueKeyFromProductContext,
+  resolveIssueKey,
+  getRetryIssueKey
+} = require('../src/domain/incident');
 
 test('reads the active Jira issue key from the UI Kit product extension context', () => {
   assert.equal(typeof getIssueKeyFromProductContext, 'function', 'getIssueKeyFromProductContext must be implemented');
@@ -13,7 +17,6 @@ test('reads the active Jira issue key from the UI Kit product extension context'
 });
 
 test('supports a platform-context issue-key fallback and trims surrounding whitespace', () => {
-  assert.equal(typeof getIssueKeyFromProductContext, 'function', 'getIssueKeyFromProductContext must be implemented');
   assert.equal(
     getIssueKeyFromProductContext({ platformContext: { issueKey: ' DEMO-8 ' } }),
     'DEMO-8'
@@ -21,14 +24,28 @@ test('supports a platform-context issue-key fallback and trims surrounding white
 });
 
 test('rejects missing or malformed issue keys from context', () => {
-  assert.equal(typeof getIssueKeyFromProductContext, 'function', 'getIssueKeyFromProductContext must be implemented');
   assert.equal(getIssueKeyFromProductContext(undefined), null);
   assert.equal(getIssueKeyFromProductContext({ extension: { issue: {} } }), null);
   assert.equal(getIssueKeyFromProductContext({ extension: { issue: { key: 'DEMO-0' } } }), null);
 });
 
+test('uses the active issue context as the resolver target even when the payload is omitted', () => {
+  assert.equal(resolveIssueKey(undefined, { extension: { issue: { key: 'DEMO-7' } } }), 'DEMO-7');
+});
+
+test('rejects a payload that attempts to target a different issue from the active panel', () => {
+  assert.throws(
+    () => resolveIssueKey('DEMO-8', { extension: { issue: { key: 'DEMO-7' } } }),
+    /only load the Jira issue where it is currently open/i
+  );
+});
+
+test('validates the payload fallback when resolver context omits the issue key', () => {
+  assert.equal(resolveIssueKey('DEMO-8', {}), 'DEMO-8');
+  assert.throws(() => resolveIssueKey('bad-key', {}), /valid active Jira issue key/i);
+});
+
 test('uses the active context issue key for retry before falling back to the last attempted key', () => {
-  assert.equal(typeof getRetryIssueKey, 'function', 'getRetryIssueKey must be implemented');
   assert.equal(
     getRetryIssueKey({ extension: { issue: { key: 'DEMO-9' } } }, 'DEMO-8'),
     'DEMO-9'
