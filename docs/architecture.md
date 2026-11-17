@@ -16,7 +16,7 @@ The resolver also requests Jira's `issuelinks` field. The backend only normalize
 
 ## Teamwork Graph queries and permissions
 
-The planned graph integration uses Atlassian's published curated queries:
+The current graph integration uses Atlassian's published curated queries:
 - `jiraWorkItemGoals(id: $id)`
 - `jiraWorkItemLinkedExternalDeployments(id: $id)`
 - `jiraWorkItemLinkedExternalPullRequests(id: $id)`
