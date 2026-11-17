@@ -12,13 +12,13 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
 - Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists. Jira requests including response-body parsing and optional Graph requests have deadlines sized below Forge's 25-second resolver invocation ceiling; timed-out Graph pagination preserves already loaded evidence.
 - Suggested next checks prioritized from observed deployment, pull-request and linked Jira-work states/timestamps, with a rationale and source link where available; they are not root-cause findings.
-- Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, request deadlines including hanging response bodies, graph evidence normalization, pagination timeouts, adapter behavior, empty results, partial GraphQL responses, unsafe source URLs, and the new Rovo/MCP action's input validation, current-user reads, bounded output and unavailable-Graph behavior. The feature branch CI passes 4,126 tests.
+- Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, request deadlines including hanging response bodies, graph evidence normalization, pagination timeouts, adapter behavior, empty results, partial GraphQL responses, unsafe source URLs, and the new Rovo/MCP action's input validation, current-user reads, bounded output and unavailable-Graph behavior. The feature branch CI passes 4,130 tests.
 
 ## Rovo Agent and MCP interface (feature branch)
 
 The `codegeist/rovo-agent-mcp` branch adds a **TraceBack Investigator** Rovo Agent and a **TraceBack MCP** module. Both call the same read-only `get-traceback-context` Forge action, which reuses the Jira and Teamwork Graph services already used by the existing issue-context resolver. The action validates issue keys, reads Jira and Teamwork Graph as the invoking user, returns bounded structured evidence and prioritized follow-up leads, and explicitly marks root cause as not established. It introduces no write actions and no additional OAuth scopes.
 
-**Important:** these Rovo modules are not yet included in the deployed 2.21.0 development build. The branch passes 4,126 automated tests and Forge CLI lint, but live Rovo chat, Rovo Studio MCP discovery, administrator authorization and judge-site installation remain untested. See [docs/ROVO_AGENT_MCP.md](docs/ROVO_AGENT_MCP.md).
+**Important:** these Rovo modules are not yet included in the deployed 2.21.0 development build. The branch passes 4,130 automated tests and Forge CLI lint, but live Rovo chat, Rovo Studio MCP discovery, administrator authorization and judge-site installation remain untested. See [docs/ROVO_AGENT_MCP.md](docs/ROVO_AGENT_MCP.md).
 
 ## Why TraceBack
 
