@@ -6,12 +6,12 @@
 
 ## Latest verified build status — 17 November 2026
 
-- Core app / PR #1: branch head `7037b4f3d11535d304febb1183d3352b7009e458`; push CI [#44101416618](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44101416618) passed **4,130 tests**, syntax/frontend checks, authenticated Forge CLI lint, and Forge development deployment/upgrade. Core app code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` is deployed as development version **2.38.0**. Fresh browser acceptance is not recorded.
+- Core app / PR #1: branch head `4a2b3c3bec8e7773463dd71a4ba483ba6da65e7b`; push CI [#44103953125](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103953125) passed **4,130 tests**, syntax/frontend checks and authenticated Forge CLI lint. The docs/workflow-only commit correctly skipped deployment. Core app code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` is deployed as Forge development version **2.44.0** by [#44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512). Fresh browser acceptance is not recorded.
 - Dependency remediation / PR #2: head `e290c6e8f76fcfde23c7f375f2ee3a77d18528d2`; push CI [#44101730325](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44101730325) and PR CI [#44101743851](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44101743851) passed **4,134 tests** and strict audit with **0 vulnerabilities**. It pins `prosemirror-view@1.42.9`, `glob@14.0.2` scoped to `@forge/manifest`, and `minimatch@11.0.8`. The `glob` override crosses the declared `@forge/manifest@13.9.0` `^13.0.0` range. Keep unmerged pending independent compatibility review; direct PackageValidator tests do not prove Atlassian support.
 - Rovo/MCP / PR #5: head `18357a3433c17633f6295c9e6f8e21d39fd22d08`; push CI [#44102276569](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102276569) and PR CI [#44102289313](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44102289313) passed **4,146 tests**. Authenticated Forge CLI manifest lint passed on push; feature-branch deployment was skipped. Live Rovo/MCP acceptance remains outstanding.
 - The core dependency audit remains **9 high and 4 moderate**. The zero-finding audit result applies only to PR #2's isolated lockfile.
 - All three PRs remain open, draft and unmerged. The connected Jira tenant is a production site; there is no verified separate test site. Four granular Teamwork Graph scopes remain disabled, and DEMO-9 has no linked evidence records.
-- **No judge installation link, fresh browser acceptance of v2.38.0, public demo video, or final Devpost submission is verified.**
+- **No judge installation link, fresh browser acceptance of v2.44.0, public demo video, or final Devpost submission is verified.**
 
 ## Official Codegeist 2026 terms (recheck before final submission)
 
@@ -53,7 +53,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] No paid service, secret, or recurring service requirement blocks judge access.
 - [ ] The project operates consistently and is free for judge evaluation.
 
-## Teamwork Graph bonus evidence
+## Teamwork Graph bonus evidence (optional; complete only if this is the one selected bonus)
 
 - [ ] The app consumes real data from the Teamwork Graph API as the current user.
 - [ ] Official curated query usage and granular scopes are documented.
@@ -67,7 +67,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 
 - [ ] Register/join the hackathon on Devpost.
 - [ ] Select Apps for Software Teams.
-- [ ] Select one bonus only after its integration passes live acceptance: Teamwork Graph requires administrator-granted scopes and genuine linked records; Best Agents requires a deployed/discovered agent and successful action; Atlassian MCP requires an enabled MCP tool and successful invocation. If none passes, submit without a bonus.
+- [ ] Preferred bonus: Best Agents, but only after the Rovo agent is deployed, discovered, and a live action invocation plus permission-boundary test passes. Teamwork Graph and Atlassian MCP are alternatives only; MCP additionally requires administrator enablement and OAuth consent. Select at most one bonus. If no candidate passes live acceptance, submit without a bonus.
 - [ ] Provide project title and concise description.
 - [ ] Describe the real problem, target users, workflow, and measurable value.
 - [ ] Explain the Forge implementation and Teamwork Graph API use.
@@ -78,7 +78,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] Ensure video shows the working app on the actual Atlassian UI and demonstrates real end-to-end behavior.
 - [ ] Use only original or properly licensed audio, visuals and marks; the rules prohibit third-party trademarks and copyrighted music/material unless permission is held.
 - [ ] Explain how the app meets the main technology requirement.
-- [ ] Include the Teamwork Graph bonus-prize write-up.
+- [ ] Include a write-up for exactly the one bonus selected (if any); do not include or claim multiple bonus categories.
 - [ ] Submit the entire form before the official deadline; save Devpost's submission receipt and final snapshot.
 
 ## Demo outline
