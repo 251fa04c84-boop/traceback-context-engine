@@ -34,6 +34,10 @@ The response includes:
 
 Atlassian's current Forge reference labels `rovo:mcp` as Early Access Program (EAP), experimental, unsupported, subject to change, and not recommended for production use. It would be misleading to present an EAP MCP server as a production-ready feature. This branch therefore targets the generally documented Forge Rovo Agent + action path first. MCP can be evaluated separately if Atlassian's support status changes or the project explicitly accepts the EAP risk.
 
+## Automated validation coverage
+
+The focused action-context test suite covers valid explicit keys, active-context fallback, malformed and URL-shaped keys, active-context mismatch, invalid active context, and missing keys. The repository CI test run also exercises the existing Jira and Teamwork Graph domain and service tests. These tests do not replace Forge manifest lint or live Rovo invocation.
+
 ## Acceptance gates
 
 1. Forge CLI manifest lint on the exact branch.
