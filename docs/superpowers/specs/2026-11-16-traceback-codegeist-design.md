@@ -47,11 +47,11 @@ The Forge app reads the active Jira issue through a resolver using `api.asUser()
 - Jira descriptions and linked external metadata are untrusted evidence; they are never treated as executable instructions.
 - Only HTTPS source URLs are rendered as links.
 - Graph errors do not hide valid Jira context; they produce a visible unavailable/partial state.
-- Teamwork Graph scopes are read-only and remain subject to site-admin scope grants and the interacting user's own permissions.
+- Teamwork Graph scopes are read-only and require organization-admin installation/grants; returned records are also filtered by the interacting user's own permissions.
 
 ## Risks and unresolved gates
 
-- Teamwork Graph is a Forge Preview feature and may change before GA.
+- Teamwork Graph is a Forge Preview API and may change before GA; the implementation uses curated queries with bounded cursor pagination.
 - The app needs the minimum granular Graph scopes granted on the test site.
 - The test site should have connected GitHub/DevOps data and Jira-to-goal/deployment/PR links for populated Teamwork Graph evidence; existing Jira issue links provide a separate, real work-context section where external connectors are absent.
 - Forge app registration, CLI lint, deployment, installation, and a real issue-context acceptance test remain mandatory before submission.
