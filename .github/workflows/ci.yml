@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, "codegeist/**"]
+    branches: [main, "codegeist/**", "security/**"]
   pull_request:
 
 permissions:
@@ -24,6 +24,8 @@ jobs:
           else
             npm install
           fi
+      - name: Verify the installed transitive dependency tree
+        run: npm ls prosemirror-view glob minimatch --all
       - name: Report dependency audit findings without applying automatic upgrades
         shell: bash
         run: |
@@ -53,6 +55,9 @@ jobs:
               console.warn("::warning title=High dependency vulnerabilities::npm audit found " + summary.high + " high and " + (summary.moderate || 0) + " moderate vulnerabilities. Review docs/DEPENDENCY_AUDIT.md; do not apply force upgrades without compatibility tests.");
             }
           '
+      - name: Require a clean dependency audit for the remediation pull request
+        if: github.event.pull_request.number == 2
+        run: npm audit --audit-level=low
       - run: npm test
       - run: npm run lint:syntax
       - run: npm run lint:frontend

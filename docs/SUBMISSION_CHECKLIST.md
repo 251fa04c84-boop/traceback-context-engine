@@ -1,8 +1,8 @@
 # TraceBack Context Engine — Codegeist Submission Checklist
 
 **Target category:** Apps for Software Teams  
-**Target bonus prize:** Best apps with Teamwork Graph integration  
-**Current state:** Development draft; not ready to submit.
+**Potential bonus prize:** Best apps with Teamwork Graph integration — not yet selected; select only after live data acceptance  
+**Current state:** Development draft; not ready to submit. The app is registered and deployed to Forge development (version 2.16.0 on the isolated dependency branch), but fresh live acceptance, admin scope approval, judge sharing, and the public demo remain incomplete.
 
 ## Official Codegeist 2026 terms (recheck before final submission)
 
@@ -30,10 +30,10 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 
 ## Product and Forge readiness
 
-- [ ] Product meaningfully addresses the software-team theme: understanding work, delivery and linked context from a Jira issue.
-- [ ] App registered in Forge exactly once.
-- [ ] Current manifest and source pass forge lint.
-- [ ] App deployed to a working Forge environment.
+- [x] Product meaningfully addresses the software-team theme: understanding work, delivery and linked context from a Jira issue.
+- [x] App registered in Forge exactly once.
+- [x] Current manifest and source pass Forge CLI lint (`No issues found`).
+- [x] App deployed to a working Forge development environment; patched dependency branch deployed as app version 2.16.0. Fresh browser acceptance of that version is still pending.
 - [ ] App deployed to the Forge production environment before enabling external sharing.
 - [ ] In Atlassian Developer Console → Distribution → Distribution controls, set the unlicensed app to **Sharing**, choose Jira, and copy the generated installation link. See [Atlassian's Forge distribution guide](https://developer.atlassian.com/platform/forge/distribute-your-apps/).
 - [ ] App installed by a Jira site administrator using the official judge installation link.
@@ -45,6 +45,8 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] The project operates consistently and is free for judge evaluation.
 
 ## Teamwork Graph bonus evidence
+
+The Teamwork Graph query implementation exists in the app, but the four granular scopes were observed unchecked/disabled on the connected Jira site. The code and unit tests alone do not establish live bonus eligibility. Keep every evidence checkbox below open until a real issue returns source-verified graph records in the deployed panel.
 
 - [ ] The app consumes real data from the Teamwork Graph API as the current user.
 - [ ] Official curated query usage and granular scopes are documented.
@@ -58,7 +60,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 
 - [ ] Register/join the hackathon on Devpost.
 - [ ] Select Apps for Software Teams.
-- [ ] Select Best apps with Teamwork Graph integration as the single target bonus prize.
+- [ ] Select Best apps with Teamwork Graph integration only after administrator-approved scopes and real linked-record retrieval are demonstrated live. Do not select it yet.
 - [ ] Provide project title and concise description.
 - [ ] Describe the real problem, target users, workflow, and measurable value.
 - [ ] Explain the Forge implementation and Teamwork Graph API use.
@@ -85,6 +87,19 @@ The detailed, evidence-safe 3:15–3:45 storyboard is in [docs/DEMO_SCRIPT.md](D
 
 Do not narrate a capability that was not shown working in the submitted build.
 
+## Current dependency/security state
+
+- The current application branch before the dependency PR reports 9 high, 4 moderate, 0 critical npm audit findings.
+- Draft PR #2 contains patched overrides for `prosemirror-view@1.42.9`, `glob@14.0.2`, and `minimatch@11.0.1`; its exact lockfile passed npm audit with 0 findings, 4,110 combined tests, Forge CLI lint, and a Forge development deployment as version 2.16.0.
+- The `glob` and `minimatch` overrides cross upstream major-version ranges. PR #2 remains draft for review. Do not describe the main application branch as vulnerability-free until the reviewed dependency PR is merged and the final base-branch checks pass.
+
 ## Prize verification and payment
 
 The official rules advertise cash awards. Payment is conditional on winner selection and identity/qualification/role verification. Keep entrant and banking/tax information accurate and respond to Required Forms within the stated deadline; the rules say monetary prizes are delivered within 60 days after Sponsor/Devpost receives completed Required Forms. Account for wire/foreign-exchange fees, taxes and applicable Indian banking/foreign-exchange reporting obligations.
+
+
+## Latest engineering baseline — 17 November 2026
+
+The application base commit `fffaef7204d514e10237461f1440e6d904d5dd1b` passed **4,120 automated tests, 0 failures, 0 skips** in PR validation [#44079753736](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079753736). The matching push workflow [#44079747452](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079747452) also passed syntax, frontend compilation, authenticated Forge CLI lint, Forge development deployment and the existing development installation upgrade. This does not clear the app-branch dependency findings; the separate scoped override PR must pass its strict audit and independent compatibility review before it can be integrated.
+
+No browser retest, judge installation link, public YouTube demo, or final Devpost submission is recorded. The app remains a development draft.

@@ -14,6 +14,10 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - Suggested next checks prioritized from observed deployment, pull-request and linked Jira-work states/timestamps, with a rationale and source link where available; they are not root-cause findings.
 - Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, request deadlines including hanging response bodies, graph evidence normalization, pagination timeouts, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
 
+## Codegeist submission preparation
+
+A fact-checked submission draft and judge-readiness checklist are in [docs/CODEGEIST_SUBMISSION_DRAFT.md](docs/CODEGEIST_SUBMISSION_DRAFT.md). The demo storyboard is in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md); do not record or publish it until live acceptance gates pass.
+
 ## Why TraceBack
 
 An engineer investigating a Jira incident needs more than an issue description. TraceBack assembles existing Jira-linked work plus delivery context already connected to that work item: goals, deployments, and pull requests. It shows where each record came from and what is still missing, so the engineer can investigate without confusing correlation with causation.
@@ -68,7 +72,8 @@ Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to 
 
 ## Dependency security
 
-The inspected npm audit reported unresolved high and moderate dependency findings. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the dated report. The lockfile is committed and `npm ci` is verified; upstream high and moderate advisories remain unresolved. Do not apply `npm audit fix --force` without compatibility testing.
+The isolated security PR pins patched `prosemirror-view@1.42.9` and scopes the `glob@14.0.2` override to `@forge/manifest` only; `minimatch@11.0.1` is resolved through glob 14's own dependency range. This removes the global minimatch override and narrows the blast radius, but still crosses the upstream `@forge/manifest@13.9.0` declaration of `glob@^13.0.0`. The exact tree has passed strict npm audit, dependency-tree checks, full tests and Forge CLI lint on the isolated branch. The latest application tree has 4,120 tests passing; this security tree must be revalidated against that exact base before merge. Keep PR #2 draft pending that check and independent compatibility review. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md).
+
 
 ## Jira installation and acceptance
 

@@ -65,3 +65,150 @@ The latest locked-dependency audit was re-run by GitHub Actions push workflow [#
 The current lockfile resolves `@forge/api 8.5.0`, `@forge/bridge 7.3.0`, `@forge/react 12.5.0`, `@forge/manifest 13.9.0`, `@atlaskit/adf-schema 56.7.3`, `@atlaskit/editor-prosemirror 8.0.3`, `prosemirror-view 1.41.5`, `glob 13.0.7`, and `minimatch 10.2.6`. In particular, the locked `prosemirror-view 1.41.5` remains below the previously identified patched version 1.42.3; this is not cleared by the passing app test suite.
 
 No dependency upgrades were made in this documentation-only change. Do not claim the app is vulnerability-free, and do not use `npm audit fix --force`. Any remediation should be isolated, compatibility-reviewed, and followed by the complete CI, Forge deployment and live acceptance gates.
+
+
+## Isolated remediation investigation — 17 November 2026
+
+This investigation was performed on the separate `security/dependency-remediation` branch, based on the validated application commit `c1fbe07fabadcd6e03f17b993528668609e1b32e`. No production branch dependency versions were changed.
+
+### Findings from the committed lockfile
+
+- `@forge/bridge@7.3.0` depends on `@atlaskit/adf-schema@^56.7.0` and `@forge/manifest@13.9.0`.
+- `@forge/react@12.5.0` depends on `@atlaskit/adf-schema`, `@atlaskit/adf-utils`, and `@atlaskit/forge-react-types`.
+- Five installed copies of `@atlaskit/editor-prosemirror` (versions 8.0.3 and 9.0.0) declare an exact `prosemirror-view@1.41.5` dependency. The fixed version for GHSA-c8x8-7fp4-3x9w is 1.42.3.
+- `@forge/manifest@13.9.0` declares `glob@^13.0.0`; the installed `glob@13.0.7` declares `minimatch@^10.2.2`. The audit's fixed versions are outside those declared major ranges (glob 14.0.2 and minimatch 11.0.1).
+- The Forge UI source imports `@forge/react` and `@forge/bridge`; it does not directly import ProseMirror or an editor component. This narrows direct feature exposure but does not remove the vulnerable packages from the installed dependency tree or establish Marketplace compliance.
+
+### Compatibility decision
+
+No package or lockfile override was committed. Forcing `prosemirror-view@1.42.3` would override an exact upstream Atlaskit dependency declaration; forcing `glob@14.0.2` or `minimatch@11.0.1` would cross upstream major-version ranges. The npm audit's proposed direct Forge package fixes include major downgrades, which are not an acceptable blind remediation.
+
+An Atlassian Developer Community report independently describes the same `prosemirror-view@1.41.5` pin in Forge UI Kit dependency trees and reports that an npm override leads to an `npm ls` dependency problem. This is corroborating community evidence, not an official Atlassian remediation commitment.
+
+### Release impact and required next action
+
+Atlassian's current Marketplace cloud-app security requirements explicitly prohibit known high- or critical-severity third-party dependencies. The current audit therefore remains a release blocker even though this app's own UI does not directly expose a ProseMirror editor and all functional tests pass.
+
+The safe next action is to obtain an upstream patched Forge/Atlaskit dependency release or written Atlassian guidance on a supported mitigation. If Atlassian confirms that the vulnerability is not present in the shipped Forge app artifact or provides an accepted mitigation, retain that evidence and rerun the full dependency audit and Forge validation. Do not describe the issue as resolved solely because an override installs or because the affected editor is not directly used.
+
+References:
+- [GitHub advisory GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w) — fixed in `prosemirror-view@1.42.3`.
+- [Atlassian Marketplace cloud-app security requirements](https://developer.atlassian.com/platform/marketplace/security-requirements/) — known high/critical third-party vulnerabilities are prohibited.
+- [Atlassian Marketplace security enforcement policy](https://developer.atlassian.com/platform/marketplace/marketplace-security-enforcement-policy/) — explains vulnerability handling and remediation expectations.
+- [Atlassian Developer Community report](https://community.developer.atlassian.com/t/forge-react-bridge-dependencies-pin-vulnerable-prosemirror-view-1-41-5-ghsa-c8x8-7fp4-3x9w/103359) — corroborates the upstream exact-version pin and override compatibility issue.
+
+
+## Follow-up registry and override evidence — 17 November 2026
+
+A fresh package-registry check changes the earlier assessment of the ProseMirror override and justifies a controlled CI experiment, but it does not yet establish a completed remediation:
+
+- npm currently lists `prosemirror-view@1.42.9` as the latest stable release. The vulnerability is fixed from 1.42.3 onward. See [npm package versions](https://www.npmjs.com/package/prosemirror-view?activeTab=versions) and [GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w).
+- The October 2026 Atlassian Developer Community thread linked above contains a later follow-up from a developer who tested a root npm override to `prosemirror-view@1.42.3` with Forge React/Bridge. They reported that all ProseMirror instances resolved to 1.42.3 and the corresponding high audit findings fell to zero in their clean test projects.
+- The same follow-up clarifies that the `npm ls --all` `ELSPROBLEMS` result in that environment was caused by separate React peer-dependency declarations (`react-scrolllock` and `@atlaskit/analytics-next-stable-react-context` expecting React 16), and persisted both with and without the ProseMirror override. Therefore, the earlier interpretation that the override itself necessarily caused the npm tree error was too strong.
+- This is community-reported compatibility evidence, not an official Atlassian support statement and not a test of this repository's exact lockfile, build output, or deployed Forge artifact.
+
+### Updated next experiment
+
+Test a root npm override to the latest stable patched `prosemirror-view` (currently 1.42.9) on this isolated branch only. Regenerate the lockfile using npm in a network-enabled CI runner, preserve npm's registry-provided integrity hash, then run `npm ci`, `npm ls prosemirror-view`, `npm audit --json`, the complete test suite, frontend/syntax checks, Forge CLI lint and a development deployment/live acceptance check. Inspect the built Forge bundle for ProseMirror code as additional evidence, not as a substitute for dependency-policy compliance.
+
+Do not hand-edit or omit the lockfile integrity field, do not apply the override to the main application branch until the complete validation succeeds, and do not claim all high vulnerabilities are resolved unless the full audit confirms it. The separate `glob`/`minimatch` major-version constraints remain independently unresolved.
+
+
+### Isolated ProseMirror override CI result — 17 November 2026
+
+GitHub Actions run [44027756327](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44027756327) completed successfully on the isolated security branch at commit `8f9c2d68b99ec39ecf533188e5754ecdb2f45c53`.
+
+Verified from the job log and retained artifact:
+
+- `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` succeeded using Node 24.22.2 / npm 11.19.1.
+- `npm ci --ignore-scripts` succeeded; 403 packages installed.
+- `npm ls prosemirror-view --all` succeeded, and a lockfile assertion confirmed every locked `prosemirror-view` entry is `1.42.9` (patched version).
+- `npm audit --json`: 0 high, 0 critical, 6 moderate vulnerabilities (down from the previously recorded 9 high + 4 moderate). Do not describe the dependency tree as vulnerability-free.
+- Tests: 4,107 passed, 0 failed, 0 skipped.
+- `npm run lint:syntax` and `npm run lint:frontend` both passed.
+- CI uploaded artifact `prosemirror-remediation-evidence` (artifact ID `14304290949`) containing the exact regenerated lockfile and JSON audit report. Artifact retention expires 24 November 2026.
+
+The workflow was then extended to commit the CI-generated lockfile to this isolated branch only, after successful validation. That follow-up push and its resulting run must be checked before treating the lockfile as persisted. No changes were made to the main app branch, Forge deployment, or PR #1. The six moderate audit findings remain; the separate `glob`/`minimatch` remediation and Atlassian Marketplace policy review remain open.
+
+
+## Full isolated override validation — 17 November 2026
+
+A second, broader override experiment was completed on `security/glob-minimatch-experiment`, based on the separately validated application branch. The experiment changes only the isolated branch's npm overrides and generated lockfile; it does not change the main branch or PR #1.
+
+**Successful validation:** [GitHub Actions run #44067874879](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44067874879), commit `a0aa2adca67b9ff7e11eb0c1a9aeb339be6cf6e7`.
+
+- Node 24 / npm lockfile regeneration succeeded.
+- `npm ci --ignore-scripts` succeeded.
+- The lockfile contains exactly one installed copy of each overridden package: `prosemirror-view@1.42.9`, `glob@14.0.2`, and `minimatch@11.0.1`.
+- `npm ls prosemirror-view glob minimatch --all` succeeded with no invalid dependency-tree errors.
+- `npm audit --json` reported **0 vulnerabilities: 0 low, 0 moderate, 0 high, 0 critical**.
+- Tests: **4,107 passed, 0 failed, 0 skipped**.
+- JavaScript syntax checks and frontend JSX compilation passed.
+- Authenticated Forge CLI lint completed and reported **No issues found**.
+- The CI-generated lockfile was committed to this isolated branch after all checks passed. The run artifact (ID `14319879273`) preserves the lockfile and JSON audit report until 24 November 2026.
+
+### Compatibility and release decision
+
+This is materially stronger evidence than the earlier ProseMirror-only experiment: all three patched versions install together, npm's dependency-tree validation succeeds, the complete test suite passes, Forge CLI lint passes, and npm audit reports zero findings.
+
+However, `glob@14.0.2` and `minimatch@11.0.1` cross the major-version ranges declared by upstream Forge/manifest dependencies. The successful `npm ls`, app tests, and Forge lint reduce the compatibility concern but do not constitute an Atlassian support statement or a deployed runtime test using this exact dependency tree. Therefore:
+
+- Keep the overrides and lockfile isolated until the draft dependency PR is independently reviewed.
+- Do not claim that the current main app branch is vulnerability-free; its existing lockfile still reports 9 high and 4 moderate findings.
+- Do not deploy or merge the experiment automatically. Require a deliberate dependency review and a full Forge development deploy plus live acceptance before release.
+- If Atlassian provides a supported upstream fix or written compatibility guidance, retain it with the PR.
+
+The zero-vulnerability result is an observed npm audit result for this exact isolated lockfile and CI run, not a guarantee against undiscovered vulnerabilities or future advisories.
+
+
+### Integration validation against the latest application branch — 17 November 2026
+
+The dependency PR's merge-result CI [run #44068485217](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44068485217) tested the dependency changes together with the latest `codegeist/forge-foundation` application branch:
+
+- `npm ci` succeeded and `npm audit` reported **0 vulnerabilities**.
+- **4,110 tests passed, 0 failed, 0 skipped**, including the latest backend Teamwork Graph HTTP-response regression tests.
+- JavaScript syntax checks and frontend JSX compilation passed.
+- Forge CLI lint is skipped on pull-request events by design; the matching authenticated push validation [#44068478540](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44068478540) completed Forge CLI lint with **No issues found**.
+- The PR remains draft and has not been deployed with the overridden dependency tree. The zero-audit result is verified, but development deployment/live acceptance of this exact combined tree remains a pre-release gate.
+
+
+### Forge development deployment with the patched dependency tree — 17 November 2026
+
+The exact dependency tree in this draft PR was deployed successfully to the Forge **development** environment by [GitHub Actions run #44072061196](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44072061196), commit `f94945ca327720bdbe12c72b3705c0a5f6d175ae`.
+
+- `npm ci` installed the committed lockfile successfully (404 packages); npm reported **0 vulnerabilities**.
+- The lockfile assertions confirmed `prosemirror-view@1.42.9`, `glob@14.0.2`, and `minimatch@11.0.1`.
+- `npm audit --audit-level=low` passed with **0 findings**.
+- Forge CLI 15.1.0 lint reported **No issues found**.
+- Forge CLI deployed TraceBack Context Engine **version 2.16.0** to the **development** environment. Forge reported the version is eligible for the Runs on Atlassian program.
+- This deployment did **not** deploy to the production Forge environment, change the manifest scopes, or run an installation upgrade. The existing development installation remains on the previously configured Jira site; that site is a production Jira tenant, so this is still a controlled development installation, not a separate test tenant.
+
+This materially reduces the dependency compatibility risk because the patched tree passed npm installation, audit, Forge lint, packaging, manifest validation, and an actual Forge development deployment. It is not yet a live-runtime acceptance test of the deployed version: a fresh browser retest is still outstanding, and the Teamwork Graph scopes remain unapproved/disabled. Do not merge or release this draft solely on the basis of the deployment.
+
+The one-off workflow used for this isolated deployment is removed from the final PR diff; the run record remains available at the link above.
+
+
+## Scoped override hardening — 17 November 2026
+
+A follow-up review narrowed the dependency override configuration on the isolated branch:
+
+- `prosemirror-view@1.42.9` remains a root override because five installed Atlaskit editor packages declare the exact vulnerable `1.41.5` version.
+- The `glob@14.0.2` override is now nested under `@forge/manifest` rather than applied globally. The inspected lockfile has one `glob` installation and `@forge/manifest@13.9.0` is its only direct consumer.
+- The root `minimatch@11.0.1` override was removed. `glob@14.0.2` itself declares `minimatch@^11.0.0`, and the committed lockfile resolves that dependency to patched `11.0.1`.
+- Added `test/dependency-overrides.test.js` to guard the intended override scope and assert that every locked ProseMirror view copy is patched.
+
+This is a blast-radius reduction, not removal of the compatibility concern: `@forge/manifest@13.9.0` still declares `glob@^13.0.0`, while the scoped override supplies 14.0.2. The scoped change and regression test must pass a fresh `npm ci`, full test suite, audit, syntax/frontend checks and authenticated Forge CLI lint before this updated PR head can be considered validated. No app source, manifest scopes, Jira data, or production deployment were changed.
+
+
+## Rebased scoped override and latest application test base — 17 November 2026
+
+The scoped dependency experiment has been rebased onto application commit `ee32378a385666c4c86adb13a43d3f01ce610c31`, which includes the latest resolver request deadlines, Graph pagination timeout handling, stale-response protection and truthful empty-state copy. The security PR remains limited to dependency configuration, lockfile, regression assertions, CI audit gates and documentation; it does not change the Forge manifest or runtime application source.
+
+The isolated dependency configuration remains:
+- Root `prosemirror-view@1.42.9` override to satisfy exact vulnerable Atlaskit pins.
+- `glob@14.0.2` scoped only under `@forge/manifest`; this still crosses `@forge/manifest@13.9.0`'s declared `glob@^13.0.0` range.
+- No global `minimatch` override; glob 14 declares `minimatch@^11.0.0` and the lockfile resolves `11.0.1`.
+
+The exact prior scoped tree passed `npm ci`, `npm ls prosemirror-view glob minimatch --all`, strict `npm audit --audit-level=low` with zero findings, 4,112 merge-result tests, syntax/frontend checks and authenticated Forge CLI lint. That prior result is not a substitute for CI on the newly rebased head. The rebased PR is configured to rerun the dependency-tree check and strict audit against the full 4,120-test application base. Keep it draft until those exact checks pass and independent compatibility review is complete.
+
+The app-branch push workflow no longer passes `--confirm-scopes` to Forge installation. CI must not automatically consent to new scopes; any scope addition must be approved explicitly by an Atlassian organization administrator.
