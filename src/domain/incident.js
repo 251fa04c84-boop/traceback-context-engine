@@ -11,6 +11,14 @@ function getIssueKeyFromProductContext(context) {
   return isValidIssueKey(issueKey) ? issueKey : null;
 }
 
+function getRetryIssueKey(context, lastIssueKey) {
+  const activeIssueKey = getIssueKeyFromProductContext(context);
+  if (activeIssueKey) return activeIssueKey;
+
+  const fallbackIssueKey = typeof lastIssueKey === 'string' ? lastIssueKey.trim() : '';
+  return isValidIssueKey(fallbackIssueKey) ? fallbackIssueKey : null;
+}
+
 function plainText(value) {
   if (value == null) return '';
   if (typeof value === 'string') return value;
@@ -86,6 +94,7 @@ function normalizeIssue(issue) {
 module.exports = {
   isValidIssueKey,
   getIssueKeyFromProductContext,
+  getRetryIssueKey,
   plainText,
   normalizeRelatedIssues,
   normalizeIssue
