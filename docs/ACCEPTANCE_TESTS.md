@@ -250,6 +250,15 @@ The separate draft dependency PR #2 is rebased directly onto application commit 
 - PR validation: [#44080696080](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080696080).
 - Authenticated push validation: [#44080687502](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44080687502).
 - Two direct compatibility tests call the actual `@forge/manifest@13.9.0` `PackageValidator` with glob 14: one matching extra file and one missing pattern. Both passed.
-- The current scoped dependency tree was not deployed by these workflows; the push validation deliberately skipped the deployment step on `security/**`.
+- The exact scoped dependency tree was subsequently deployed to Forge development as version **2.21.0** in [push run #44081294538](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081294538); Jira confirmed the existing development installation was already at the latest version. This was a controlled development deployment on the connected production Jira tenant, not a production/judge deployment. The workflow did not auto-consent to scopes.
 - The remaining semver compatibility question is explicit: `@forge/manifest@13.9.0` declares `glob@^13.0.0`, while the scoped override supplies 14.0.2. The direct consumer test reduces practical risk but does not constitute an Atlassian support statement.
 - The app branch itself still reports 9 high and 4 moderate audit findings until the reviewed dependency PR is integrated.
+
+
+## Scoped dependency tree development deployment — 17 November 2026
+
+- Exact dependency branch commit: `8f71a4280d5804336e2017c6843256f718af77e8`.
+- [Push workflow #44081294538](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081294538) passed 4,124 tests, dependency-tree validation, syntax/frontend checks and authenticated Forge CLI lint; it deployed TraceBack Context Engine **version 2.21.0** to Forge development.
+- The existing development installation on `251fa04c84.atlassian.net` was confirmed already at the latest version. The command did not use `--confirm-scopes`; no new scope consent was auto-approved.
+- This is not a production deployment, separate test tenant, or judge installation. Forge CLI warns the connected Jira site is a production tenant.
+- **Fresh browser acceptance of 2.21.0 remains pending.** No claim is made that the panel's live UI or Teamwork Graph data has been reverified after this deployment.

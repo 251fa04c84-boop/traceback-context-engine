@@ -225,3 +225,17 @@ return (await (0, glob_1.glob)(pattern)).some((file) => fs_1.default.lstatSync(f
 It uses the named asynchronous `glob(pattern)` API with no special options, classes, or internal exports. The upstream glob 14 package retains the named `glob()` API. To turn that source review into executable evidence, this PR adds a test that invokes the actual exported `PackageValidator` from `@forge/manifest@13.9.0` against a temporary matching file and a missing-file pattern while the lockfile resolves glob 14. This tests the exact consumer path rather than only testing `glob` in isolation.
 
 This narrows the practical compatibility concern but does not erase the declared semver mismatch: the Atlassian package still specifies `glob@^13.0.0`. Retain the explicit override, its source review, the integration test, and the CI result for reviewer visibility. Do not call this an Atlassian-supported combination unless Atlassian confirms it.
+
+
+## Controlled development deployment of the scoped tree — 17 November 2026
+
+After the direct `@forge/manifest@13.9.0` consumer tests passed, the exact scoped dependency tree was deployed to the Forge **development** environment by [GitHub Actions run #44081294538](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081294538), branch head `8f71a4280d5804336e2017c6843256f718af77e8`.
+
+- `npm ci`, `npm ls prosemirror-view glob minimatch --all`, 4,124 tests, syntax/frontend checks, and authenticated Forge CLI lint passed.
+- Strict npm audit on the matching PR validation remains **0 vulnerabilities** ([#44081054112](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44081054112)).
+- Forge CLI deployed the scoped tree as development app version **2.21.0**; Jira reported the existing development installation was already at the latest version.
+- The install command did not pass `--confirm-scopes`; no automatic scope consent was requested.
+- This is a controlled development deployment on `251fa04c84.atlassian.net`, which Forge identifies as a production Jira site. It is not a production environment deployment, separate test tenant, or judge installation.
+- A fresh browser retest of version 2.21.0 is still outstanding. The four Teamwork Graph scopes and representative real linked-record acceptance remain separate administrator/runtime gates.
+
+The workflow's temporary exact-branch development-deploy condition has been reverted after this one validation run. Future security-branch pushes will not automatically deploy; the normal application branch workflow remains the only automatic development deployment path. It still does not auto-consent to scopes.
