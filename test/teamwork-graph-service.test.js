@@ -22,7 +22,7 @@ test('queries all curated issue-context relationships as the current Atlassian u
           requestCount += 1;
           capturedQuery = query;
           capturedVariables = variables;
-          return { ok: true, async json() { return graphResponse; } };
+          return graphResponse;
         }
       };
     }
@@ -80,7 +80,7 @@ test('does not fail the Jira resolver when Teamwork Graph denies access', async 
     asUser() {
       return {
         async requestTeamworkGraph() {
-          return { ok: false, status: 403, async json() { return { errors: [{ message: 'Forbidden' }] }; } };
+          return { data: null, errors: [{ message: 'Forbidden' }] };
         }
       };
     }
@@ -105,19 +105,14 @@ test('normalizes partial GraphQL data without throwing away linked evidence', as
       return {
         async requestTeamworkGraph() {
           return {
-            ok: true,
-            async json() {
-              return {
-                data: {
-                  jiraWorkItemGoals: { edges: [] },
-                  jiraWorkItemLinkedExternalDeployments: {
-                    edges: [{ node: { id: 'deployment-2', displayName: 'Staging deploy', state: 'IN_PROGRESS' } }]
-                  },
-                  jiraWorkItemLinkedExternalPullRequests: { edges: [] }
-                },
-                errors: [{ message: 'Pull request relationship not visible' }]
-              };
-            }
+            data: {
+              jiraWorkItemGoals: { edges: [] },
+              jiraWorkItemLinkedExternalDeployments: {
+                edges: [{ node: { id: 'deployment-2', displayName: 'Staging deploy', state: 'IN_PROGRESS' } }]
+              },
+              jiraWorkItemLinkedExternalPullRequests: { edges: [] }
+            },
+            errors: [{ message: 'Pull request relationship not visible' }]
           };
         }
       };
