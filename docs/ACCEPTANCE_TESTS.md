@@ -18,7 +18,8 @@ This record must be completed against an actually deployed Forge app. A successf
 - [ ] forge lint and current manifest/source validation completed successfully.
 - [ ] Forge app deployed to the development environment.
 - [ ] App installed on the test Jira site.
-- [ ] Requested Jira and Teamwork Graph scopes are granted by the site administrator.
+- [ ] Requested Jira and Teamwork Graph scopes are granted by an organization administrator.
+- [ ] An organization administrator approves the Teamwork Graph scopes; these scopes can expose organization-wide data and Atlassian requires organization-admin installation.
 - [ ] The site has the expected graph connectors enabled, if external PR/deployment records are to be shown.
 - [ ] The judge installation link is generated using Atlassian's supported sharing flow.
 
@@ -42,10 +43,11 @@ This record must be completed against an actually deployed Forge app. A successf
 
 ## Teamwork Graph acceptance
 
-- [ ] Confirm the site administrator granted read:graph:issue:jira.
-- [ ] Confirm the site administrator granted read:graph:goal:atlassian.
-- [ ] Confirm the site administrator granted read:graph:deployment:external.
-- [ ] Confirm the site administrator granted read:graph:pull-request:external.
+- [ ] Confirm the organization administrator granted read:graph:issue:jira.
+- [ ] Confirm the organization administrator granted read:graph:goal:atlassian.
+- [ ] Confirm the organization administrator granted read:graph:deployment:external.
+- [ ] Confirm the organization administrator granted read:graph:pull-request:external.
+- [ ] Record that Teamwork Graph is a Forge Preview API and verify the current curated-query schema before final deployment.
 - [ ] Verify linked goals, external deployments and external pull requests when real records exist.
 - [ ] Verify cursor pagination follows later pages for each relationship category and does not duplicate records.
 - [ ] Verify a category with more than 125 records is marked as capped with a visible warning rather than silently appearing complete.
