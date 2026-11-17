@@ -88,5 +88,5 @@ test('bounds pagination and clearly reports categories with more than five pages
   assert.equal(captured.length, 5);
   assert.equal(result.goals.length, 5);
   assert.deepEqual(result.truncatedCategories, ['goals']);
-  assert.match(result.warning, /additional records/i);
+  assert.match(result.warning, /additional linked records/i);
 });
