@@ -24,7 +24,7 @@ When a software incident is tracked in Jira, the issue rarely contains the whole
 
 TraceBack then turns observed states and timestamps into prioritized next checks—for example, inspect a failed linked deployment, review an open pull request, or check an unresolved related Jira item. Each suggestion explains what was observed. It is an investigation lead, not a root-cause claim or probability score.
 
-The same evidence path is also exposed through **TraceBack Investigator**, a read-only Rovo Agent, and **TraceBack MCP**, which makes the same action available to customer-created Rovo agents in Rovo Studio. These are not separate data pipelines with broader credentials: they reuse a shared action that validates the issue key and performs Jira and Teamwork Graph reads as the invoking user.
+The same evidence path is also exposed through **TraceBack Investigator**, a read-only Rovo Agent, and **TraceBack MCP**, which makes the same action available to customer-created Rovo agents in Rovo Studio. These are not separate data pipelines with broader credentials: they reuse a shared action that validates the issue key and performs Jira and Teamwork Graph reads as the invoking user. The action explicitly labels issue and linked-record free text as untrusted evidence, and the Rovo prompt instructs the agent to ignore embedded instructions.
 
 TraceBack is deliberately honest about missing data. It distinguishes available, empty, partial and unavailable Teamwork Graph results; permission-filtered or disconnected sources are not presented as proof that no evidence exists. Source URLs are validated before becoming links. The Jira panel, Rovo Agent and MCP action are read-only: they do not trigger deployments, rollbacks, feature-flag changes or Jira mutations.
 
@@ -48,7 +48,7 @@ TraceBack is designed for software teams that need to start an investigation wit
 - **Rovo Agent:** TraceBack Investigator uses a constrained, read-only prompt and the shared context action.
 - **Atlassian MCP:** TraceBack MCP exposes the same action to customer-created agents in Rovo Studio after site administrator authorization.
 - **Reliability controls:** Bounded cursor pagination, stable-ID de-duplication, input validation, safe HTTPS link validation, partial-error handling, explicit evidence states, bounded action output and timeout handling.
-- **Safety controls:** No fabricated telemetry, no causal claims from linked records alone, no Jira mutation or operational action, and no escalation of privilege through Rovo/MCP.
+- **Safety controls:** No fabricated telemetry, no causal claims from linked records alone, no Jira mutation or operational action, explicit untrusted-evidence boundaries for free text, and no escalation of privilege through Rovo/MCP.
 
 ## Current engineering evidence — 17 November 2026
 
