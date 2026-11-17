@@ -76,3 +76,23 @@ The Jira Manage apps / Connected Apps Authorization view for the installed Trace
 This explains the observed split: the Forge panel can fetch and render the Jira issue, while the Teamwork Graph relationship data is unavailable. The app already requests these scopes in `manifest.yml`, but the site installation has not granted them. Per Atlassian's granular-scope model, the site administrator must enable the relevant object scopes in Connected Apps. The next required action is explicit administrator approval of these four read-only scopes, followed by a short propagation wait and a fresh live panel retest.
 
 Until that approval is granted, do not claim Teamwork Graph integration is accepted or that the missing records are genuinely absent.
+
+
+## Expanded automated verification — 17 November 2026
+
+The test suite has been expanded from the earlier baseline to **103 automated test cases** across the Node.js built-in test runner.
+
+### Coverage areas added
+
+- Resolver handler behavior: active issue binding, cross-issue request rejection, malformed issue keys, Jira 404 and 503 responses, requested field minimization, current-user API context, and graceful failure when optional Teamwork Graph access is unavailable.
+- Teamwork Graph adversarial inputs: malformed top-level data, invalid connection shapes, missing stable IDs, wrong node types, unsafe schemes, URL credentials, hostile error messages, and invalid identifiers.
+- Pagination behavior: category-specific cursors, completed-category skipping, repeated/missing/blank cursor detection, deduplication, page safety limits, partial failures, and error preservation.
+- Investigation logic: all terminal Jira statuses, active statuses, failed/in-progress deployments, production severity, open/draft/merged pull requests, archived goals, priority ordering, malformed collections, and timestamp boundaries.
+
+### CI evidence
+
+- Push run [#327](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44025703532), commit `9e9124d3211fcac75bb170af989875b52aa2fc1a`: the 103-test step passed; syntax checks and frontend compilation passed; Forge CLI validation passed. Development deployment was still running at the time this record was written.
+- Preceding push run [#325](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44025626773), commit `7de893502e01b9cfe5deeb6c8f5257876a1f7650`: tests, syntax, frontend compilation and Forge CLI validation passed; it includes the 91-test suite before the final investigation edge-case matrix.
+- The initial expanded run [#320](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44025467990) intentionally caught three failures (78/81 passing). Two were incorrect adversarial test assumptions; one exposed that array-shaped GraphQL data was accepted as an empty response. The implementation now rejects array-shaped `data` as unavailable, and the corrected test suite passed in later CI.
+
+These are automated unit/handler tests and build validations. They do not replace a live test with administrator-approved Teamwork Graph scopes or real connected external records.
