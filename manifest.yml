@@ -40,11 +40,9 @@ modules:
       function: rovo-investigation
       actionVerb: GET
       description: |
-        Retrieve a read-only, source-linked investigation snapshot for a Jira issue.
-        Use the supplied Jira issue key and current user's permissions to read Jira fields
-        and linked Teamwork Graph goals, external deployments, and external pull requests.
-        Returns explicit evidence availability and completeness states plus ranked follow-up leads.
-        Never use this action to modify Jira or production systems.
+        Retrieve source-linked Jira and Teamwork Graph evidence for an issue.
+        Uses the current user's permissions and returns evidence status plus ranked next checks.
+        Read-only: no Jira or production changes.
       inputs:
         issueKey:
           title: Jira issue key
