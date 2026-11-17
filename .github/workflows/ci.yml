@@ -63,18 +63,12 @@ jobs:
       - run: npm run lint:frontend
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
-      - name: Validate Forge app with CLI when registered
+      - name: Validate registered Forge app with CLI
         if: github.event_name != 'pull_request'
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        shell: bash
-        run: |
-          if grep -Eq '^  id:' manifest.yml; then
-            npx --yes @forge/cli@15.1.0 lint
-          else
-            echo "::warning title=Forge registration required::Forge CLI lint is skipped because manifest.yml has no app.id. Register this Forge app once with 'forge register' before deployment and judge installation."
-          fi
+        run: npx --yes @forge/cli@15.1.0 lint
       - name: Deploy and upgrade the development installation after successful push checks (never auto-consent to scopes)
         if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation'
         env:
