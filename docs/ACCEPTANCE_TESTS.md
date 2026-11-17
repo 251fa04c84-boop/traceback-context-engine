@@ -115,3 +115,18 @@ Do not change a result to Pass until the corresponding live action has been perf
 - Verified steps: `npm ci`, report-only dependency audit, **38/38 tests**, syntax checks, frontend JSX compilation, and authenticated Forge CLI validation. Forge CLI validation completed successfully.
 - PR CI [run #302](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44012423027) also passed its applicable checks; Forge CLI validation was skipped by the PR-event workflow condition.
 - The dependency audit remains **9 high, 4 moderate, 0 critical**. CI success is not a vulnerability remediation or a live Jira/Teamwork Graph acceptance result.
+
+
+## Live Jira connector probe — 17 November 2026
+
+A clearly labelled, low-priority temporary Jira Task was created in the existing `DEMO` project for a safe live-context probe:
+
+- Issue: [DEMO-9](https://251fa04c84.atlassian.net/browse/DEMO-9), summary `[TraceBack TEST] Temporary issue-context panel acceptance check`.
+- Labels: `traceback-test`, `temporary`, `acceptance-check`.
+- Jira REST via the authenticated connector returned the expected key, summary, description, Open status, Low priority, and empty issue links.
+- Teamwork Graph context lookup resolved the JiraWorkItem ARI and returned an empty relationship summary for goals, external deployments, and external pull requests.
+- This proves the connector-side Jira issue and graph query paths can resolve the test issue, but does **not** prove the Forge app's runtime resolver, granted scopes, or rendered issue-context panel.
+- No artificial links, deployments, goals, or pull requests were created. No production/customer incident data was used.
+- Browser profile inspection shows the saved TinyFish profile has a Google sign-in only, not an Atlassian sign-in. Therefore visual panel verification is still blocked until an authenticated Atlassian browser session is available.
+
+The temporary test issue is intentionally left in place for inspection and can be removed after acceptance testing.
