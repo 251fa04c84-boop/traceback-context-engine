@@ -6,7 +6,7 @@
 
 - Deployed Forge development version **2.21.0** does not include the Rovo Agent/MCP feature.
 - Experimental branch: `codegeist/rovo-agent-mcp`, current validated code commit `047214c29cf55e94768a9c49039776572ccf3d12` before this documentation-only refresh.
-- CI [run #44084902302](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44084902302): **4,126 tests passed, 0 failed, 0 skipped**; syntax checks, frontend compilation and Forge CLI lint passed.
+- CI [run #44084902302](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44084902302): **4,130 tests passed, 0 failed, 0 skipped**; syntax checks, frontend compilation and Forge CLI lint passed.
 - The feature branch is based on the application branch, which still reports **9 high and 4 moderate** npm audit findings. The separate dependency-remediation PR #2 has a zero-finding audit but remains draft pending independent review and live acceptance.
 - No Rovo Agent deployment, Rovo chat invocation, MCP discovery, Rovo Studio invocation, or judge-site installation has been performed.
 - The four Teamwork Graph scopes remain unapproved on the connected Jira site. Live Teamwork Graph acceptance is still blocked on a dedicated test site and organization-admin approval.
