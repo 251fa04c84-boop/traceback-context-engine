@@ -49,6 +49,18 @@ TraceBack focuses on **investigation evidence integrity**, not an AI-generated r
 
 This is intended to reduce context-switching while keeping the engineer responsible for verifying the cause.
 
+## Judge-criteria alignment
+
+The official judging dimensions are equally weighted. This is an honest evidence map, not a claimed judge score.
+
+| Dimension | TraceBack evidence | Remaining proof needed |
+| --- | --- | --- |
+| Technology | Native Forge Jira issue context; current-user Jira/Graph reads; bounded pagination and request deadlines; source URL validation; automated tests and frontend compilation. | Fresh Forge CLI validation and live acceptance on a separate test site with real linked records. |
+| Design | Context appears inside the Jira issue; source links, relationship labels, and explicit available/empty/partial/unavailable states keep the investigation understandable. | Browser review with engineers, accessibility/usability feedback, and screenshots from the accepted build. |
+| Impact | The workflow is designed to reduce system switching and prevent false conclusions from missing or correlated evidence. | A controlled user test with measured task time, system switches, and evidence-interpretation accuracy; no impact percentage is claimed yet. |
+| Innovation | Evidence integrity, completeness and provenance are first-class product behavior; investigation leads are explicitly not root-cause predictions. | Demonstrate the advantage against a real incident workflow. Include Rovo/MCP only if the separate extension passes its acceptance gates. |
+| Presentation | A real-Jira demo storyboard and under-five-minute structure are prepared. | Record and publish the actual accepted build, add accurate captions, and verify the public YouTube link. |
+
 ## Technology
 
 - Atlassian Forge, Jira issue context module, UI Kit, Forge resolver, and Jira REST API.
