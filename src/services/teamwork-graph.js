@@ -116,6 +116,35 @@ function unavailableEvidence(warning) {
   };
 }
 
+async function readTeamworkGraphResponse(response) {
+  if (!response || typeof response !== 'object') return response;
+  if (typeof response.json !== 'function') return response;
+
+  let body;
+  try {
+    body = await response.json();
+  } catch {
+    return {
+      data: null,
+      errors: [{ message: 'Teamwork Graph returned an unreadable response body.' }]
+    };
+  }
+
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    body = { data: null };
+  }
+
+  const status = Number(response.status);
+  const httpFailure = response.ok === false || (Number.isFinite(status) && status >= 400);
+  if (!httpFailure) return body;
+
+  const errors = Array.isArray(body.errors) ? [...body.errors] : [];
+  errors.push({
+    message: 'Teamwork Graph request failed (' + (Number.isFinite(status) ? status : 'HTTP') + ').'
+  });
+  return { ...body, errors };
+}
+
 function makeRequestVariables(issueAri, cursors, include) {
   return {
     id: issueAri,
@@ -180,10 +209,11 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
       try {
         // @forge/api requestTeamworkGraph resolves to { data, errors } directly;
         // it is not a Fetch Response and must not be treated as response.json().
-        graphResponse = await userApi.requestTeamworkGraph(
+        const rawResponse = await userApi.requestTeamworkGraph(
           TEAMWORK_GRAPH_QUERY,
           makeRequestVariables(issueAri, cursors, include)
         );
+        graphResponse = await readTeamworkGraphResponse(rawResponse);
       } catch {
         errors.push({ message: 'Teamwork Graph request failed.' });
         break;
