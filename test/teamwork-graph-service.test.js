@@ -55,6 +55,90 @@ test('queries all curated issue-context relationships as the current Atlassian u
   assert.equal(result.pullRequests[0].title, 'Handle checkout retries');
 });
 
+test('parses the backend HTTP response shape before normalizing Teamwork Graph evidence', async () => {
+  const body = {
+    data: {
+      jiraWorkItemGoals: { edges: [{ node: { id: 'goal-http-1', name: 'Reliable releases' } }], pageInfo: { hasNextPage: false, endCursor: null } },
+      jiraWorkItemLinkedExternalDeployments: { edges: [], pageInfo: { hasNextPage: false, endCursor: null } },
+      jiraWorkItemLinkedExternalPullRequests: { edges: [], pageInfo: { hasNextPage: false, endCursor: null } }
+    }
+  };
+  const apiClient = {
+    asUser() {
+      return {
+        async requestTeamworkGraph() {
+          return {
+            ok: true,
+            status: 200,
+            async json() { return body; }
+          };
+        }
+      };
+    }
+  };
+
+  const result = await fetchTeamworkGraphEvidence(
+    apiClient,
+    '10006',
+    'c0e47565-a2b1-472f-bd30-5c1e3684bb1e'
+  );
+
+  assert.equal(result.status, 'available');
+  assert.equal(result.goals[0].id, 'goal-http-1');
+});
+
+test('preserves GraphQL errors and marks non-2xx backend HTTP responses unavailable', async () => {
+  const apiClient = {
+    asUser() {
+      return {
+        async requestTeamworkGraph() {
+          return {
+            ok: false,
+            status: 403,
+            async json() {
+              return { data: null, errors: [{ message: 'Forbidden' }] };
+            }
+          };
+        }
+      };
+    }
+  };
+
+  const result = await fetchTeamworkGraphEvidence(
+    apiClient,
+    '10006',
+    'c0e47565-a2b1-472f-bd30-5c1e3684bb1e'
+  );
+
+  assert.equal(result.status, 'unavailable');
+  assert.match(result.warning, /Teamwork Graph/i);
+});
+
+test('returns safe unavailable evidence when a backend HTTP response body is not valid JSON', async () => {
+  const apiClient = {
+    asUser() {
+      return {
+        async requestTeamworkGraph() {
+          return {
+            ok: true,
+            status: 200,
+            async json() { throw new SyntaxError('invalid JSON'); }
+          };
+        }
+      };
+    }
+  };
+
+  const result = await fetchTeamworkGraphEvidence(
+    apiClient,
+    '10006',
+    'c0e47565-a2b1-472f-bd30-5c1e3684bb1e'
+  );
+
+  assert.equal(result.status, 'unavailable');
+  assert.match(result.warning, /Teamwork Graph/i);
+});
+
 test('returns unavailable evidence without making a request when the issue identity is invalid', async () => {
   let requestCount = 0;
   const apiClient = {
