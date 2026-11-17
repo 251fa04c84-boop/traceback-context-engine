@@ -96,3 +96,19 @@ References:
 - [Atlassian Marketplace cloud-app security requirements](https://developer.atlassian.com/platform/marketplace/security-requirements/) — known high/critical third-party vulnerabilities are prohibited.
 - [Atlassian Marketplace security enforcement policy](https://developer.atlassian.com/platform/marketplace/marketplace-security-enforcement-policy/) — explains vulnerability handling and remediation expectations.
 - [Atlassian Developer Community report](https://community.developer.atlassian.com/t/forge-react-bridge-dependencies-pin-vulnerable-prosemirror-view-1-41-5-ghsa-c8x8-7fp4-3x9w/103359) — corroborates the upstream exact-version pin and override compatibility issue.
+
+
+## Follow-up registry and override evidence — 17 November 2026
+
+A fresh package-registry check changes the earlier assessment of the ProseMirror override and justifies a controlled CI experiment, but it does not yet establish a completed remediation:
+
+- npm currently lists `prosemirror-view@1.42.9` as the latest stable release. The vulnerability is fixed from 1.42.3 onward. See [npm package versions](https://www.npmjs.com/package/prosemirror-view?activeTab=versions) and [GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w).
+- The October 2026 Atlassian Developer Community thread linked above contains a later follow-up from a developer who tested a root npm override to `prosemirror-view@1.42.3` with Forge React/Bridge. They reported that all ProseMirror instances resolved to 1.42.3 and the corresponding high audit findings fell to zero in their clean test projects.
+- The same follow-up clarifies that the `npm ls --all` `ELSPROBLEMS` result in that environment was caused by separate React peer-dependency declarations (`react-scrolllock` and `@atlaskit/analytics-next-stable-react-context` expecting React 16), and persisted both with and without the ProseMirror override. Therefore, the earlier interpretation that the override itself necessarily caused the npm tree error was too strong.
+- This is community-reported compatibility evidence, not an official Atlassian support statement and not a test of this repository's exact lockfile, build output, or deployed Forge artifact.
+
+### Updated next experiment
+
+Test a root npm override to the latest stable patched `prosemirror-view` (currently 1.42.9) on this isolated branch only. Regenerate the lockfile using npm in a network-enabled CI runner, preserve npm's registry-provided integrity hash, then run `npm ci`, `npm ls prosemirror-view`, `npm audit --json`, the complete test suite, frontend/syntax checks, Forge CLI lint and a development deployment/live acceptance check. Inspect the built Forge bundle for ProseMirror code as additional evidence, not as a substitute for dependency-policy compliance.
+
+Do not hand-edit or omit the lockfile integrity field, do not apply the override to the main application branch until the complete validation succeeds, and do not claim all high vulnerabilities are resolved unless the full audit confirms it. The separate `glob`/`minimatch` major-version constraints remain independently unresolved.
