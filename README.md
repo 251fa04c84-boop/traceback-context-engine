@@ -10,9 +10,9 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - Existing inward/outward Jira issue links, including relationship, status, type, priority and safe same-site issue links.
 - A Teamwork Graph client that retrieves linked goals, external deployments, and pull requests through Atlassian's curated GraphQL queries, following cursors for up to five pages (125 records) per category and reporting when the safety cap or bounded request-time budget is reached.
 - Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
-- Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists. Jira and optional Graph requests have deadlines sized below Forge's 25-second resolver invocation ceiling; timed-out Graph pagination preserves already loaded evidence.
+- Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists. Jira requests including response-body parsing and optional Graph requests have deadlines sized below Forge's 25-second resolver invocation ceiling; timed-out Graph pagination preserves already loaded evidence.
 - Suggested next checks prioritized from observed deployment, pull-request and linked Jira-work states/timestamps, with a rationale and source link where available; they are not root-cause findings.
-- Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, graph evidence normalization, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
+- Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, request deadlines including hanging response bodies, graph evidence normalization, pagination timeouts, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
 
 ## Why TraceBack
 

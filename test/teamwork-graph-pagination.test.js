@@ -112,3 +112,36 @@ test('bounds pagination and clearly reports categories with more than five pages
   assert.deepEqual(result.truncatedCategories, ['goals']);
   assert.match(result.warning, /additional linked records/i);
 });
+
+
+test('preserves first-page evidence and marks pending categories partial when a later Graph request times out', async () => {
+  let calls = 0;
+  const client = {
+    asUser() {
+      return {
+        requestTeamworkGraph() {
+          calls += 1;
+          if (calls === 1) {
+            return Promise.resolve(graphResponse({
+              goals: connection([{ id: 'goal-timeout', name: 'Evidence before timeout' }], true, 'next-goal'),
+              deployments: connection([]),
+              pullRequests: connection([])
+            }));
+          }
+          return new Promise(() => {});
+        }
+      };
+    }
+  };
+
+  const result = await fetchTeamworkGraphEvidence(client, '10006', CLOUD_ID, {
+    totalDurationMs: 100,
+    requestDurationMs: 10
+  });
+
+  assert.equal(calls, 2);
+  assert.equal(result.status, 'partial');
+  assert.deepEqual(result.goals.map((goal) => goal.id), ['goal-timeout']);
+  assert.deepEqual(result.truncatedCategories, ['goals']);
+  assert.match(result.warning, /some connected evidence could not be loaded/i);
+});

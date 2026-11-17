@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ForgeReconciler, {
   Badge,
   Button,
@@ -37,19 +37,23 @@ function App() {
   const [incident, setIncident] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const requestSequence = useRef(0);
 
   async function loadIssue(key) {
     if (!key) return;
+    const requestId = ++requestSequence.current;
     setIssueKey(key);
     setLoading(true);
     setError('');
     try {
       const result = await invoke('getIssueContext', { issueKey: key });
-      setIncident(result);
+      if (requestId === requestSequence.current) setIncident(result);
     } catch (err) {
-      setError(err?.message || 'Unable to load Jira issue context.');
+      if (requestId === requestSequence.current) {
+        setError(err?.message || 'Unable to load Jira issue context.');
+      }
     } finally {
-      setLoading(false);
+      if (requestId === requestSequence.current) setLoading(false);
     }
   }
 
@@ -61,6 +65,9 @@ function App() {
       return;
     }
     loadIssue(contextIssueKey);
+    return () => {
+      requestSequence.current += 1;
+    };
   }, [contextIssueKey, contextReady]);
 
   if (loading) return <Stack space="space.200"><Spinner /><Text>Reading issue and linked evidence from Jira…</Text></Stack>;
@@ -142,7 +149,11 @@ function App() {
         </Inline>
         <Text>{graph.source || 'Atlassian Teamwork Graph'} · {evidenceCount} linked records</Text>
         <Text>The app follows Teamwork Graph cursors and attempts to load up to 125 records per category. If pagination cannot complete within that safety limit, the warning below identifies where more records may exist.</Text>
-        {graph.warning ? <Text>{graph.warning}</Text> : <Text>Linked records were returned for this Jira work item.</Text>}
+        {graph.warning ? <Text>{graph.warning}</Text> : graph.status === 'empty'
+          ? <Text>The Teamwork Graph query returned no linked records visible to this user. This does not prove that no related evidence exists elsewhere.</Text>
+          : graph.status === 'unavailable'
+            ? <Text>Teamwork Graph evidence is currently unavailable. Check app scopes, site configuration, and current-user access.</Text>
+            : <Text>Linked records were returned for this Jira work item.</Text>}
       </Stack>
 
       <Stack space="space.100">

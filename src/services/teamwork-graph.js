@@ -180,7 +180,13 @@ function appendConnection(target, incoming) {
   }
 }
 
-async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
+async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId, options = {}) {
+  const totalDurationMs = Number.isFinite(options.totalDurationMs)
+    ? options.totalDurationMs
+    : MAX_TOTAL_DURATION_MS;
+  const requestDurationMs = Number.isFinite(options.requestDurationMs)
+    ? options.requestDurationMs
+    : MAX_REQUEST_DURATION_MS;
   let issueAri;
   try {
     issueAri = buildJiraIssueAri(cloudId, issueId);
@@ -220,7 +226,7 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
 
     while (Object.values(include).some(Boolean) && requestCount < MAX_PAGES_PER_CATEGORY) {
       let graphResponse;
-      const remainingMs = MAX_TOTAL_DURATION_MS - (Date.now() - startedAt);
+      const remainingMs = totalDurationMs - (Date.now() - startedAt);
       if (remainingMs <= 0) {
         markPendingCategoriesAsTruncated();
         errors.push({ message: 'Teamwork Graph pagination exceeded its time budget.' });
@@ -236,7 +242,7 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
             TEAMWORK_GRAPH_QUERY,
             makeRequestVariables(issueAri, cursors, include)
           )),
-          Math.min(MAX_REQUEST_DURATION_MS, remainingMs),
+          Math.min(requestDurationMs, remainingMs),
           'Teamwork Graph request timed out.'
         );
       } catch {
