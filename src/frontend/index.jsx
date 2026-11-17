@@ -141,7 +141,7 @@ function App() {
           </Badge>
         </Inline>
         <Text>{graph.source || 'Atlassian Teamwork Graph'} · {evidenceCount} linked records</Text>
-        <Text>Up to 10 linked records per category are requested in this version; this panel does not yet paginate beyond that limit.</Text>
+        <Text>Linked goals, deployments and pull requests are loaded through cursor pagination, up to 125 records per category. If that safety cap is reached, the warning below identifies where more records may exist.</Text>
         {graph.warning ? <Text>{graph.warning}</Text> : <Text>Linked records were returned for this Jira work item.</Text>}
       </Stack>
 
