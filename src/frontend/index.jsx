@@ -141,6 +141,7 @@ function App() {
           </Badge>
         </Inline>
         <Text>{graph.source || 'Atlassian Teamwork Graph'} · {evidenceCount} linked records</Text>
+        <Text>Up to 10 linked records per category are requested in this version; this panel does not yet paginate beyond that limit.</Text>
         {graph.warning ? <Text>{graph.warning}</Text> : <Text>Linked records were returned for this Jira work item.</Text>}
       </Stack>
 
