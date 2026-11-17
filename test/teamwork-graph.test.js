@@ -125,8 +125,8 @@ test('reports bounded pagination when a category still has more linked records',
 
   assert.equal(result.status, 'available');
   assert.deepEqual(result.truncatedCategories, ['goals']);
-  assert.match(result.warning, /125 linked records/i);
-  assert.match(result.warning, /additional records may exist.*goals/i);
+  assert.match(result.warning, /pagination could not be completed.*goals/i);
+  assert.match(result.warning, /additional linked records may exist/i);
 });
 
 test('returns a safe unavailable state for a malformed Teamwork Graph response', () => {
