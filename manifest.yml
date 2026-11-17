@@ -20,6 +20,7 @@ app:
     name: nodejs24.x
     memoryMB: 256
     architecture: arm64
+  id: ari:cloud:ecosystem::app/b7cbb6a8-de78-4ba8-91fb-48733c1c2157
 permissions:
   scopes:
     - read:jira-work
