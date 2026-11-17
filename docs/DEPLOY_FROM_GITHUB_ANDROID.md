@@ -33,7 +33,7 @@ Never put the token in a normal repository variable or commit it to GitHub. Use 
 3. Set **source_branch** to `codegeist/forge-foundation`.
 4. If the manifest has no app ID, first check [Atlassian Developer Console → My apps](https://developer.atlassian.com/console/myapps/) for an existing TraceBack Context Engine registration. Select **confirm_no_existing_registration** only if no earlier registration exists. If it was registered before, stop and recover that existing app ID instead of registering a second time.
 5. On the first registration only, select **accept_forge_terms**. This is your explicit approval for the workflow to accept Atlassian's Forge CLI terms and register the app once.
-6. Select **confirm_readonly_scopes** only after reviewing the read-only scopes listed in the workflow. These allow Jira issue and linked Teamwork Graph reads.
+6. Select **confirm_readonly_scopes** only after reviewing the read-only scopes listed in the workflow. These allow Jira issue and linked Teamwork Graph reads. **Important:** Atlassian documents that installing apps with Teamwork Graph scopes requires an organization administrator because the scopes can access organization-wide data. If your Atlassian account is only a Jira site admin, ask an organization admin to run/approve this installation and grant the scopes.
 7. Choose **install** if this app has never been installed on `251fa04c84.atlassian.net`; choose **upgrade** only if it is already installed there.
 8. Leave **developer_space_id** empty unless the Forge CLI reports that you must choose a specific Developer Space. If it does, obtain the ID from the Atlassian Developer Console and run again only after checking whether registration already succeeded.
 
@@ -47,7 +47,7 @@ Never put the token in a normal repository variable or commit it to GitHub. Use 
 - Deploys to the Forge `development` environment.
 - Installs or upgrades the app on the development Jira site using the selected mode.
 
-The workflow does not deploy to production, publish a Marketplace listing, or expose a judge installation link.
+The workflow does not deploy to production, publish a Marketplace listing, or expose a judge installation link. Teamwork Graph is currently a Forge Preview API: curated queries are supported for new apps, but schemas and behavior may change before general availability, with Atlassian's documented minimum one-month deprecation notice.
 
 ## Important recovery rule
 
