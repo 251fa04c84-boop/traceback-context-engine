@@ -48,7 +48,7 @@ Reference: [Forge Rovo Action module](https://developer.atlassian.com/platform/f
 
 ## Automated validation coverage
 
-The focused action-context tests cover valid explicit keys, active-context fallback, malformed and URL-shaped keys, active-context mismatch, invalid active context, and missing keys. Repository CI also runs the existing Jira and Teamwork Graph domain and service tests. Automated tests do not replace Forge manifest lint, MCP connection validation, or live Rovo invocation.
+The focused action-context tests cover valid explicit keys, active-context fallback, malformed and URL-shaped keys, active-context mismatch, invalid active context, and missing keys. The extracted action-orchestration tests additionally verify invoking-user-only Jira access, the documented action payload context, mismatch/missing-key rejection before network calls, and no Teamwork Graph request after a Jira read failure. Repository CI also runs the existing Jira and Teamwork Graph domain and service tests. Automated tests do not replace Forge manifest lint, MCP connection validation, or live Rovo invocation.
 
 ## Reproducible validation commands
 
