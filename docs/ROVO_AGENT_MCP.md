@@ -41,7 +41,7 @@ The action bounds text fields and limits each returned category to 125 records, 
 - The action never writes to Jira, triggers deployments, rolls back services, toggles feature flags, or performs production actions.
 - The Rovo Agent prompt requires source-backed statements and prohibits fabricated telemetry, causal claims, and treating empty/partial/unavailable results as proof that evidence does not exist.
 - No raw upstream exception details are returned to the agent.
-- The output is bounded to avoid oversized agent payloads.
+- The output is bounded to avoid oversized agent payloads.\n- The MCP tool returns explicit untrusted-field metadata, but it does not transfer TraceBack Investigator's system prompt to customer-created agents; those agents must enforce their own policy for treating tool output as untrusted data.
 
 ## How to verify after deployment
 
@@ -61,5 +61,5 @@ The action bounds text fields and limits each returned category to 125 records, 
 - The action returns Jira and Teamwork Graph context only. It does not connect telemetry, logs, traces, alerting, or service runtime systems.
 - It cannot prove a root cause. It produces follow-up leads, not diagnosis.
 - The Rovo Agent can access only data available in the Atlassian workspace where the app is installed.
-- MCP availability depends on the site's Rovo Studio configuration and administrator authorization; declaring the module does not prove a judge can invoke it.
+- MCP availability depends on the site's Rovo Studio configuration and administrator authorization; declaring the module does not prove a judge can invoke it. Customer-created agents must be configured to respect the returned untrusted-evidence boundary; the TraceBack Investigator prompt is not inherited by other agents.
 - Live Rovo acceptance, MCP discovery, judge-site installation, and final Devpost bonus eligibility remain unverified.
