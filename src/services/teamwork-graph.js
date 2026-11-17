@@ -176,9 +176,11 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
     let requestCount = 0;
 
     while (Object.values(include).some(Boolean) && requestCount < MAX_PAGES_PER_CATEGORY) {
-      let response;
+      let graphResponse;
       try {
-        response = await userApi.requestTeamworkGraph(
+        // @forge/api requestTeamworkGraph resolves to { data, errors } directly;
+        // it is not a Fetch Response and must not be treated as response.json().
+        graphResponse = await userApi.requestTeamworkGraph(
           TEAMWORK_GRAPH_QUERY,
           makeRequestVariables(issueAri, cursors, include)
         );
@@ -187,19 +189,6 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
         break;
       }
       requestCount += 1;
-
-      if (!response || response.ok !== true || typeof response.json !== 'function') {
-        errors.push({ message: 'Teamwork Graph request failed.' });
-        break;
-      }
-
-      let graphResponse;
-      try {
-        graphResponse = await response.json();
-      } catch {
-        errors.push({ message: 'Teamwork Graph returned an unreadable response.' });
-        break;
-      }
 
       if (!graphResponse || typeof graphResponse !== 'object') {
         errors.push({ message: 'Teamwork Graph returned an invalid response.' });
