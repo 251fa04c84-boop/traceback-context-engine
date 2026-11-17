@@ -176,10 +176,16 @@ async function fetchTeamworkGraphEvidence(apiClient, issueId, cloudId) {
     let requestCount = 0;
 
     while (Object.values(include).some(Boolean) && requestCount < MAX_PAGES_PER_CATEGORY) {
-      const response = await userApi.requestTeamworkGraph(
-        TEAMWORK_GRAPH_QUERY,
-        makeRequestVariables(issueAri, cursors, include)
-      );
+      let response;
+      try {
+        response = await userApi.requestTeamworkGraph(
+          TEAMWORK_GRAPH_QUERY,
+          makeRequestVariables(issueAri, cursors, include)
+        );
+      } catch {
+        errors.push({ message: 'Teamwork Graph request failed.' });
+        break;
+      }
       requestCount += 1;
 
       if (!response || response.ok !== true || typeof response.json !== 'function') {
