@@ -135,7 +135,7 @@ function normalizeTeamworkGraphResponse(response) {
       deployments: 'deployments',
       pullRequests: 'pull requests'
     }[category]));
-    const paginationWarning = `Showing up to 125 linked records per category. Additional records may exist for: ${labels.join(', ')}.`;
+    const paginationWarning = `Pagination could not be completed for: ${labels.join(', ')}. Additional linked records may exist.`;
     warning = warning ? `${warning} ${paginationWarning}` : paginationWarning;
   }
 
