@@ -112,3 +112,20 @@ A fresh package-registry check changes the earlier assessment of the ProseMirror
 Test a root npm override to the latest stable patched `prosemirror-view` (currently 1.42.9) on this isolated branch only. Regenerate the lockfile using npm in a network-enabled CI runner, preserve npm's registry-provided integrity hash, then run `npm ci`, `npm ls prosemirror-view`, `npm audit --json`, the complete test suite, frontend/syntax checks, Forge CLI lint and a development deployment/live acceptance check. Inspect the built Forge bundle for ProseMirror code as additional evidence, not as a substitute for dependency-policy compliance.
 
 Do not hand-edit or omit the lockfile integrity field, do not apply the override to the main application branch until the complete validation succeeds, and do not claim all high vulnerabilities are resolved unless the full audit confirms it. The separate `glob`/`minimatch` major-version constraints remain independently unresolved.
+
+
+### Isolated ProseMirror override CI result — 17 November 2026
+
+GitHub Actions run [44027756327](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44027756327) completed successfully on the isolated security branch at commit `8f9c2d68b99ec39ecf533188e5754ecdb2f45c53`.
+
+Verified from the job log and retained artifact:
+
+- `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` succeeded using Node 24.22.2 / npm 11.19.1.
+- `npm ci --ignore-scripts` succeeded; 403 packages installed.
+- `npm ls prosemirror-view --all` succeeded, and a lockfile assertion confirmed every locked `prosemirror-view` entry is `1.42.9` (patched version).
+- `npm audit --json`: 0 high, 0 critical, 6 moderate vulnerabilities (down from the previously recorded 9 high + 4 moderate). Do not describe the dependency tree as vulnerability-free.
+- Tests: 4,107 passed, 0 failed, 0 skipped.
+- `npm run lint:syntax` and `npm run lint:frontend` both passed.
+- CI uploaded artifact `prosemirror-remediation-evidence` (artifact ID `14304290949`) containing the exact regenerated lockfile and JSON audit report. Artifact retention expires 24 November 2026.
+
+The workflow was then extended to commit the CI-generated lockfile to this isolated branch only, after successful validation. That follow-up push and its resulting run must be checked before treating the lockfile as persisted. No changes were made to the main app branch, Forge deployment, or PR #1. The six moderate audit findings remain; the separate `glob`/`minimatch` remediation and Atlassian Marketplace policy review remain open.
