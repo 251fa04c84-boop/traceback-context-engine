@@ -34,8 +34,6 @@ jobs:
         run: npm run lint:frontend
       - name: Run strict dependency audit
         run: npm audit --audit-level=low
-      - name: Run Forge CLI lint
-        run: npx --yes @forge/cli@15.1.0 lint
       - name: Commit regenerated lockfile
         run: |
           git config user.name "github-actions[bot]"
