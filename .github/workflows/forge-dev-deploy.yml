@@ -66,6 +66,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [[ "$SOURCE_BRANCH" != "codegeist/forge-foundation" ]]; then
+            echo "::error title=Unexpected source branch::This deployment workflow is restricted to codegeist/forge-foundation."
+            exit 1
+          fi
           if [[ -z "$FORGE_EMAIL" || -z "$FORGE_API_TOKEN" ]]; then
             echo "::error title=Forge credentials missing::Add FORGE_EMAIL and FORGE_API_TOKEN as GitHub Actions repository secrets before running this workflow."
             exit 1
