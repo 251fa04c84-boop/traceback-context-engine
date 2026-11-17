@@ -31,7 +31,7 @@ The same `npm install` run reported that `iframe-resizer@4.4.5` has a postinstal
 
 ## Reproducibility gap
 
-The repository currently has no `package-lock.json`. CI uses `npm install`, so transitive dependency resolution can change between runs. Before release, generate and review a lockfile with Node.js 24/npm, commit it, and change CI/local instructions to use `npm ci`.
+The repository currently has no `package-lock.json`. CI falls back to `npm install` until the lockfile exists; after the user runs the consent-gated Forge development workflow, that workflow commits the generated lockfile and CI switches to `npm ci`. Review that lockfile and re-run the audit before release.
 
 ## Release decision
 
