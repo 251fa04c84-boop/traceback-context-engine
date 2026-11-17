@@ -35,6 +35,10 @@ jobs:
           npm audit --json > /tmp/traceback-npm-audit.json || true
           node -e '
             const report = JSON.parse(require("node:fs").readFileSync("/tmp/traceback-npm-audit.json", "utf8"));
+            if (report.error || !report.metadata || !report.metadata.vulnerabilities) {
+              console.error("::error title=Dependency audit unavailable::npm audit did not return a complete vulnerability report. Check registry/network access and rerun CI.");
+              process.exit(1);
+            }
             const rows = Object.entries(report.vulnerabilities || {}).map(([name, item]) => ({
               package: name,
               severity: item.severity,
