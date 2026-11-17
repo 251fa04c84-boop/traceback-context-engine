@@ -70,7 +70,7 @@ jobs:
           else
             echo "::warning title=Forge registration required::Forge CLI lint is skipped because manifest.yml has no app.id. Register this Forge app once with 'forge register' before deployment and judge installation."
           fi
-      - name: Deploy and upgrade the development installation after successful push checks
+      - name: Deploy and upgrade the development installation after successful push checks (never auto-consent to scopes)
         if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation'
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
@@ -83,4 +83,4 @@ jobs:
             exit 1
           fi
           npx --yes @forge/cli@15.1.0 deploy --non-interactive -e development
-          npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive --confirm-scopes --upgrade all -e development
+          npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive --upgrade all -e development

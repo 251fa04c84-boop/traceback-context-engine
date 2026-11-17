@@ -161,3 +161,31 @@ Acceptance boundary:
 - A fresh authenticated browser retest of the newly deployed panel is still not available. The earlier visual retest proves the resolver UI rendered before this transport patch, not after it.
 - Teamwork Graph goal/deployment/pull-request evidence remains **NOT ACCEPTED** until an organization administrator grants the scopes and a real linked-record issue is tested.
 - The app-branch dependency audit remains **OPEN** at 9 high, 4 moderate, 0 critical. The zero-finding dependency override experiment is isolated on a separate security branch and is not yet merged.
+
+
+## Reliability hardening and latest validation — 17 November 2026
+
+Application commit: `fffaef7204d514e10237461f1440e6d904d5dd1b`.
+
+Changes:
+- The Jira request deadline now covers both the REST request and `response.json()`. A slow or stalled response body cannot leave the resolver waiting after headers have arrived.
+- Teamwork Graph request timeouts are tested through the real pagination adapter. If a later page stalls, already received records remain visible and the unfinished category is marked truncated/partial.
+- The Jira panel ignores stale asynchronous responses when the issue context changes or a newer refresh supersedes an earlier request.
+- The empty Teamwork Graph state no longer displays the incorrect success message “Linked records were returned”; it explicitly says that no records were visible to the current user and that this does not prove no evidence exists elsewhere.
+- Added five Jira response/timeout tests and one Graph pagination-timeout test.
+
+CI:
+- Push validation [#44079747452](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079747452) completed successfully: locked install, dependency-audit reporting, automated tests, syntax checks, frontend compilation, authenticated Forge CLI lint, Forge development deployment and development installation upgrade all passed.
+- Pull-request validation [#44079753736](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44079753736) completed successfully for the same application commit; PR-event-only Forge lint/deployment steps were skipped by design.
+- The exact test count is not copied into this record because the retained GitHub job-log blob was no longer available when this note was written. The workflow job conclusion is successful; no guessed count is reported.
+
+Deployment workflow safety:
+- Removed the `--confirm-scopes` option from future automated development installs. CI may deploy and attempt the existing development installation upgrade, but it must not auto-consent to new app scopes. Any newly requested scopes must go through the explicit Atlassian administrator approval path.
+- This workflow change does not alter the app manifest or grant/revoke any scope.
+
+Acceptance boundary remains unchanged:
+- The CI push job deployed the app to the Forge development environment and upgraded the existing development installation on `251fa04c84.atlassian.net`; Forge identifies that Jira tenant as a production site. It is not a separate judge/test tenant.
+- No fresh browser acceptance of this exact commit is recorded.
+- The four Teamwork Graph object scopes still require explicit organization-admin approval and real linked-record acceptance.
+- The app-branch dependency audit remains open until the separate dependency PR is integrated after independent review.
+- No production Forge deployment, Marketplace listing, public demo, or Devpost submission was performed.
