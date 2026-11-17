@@ -20,14 +20,15 @@ jobs:
         with:
           node-version: 24
           package-manager-cache: false
-      - name: Install locked dependencies when available
+      - name: Require and install the committed lockfile
         shell: bash
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
+          set -euo pipefail
+          if [[ ! -f package-lock.json ]]; then
+            echo "::error title=Lockfile required::Commit package-lock.json so CI never resolves an unreviewed dependency tree."
+            exit 1
           fi
+          npm ci
       - name: Verify the installed transitive dependency tree
         run: npm ls prosemirror-view glob minimatch --all
       - name: Report dependency audit findings without applying automatic upgrades
