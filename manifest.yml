@@ -44,8 +44,8 @@ modules:
         issueKey:
           title: Jira issue key
           type: string
-          required: true
-          description: The Jira issue key to investigate, for example DEMO-9. If a Jira issue context is supplied, it must match that issue.
+          required: false
+          description: Optional Jira issue key when no active Jira issue context is available. If a Jira issue context is supplied, it must match that issue.
   function:
     - key: resolver
       handler: index.handler
