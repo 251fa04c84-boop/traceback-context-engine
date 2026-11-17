@@ -1,6 +1,10 @@
 name: Forge development deploy
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/forge-dev-deploy.yml
   workflow_dispatch:
     inputs:
       source_branch:
@@ -37,14 +41,26 @@ on:
         type: string
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: traceback-forge-development
   cancel-in-progress: false
 
 jobs:
+  validate-workflow-on-push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Confirm GitHub accepted the workflow definition
+        run: echo "Forge development deployment workflow syntax was accepted by GitHub."
+
   register-lint-deploy-install:
+    if: github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
