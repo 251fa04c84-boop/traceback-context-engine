@@ -76,3 +76,6 @@ The feature branch's push workflow runs the authenticated Forge CLI lint step bu
 8. Confirm no writes occur and returned links resolve to original source records.
 
 Until these gates pass, describe the feature as an implementation candidate, not a live or judge-verified integration.
+
+
+Validation note: this branch is a non-deploying Forge CLI manifest-lint acceptance candidate. Its CI push run is intended to validate the registered Rovo module and action schema only; it does not authorize deployment, scope consent, or live installation.
