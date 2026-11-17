@@ -1,53 +1,52 @@
 # Dependency audit record
 
-## Latest inspected report
+## Latest locked-dependency report
 
-- Source: GitHub Actions CI run [#241](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/43996448504)
-- Commit inspected: `1cb38e2290eae5fe0eba7b9ef1ee62c52d4af61e`
+- Source: GitHub Actions CI run [#279](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44008759150)
+- Commit inspected: `e112783173eb2d34c13646b1bf87099af9571cd8`
 - Date: 17 November 2026 (UTC)
-- Result: **12 advisories — 8 high, 4 moderate, 0 critical**
-- Automated tests: **34 passed, 0 failed** in the same run.
-- The audit command did not change dependencies. No `npm audit fix --force` was run.
+- Lockfile: `package-lock.json` is committed; CI successfully used `npm ci`.
+- Result: **13 vulnerable package entries — 9 high, 4 moderate, 0 critical**.
+- Automated tests: **35 passed, 0 failed**.
+- Syntax checks, frontend JSX bundle compilation, and authenticated Forge CLI lint all passed in the same run. Forge CLI reported **No issues found**.
+- The audit command is report-only. No dependency upgrades or `npm audit fix --force` were applied.
 
-| Package | Severity | Direct dependency | Reported path |
-| --- | --- | --- | --- |
-| `@atlaskit/adf-schema` | High | No | `@atlaskit/adf-schema-generator`, `@atlaskit/editor-prosemirror` |
-| `@atlaskit/adf-schema-generator` | High | No | `@atlaskit/editor-prosemirror` |
-| `@atlaskit/adf-utils` | High | No | `@atlaskit/adf-schema`, `@atlaskit/editor-prosemirror` |
-| `@atlaskit/editor-prosemirror` | High | No | `prosemirror-view` |
-| `@atlaskit/forge-react-types` | High | No | `@atlaskit/adf-schema` |
-| `@forge/api` | Moderate | Yes | `@forge/manifest` |
-| `@forge/bridge` | High | Yes | `@atlaskit/adf-schema`, `@forge/manifest` |
-| `@forge/manifest` | Moderate | No | `glob` |
-| `@forge/react` | High | Yes | ADF schema, Forge React types, Forge bridge |
-| `glob` | Moderate | No | Direct advisory and `minimatch` |
-| `minimatch` | Moderate | No | Direct advisory |
-| `prosemirror-view` | High | No | Direct advisory |
+| Package | Severity | Direct dependency |
+| --- | --- | --- |
+| `@atlaskit/adf-schema` | High | No |
+| `@atlaskit/adf-schema-generator` | High | No |
+| `@atlaskit/adf-utils` | High | No |
+| `@atlaskit/editor-json-transformer` | High | No |
+| `@atlaskit/editor-prosemirror` | High | No |
+| `@atlaskit/forge-react-types` | High | No |
+| `@forge/api` | Moderate | Yes |
+| `@forge/bridge` | High | Yes |
+| `@forge/manifest` | Moderate | No |
+| `@forge/react` | High | Yes |
+| `glob` | Moderate | No |
+| `minimatch` | Moderate | No |
+| `prosemirror-view` | High | No |
 
 ## Root advisories and compatibility assessment
 
-The three direct advisory records were checked against the GitHub Advisory Database:
+The npm report identifies upstream dependency advisories in the Atlassian Forge / Atlaskit dependency tree. The following root advisories were previously checked against the GitHub Advisory Database:
 
-- [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4): `glob` versions 9.0.0 through 14.0.1 are affected; first patched version is 14.0.2.
-- [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249): `minimatch` versions 7.0.0 through 11.0.0 are affected; first patched version is 11.0.1.
-- [GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w): `prosemirror-view` versions below 1.42.3 are affected; first patched version is 1.42.3.
+- [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4): affected `glob` versions; first patched version is 14.0.2.
+- [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249): affected `minimatch` versions; first patched version is 11.0.1.
+- [GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w): `prosemirror-view` versions below 1.42.3 are affected.
 
-The current npm `latest` tags were checked on 17 November 2026: `@forge/api` 8.5.0, `@forge/bridge` 7.3.0, and `@forge/react` 12.5.0. These are the direct versions used by this project. npm's suggested audit fixes downgrade them to major versions 6.1.1, 5.5.0, and 11.4.0 respectively. Those are not safe automatic fixes for this app.
+The current Forge packages are pinned by the package manifest to compatible semver ranges: `@forge/api ^8.5.0`, `@forge/bridge ^7.3.0`, and `@forge/react ^12.5.0`. npm's suggested automatic fixes have previously proposed major downgrades of these direct packages. Those changes are not safe to apply without a compatibility review and a new Forge deploy/test cycle.
 
-The transitive dependency metadata explains why blindly overriding is also unsafe: `@forge/manifest@13.9.0` declares `glob ^13.0.0`, while the first patched glob is 14.0.2; the current published `@atlaskit/editor-prosemirror@9.0.0` declares `prosemirror-view 1.41.5`, while the first patched view is 1.42.3. These are upstream Atlassian dependency constraints, not an isolated direct dependency that can be safely changed without a compatibility test. Do not force major overrides or downgrade the Forge UI Kit packages merely to silence npm audit.
+The transitive constraints observed in the lockfile explain why blindly forcing overrides is unsafe: Forge manifest and Atlaskit packages constrain transitive versions, including `glob` and `prosemirror-view`. Do not force major overrides or downgrade the Forge UI Kit packages merely to silence npm audit. Re-check upstream Atlassian releases and test any override in an isolated branch before considering it for release.
 
 ## Install-script warning
 
-The same CI run reported that `iframe-resizer@4.4.5` has a postinstall script (`node bin/post.js`) not yet covered by npm's `allowScripts` approval. The exact published script only prints a notice about the library's version 5 package split; it does not write build files, execute a network request, or perform a required build step. CI can safely leave this script blocked. Do not approve it just to remove the warning.
-
-## Reproducibility gap
-
-The repository currently has no `package-lock.json`. CI falls back to `npm install` until the lockfile exists; after the user runs the consent-gated Forge development workflow, that workflow commits the generated lockfile and CI switches to `npm ci`. Review that lockfile and rerun the audit before release.
+The dependency install previously reported that `iframe-resizer@4.4.5` has a postinstall script not covered by npm's `allowScripts` approval. CI leaves that script blocked. Do not approve it merely to remove a warning; first inspect any future package/version change and confirm whether the script is required.
 
 ## Release decision
 
-- **No critical advisory** was present in the inspected report.
-- **High and moderate advisories remain unresolved** in the current upstream Forge dependency tree. Passing tests do not mean the dependency tree is vulnerability-free.
-- Keep the direct Forge packages on their current compatible latest versions; do not use `npm audit fix --force`.
-- Recheck Atlassian package releases for patched transitive dependencies, then regenerate the lockfile and rerun the audit, unit tests, syntax checks, JSX compilation, Forge lint, deployment, and live acceptance tests.
-- This record is historical and must be refreshed after the lockfile is generated or dependency versions change.
+- **No critical advisory** was present in the latest locked-dependency report.
+- **Nine high and four moderate findings remain unresolved.** Passing tests and Forge lint do not mean the dependency tree is vulnerability-free.
+- The lockfile is now committed and `npm ci` is verified; the earlier reproducibility gap is closed.
+- Keep the current compatible Forge package versions. Do not run `npm audit fix --force`.
+- Revisit the audit after Atlassian ships patched compatible transitive dependencies, and rerun all tests, Forge lint, deployment and live acceptance before release.
