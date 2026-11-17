@@ -60,7 +60,7 @@ The manifest requests:
 - `read:graph:deployment:external` for linked deployments.
 - `read:graph:pull-request:external` for linked pull requests.
 
-These are read-only scopes. A site administrator must grant the requested graph scopes, and the signed-in user must still have permission to see the underlying records. A site with no connected GitHub/DevOps provider or no linked records will show an honest empty state.
+These are read-only scopes. An organization administrator must approve and grant the requested Teamwork Graph scopes, and the signed-in user must still have permission to see the underlying records. A site with no connected GitHub/DevOps provider or no linked records will show an honest empty state.
 
 ## Deploy without Codespaces
 
@@ -91,7 +91,7 @@ The `jira:issueContext` module does not work in Jira's old issue view. Teamwork 
 
 - GitHub Actions runs unit tests, JavaScript syntax checks, and a separate JSX compilation check.
 - Forge CLI lint is conditional on the app being registered; until then CI emits a warning instead of claiming Forge validation passed.
-- Live Jira installation, administrator scope grants, and end-to-end Teamwork Graph retrieval still require a registered and deployed Forge app.
+- Live Jira installation, organization-administrator scope grants, and end-to-end Teamwork Graph retrieval still require a registered and deployed Forge app.
 
 ## Codegeist submission status
 
