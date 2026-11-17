@@ -30,6 +30,7 @@ function apiClientFor(responses, captured = []) {
           captured.push({ query, variables });
           const body = responses[Math.min(index, responses.length - 1)];
           index += 1;
+          if (body instanceof Error) throw body;
           return { ok: true, async json() { return body; } };
         }
       };
@@ -72,6 +73,26 @@ test('loads all Teamwork Graph pages for each relationship while skipping comple
   assert.equal(result.deployments.length, 1);
   assert.equal(result.pullRequests.length, 1);
   assert.deepEqual(result.truncatedCategories, []);
+});
+
+
+test('preserves already loaded evidence when a later pagination request throws', async () => {
+  const captured = [];
+  const client = apiClientFor([
+    graphResponse({
+      goals: connection([{ id: 'goal-1', name: 'Reliable releases' }], true, 'goal-cursor-1'),
+      deployments: connection([]),
+      pullRequests: connection([])
+    }),
+    new Error('temporary network failure')
+  ], captured);
+
+  const result = await fetchTeamworkGraphEvidence(client, '10006', CLOUD_ID);
+
+  assert.equal(captured.length, 2);
+  assert.equal(result.status, 'partial');
+  assert.deepEqual(result.goals.map((goal) => goal.id), ['goal-1']);
+  assert.match(result.warning, /some connected evidence could not be loaded/i);
 });
 
 test('bounds pagination and clearly reports categories with more than five pages', async () => {
