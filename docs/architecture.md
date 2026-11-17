@@ -54,7 +54,7 @@ The UI distinguishes:
 
 ## Suggested investigation leads
 
-The lead builder uses only the normalized Jira issue creation time, Jira-linked work-item statuses, and Teamwork Graph deployment/PR/goal records. It can suggest checking failed or in-progress deployments, a production deployment recorded within 24 hours of issue creation, open/draft pull requests, recently merged pull requests, unresolved related Jira work, archived goals, or missing graph connectivity. Each suggestion includes a rationale, priority, and supporting source URL where available. Time proximity and links are treated as triage clues, never proof of causation. Invalid timestamps do not create time-proximity leads.
+The lead builder uses only the normalized Jira issue creation time, Jira-linked work-item statuses, and Teamwork Graph deployment/PR/goal records. It can suggest checking failed production deployments (high priority), failed non-production deployments (medium priority), in-progress deployments, a production deployment recorded within 24 hours of issue creation, open/draft pull requests, recently merged pull requests, unresolved related Jira work, archived goals, or missing graph connectivity. Each suggestion includes a rationale, priority, and supporting source URL where available. Time proximity and links are treated as triage clues, never proof of causation. Invalid timestamps do not create time-proximity leads.
 
 ## Approval and execution boundary
 
