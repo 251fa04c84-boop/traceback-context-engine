@@ -19,6 +19,7 @@ This record must be completed against an actually deployed Forge app. A successf
 - [ ] Forge app deployed to the development environment.
 - [ ] App installed on the test Jira site.
 - [ ] Requested Jira and Teamwork Graph scopes are granted by an organization administrator.
+- [ ] Confirm the target Atlassian organization is a test organization with test data only, unless a production deployment has an explicitly approved path.
 - [ ] An organization administrator approves the Teamwork Graph scopes; these scopes can expose organization-wide data and Atlassian requires organization-admin installation.
 - [ ] The site has the expected graph connectors enabled, if external PR/deployment records are to be shown.
 - [ ] The judge installation link is generated using Atlassian's supported sharing flow.
