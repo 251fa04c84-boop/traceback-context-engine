@@ -60,11 +60,11 @@ The manifest requests:
 - `read:graph:deployment:external` for linked deployments.
 - `read:graph:pull-request:external` for linked pull requests.
 
-These are read-only scopes. An organization administrator must approve and grant the requested Teamwork Graph scopes, and the signed-in user must still have permission to see the underlying records. A site with no connected GitHub/DevOps provider or no linked records will show an honest empty state.
+These are read-only scopes. An organization administrator must approve and grant the requested Teamwork Graph scopes, and the signed-in user must still have permission to see the underlying records. Because Teamwork Graph is a Preview API with organization-wide data implications, install it only in a test organization with test data unless an explicitly approved production path exists. A site with no connected GitHub/DevOps provider or no linked records will show an honest empty state.
 
 ## Deploy without Codespaces
 
-Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register, lint, deploy, and install through a consent-gated GitHub Actions workflow. It uses repository secrets; never put an Atlassian API token in chat or source control.
+Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register, lint, deploy, and install through a consent-gated GitHub Actions workflow. It uses repository secrets; never put an Atlassian API token in chat or source control. See [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the evidence-safe under-five-minute demo storyboard; it is a plan, not a recorded video.
 
 ## Dependency security
 
