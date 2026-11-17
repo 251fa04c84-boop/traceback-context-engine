@@ -38,8 +38,16 @@ test('queries all curated issue-context relationships as the current Atlassian u
   assert.match(capturedQuery, /jiraWorkItemGoals/);
   assert.match(capturedQuery, /jiraWorkItemLinkedExternalDeployments/);
   assert.match(capturedQuery, /jiraWorkItemLinkedExternalPullRequests/);
+  assert.match(capturedQuery, /first: 25/);
+  assert.match(capturedQuery, /pageInfo/);
   assert.deepEqual(capturedVariables, {
-    id: 'ari:cloud:jira:c0e47565-a2b1-472f-bd30-5c1e3684bb1e:issue/10006'
+    id: 'ari:cloud:jira:c0e47565-a2b1-472f-bd30-5c1e3684bb1e:issue/10006',
+    goalsAfter: null,
+    deploymentsAfter: null,
+    pullRequestsAfter: null,
+    includeGoals: true,
+    includeDeployments: true,
+    includePullRequests: true
   });
   assert.equal(result.status, 'available');
   assert.equal(result.goals[0].name, 'Reliable releases');
