@@ -1,8 +1,17 @@
 # TraceBack Context Engine — Codegeist Submission Checklist
 
 **Target category:** Apps for Software Teams  
-**Target bonus prize:** Best apps with Teamwork Graph integration  
+**Conditional bonus candidates:** Teamwork Graph integration, Best Agents, or Best app with Atlassian MCP — select at most one, and only after that integration passes live acceptance.  
 **Current state:** Development draft; not ready to submit.
+
+## Latest verified build status — 17 November 2026
+
+- Core app code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` is deployed to Forge development as version **2.38.0**. Latest documentation-only core branch head `388ec1a159e715e9dafe900bcb3eaba925662a8b` passed [CI #44100446606](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100446606): **4,130 tests**, syntax/frontend checks, authenticated Forge CLI lint and development-install upgrade check.
+- PR #2 dependency candidate head `b42b792d771a134af24b2817f705f8d06700d2fe` passed [push CI #603](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099908018) and [PR CI #604](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44099917882): **4,134 tests**, strict npm audit with **0 vulnerabilities**, and Forge CLI lint on push. Its `glob@14.0.2` override still crosses `@forge/manifest@13.9.0`'s declared `^13.0.0` range; do not merge before independent compatibility review.
+- PR #5 Rovo candidate head `ad0899703d58615462d0119fb34f5d610522a304` passed [push CI #44100957991](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44100957991): **4,146 tests**, syntax/frontend checks and authenticated Forge CLI manifest lint. The branch is synchronized with the latest core docs and mergeable, but was not deployed; live Rovo/MCP acceptance remains outstanding.
+- The core dependency audit still reports **9 high and 4 moderate** findings. The zero-finding result applies only to the isolated PR #2 lockfile.
+- All three PRs remain draft and unmerged. The only connected Jira site is a production tenant; there is no verified separate test site. The four granular Teamwork Graph scopes remain disabled, and DEMO-9 is a temporary service-desk test issue with no linked records.
+- **No judge installation link, fresh browser acceptance of v2.38.0, public demo video, or final Devpost submission is verified.**
 
 ## Official Codegeist 2026 terms (recheck before final submission)
 
@@ -33,7 +42,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 - [ ] Product meaningfully addresses the software-team theme: understanding work, delivery and linked context from a Jira issue.
 - [ ] App registered in Forge exactly once.
 - [ ] Current manifest and source pass forge lint.
-- [ ] App deployed to a working Forge environment.
+- [x] Forge development deployment completed (version 2.38.0); fresh browser acceptance of that version remains pending.
 - [ ] App deployed to the Forge production environment before enabling external sharing.
 - [ ] In Atlassian Developer Console → Distribution → Distribution controls, set the unlicensed app to **Sharing**, choose Jira, and copy the generated installation link. See [Atlassian's Forge distribution guide](https://developer.atlassian.com/platform/forge/distribute-your-apps/).
 - [ ] App installed by a Jira site administrator using the official judge installation link.
@@ -58,7 +67,7 @@ These are advertised awards, not a guarantee of winning or payment. Historical c
 
 - [ ] Register/join the hackathon on Devpost.
 - [ ] Select Apps for Software Teams.
-- [ ] Select Best apps with Teamwork Graph integration as the single target bonus prize.
+- [ ] Select one bonus only after its integration passes live acceptance: Teamwork Graph requires administrator-granted scopes and genuine linked records; Best Agents requires a deployed/discovered agent and successful action; Atlassian MCP requires an enabled MCP tool and successful invocation. If none passes, submit without a bonus.
 - [ ] Provide project title and concise description.
 - [ ] Describe the real problem, target users, workflow, and measurable value.
 - [ ] Explain the Forge implementation and Teamwork Graph API use.
