@@ -14,6 +14,7 @@ import ForgeReconciler, {
 import { invoke } from '@forge/bridge';
 import { getIssueKeyFromProductContext, getRetryIssueKey } from '../domain/incident';
 import { buildInvestigationLeads } from '../domain/investigation';
+import { getCategoryEmptyStateMessage } from '../domain/evidence-copy';
 
 const EMPTY_GRAPH = {
   source: 'Atlassian Teamwork Graph',
@@ -23,19 +24,6 @@ const EMPTY_GRAPH = {
   pullRequests: [],
   warning: 'Teamwork Graph evidence was not returned.'
 };
-
-function noEvidenceMessage(graph, category) {
-  if (graph.status === 'unavailable') {
-    return `${category} could not be loaded because Teamwork Graph was unavailable. Check app scopes, site configuration, and current-user access.`;
-  }
-  if (graph.status === 'partial') {
-    return `No ${category.toLowerCase()} records were returned in the partial response. Other records may be missing; check the warning and source permissions.`;
-  }
-  if (graph.status === 'empty') {
-    return `No linked ${category.toLowerCase()} records were returned for this issue to the current user. This does not prove no related evidence exists elsewhere.`;
-  }
-  return `No linked ${category.toLowerCase()} records were returned for this issue.`;
-}
 
 function SourceLink({ url, label }) {
   if (!url) return <Text>{label} (source URL unavailable)</Text>;
@@ -177,7 +165,7 @@ function App() {
             <SourceLink url={goal.url} label="Open goal" />
             {goal.archived ? <Badge appearance="default">Archived</Badge> : null}
           </Stack>
-        )) : <Text>{noEvidenceMessage(graph, 'Goal')}</Text>}
+        )) : <Text>{getCategoryEmptyStateMessage(graph.status, 'Goal')}</Text>}
       </Stack>
 
       <Stack space="space.100">
@@ -194,7 +182,7 @@ function App() {
             {deployment.createdAt ? <Text>Created: {deployment.createdAt}</Text> : null}
             <SourceLink url={deployment.url} label="Open deployment" />
           </Stack>
-        )) : <Text>{noEvidenceMessage(graph, 'Deployment')}</Text>}
+        )) : <Text>{getCategoryEmptyStateMessage(graph.status, 'Deployment')}</Text>}
       </Stack>
 
       <Stack space="space.100">
@@ -210,7 +198,7 @@ function App() {
             <Text>{pullRequest.provider}{pullRequest.createdAt ? ` · ${pullRequest.createdAt}` : ''}</Text>
             <SourceLink url={pullRequest.url} label="Open pull request" />
           </Stack>
-        )) : <Text>{noEvidenceMessage(graph, 'Pull request')}</Text>}
+        )) : <Text>{getCategoryEmptyStateMessage(graph.status, 'Pull request')}</Text>}
       </Stack>
 
       <Button appearance="subtle" onClick={() => loadIssue(issueKey)}>Refresh issue and evidence</Button>
