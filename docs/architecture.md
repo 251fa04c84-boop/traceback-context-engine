@@ -64,3 +64,19 @@ Any future production action must be separate from analysis. It must require exp
 ## Invocation and outbound-request budgets
 
 Forge UI/resolver invocations have a hard 25-second runtime ceiling ([Atlassian invocation limits](https://developer.atlassian.com/platform/forge/limits-invocation/)). TraceBack caps the complete Jira request including response-body parsing at 8 seconds and Teamwork Graph work at 12 seconds total, with a 5-second per-request ceiling. This reserves time for normalization and response serialization instead of allowing a slow upstream request to leave the panel spinning until Forge terminates the invocation. If a Graph page times out or the overall budget expires, already retrieved records are retained, the affected categories are marked incomplete, and the UI reports a partial/unavailable state. A Graph timeout never discards valid Jira issue context.
+
+
+## Rovo Agent and MCP entry points (feature branch)
+
+The `codegeist/rovo-agent-mcp` feature branch adds a second invocation path that reuses the same Jira and Teamwork Graph evidence pipeline:
+
+1. A Rovo Agent or customer-created Rovo agent invokes the `get-traceback-context` Forge action.
+2. The action validates the issue key and reads Jira through `api.asUser().requestJira()`.
+3. The action derives the Teamwork Graph lookup from the fetched Jira issue ID and the Atlassian cloud context supplied by the platform; it does not accept a model-supplied ARI.
+4. The same Teamwork Graph adapter retrieves linked goals, deployments and pull requests, with the same timeout, pagination, normalization and safe-warning behavior as the issue-context panel.
+5. The action returns a bounded structured result containing normalized issue facts, linked Jira work, graph state, investigation leads and an explicit non-causation policy.
+6. The built-in Rovo Agent prompt instructs the model to summarize only returned evidence and remain read-only. The `rovo:mcp` module exposes the same action to customer-created Rovo agents in Rovo Studio.
+
+No additional scopes are introduced. The action still relies on the current user's Jira access and the four organization-admin-approved Teamwork Graph scopes. MCP tool discovery and Rovo Agent behavior require live installation and administrator acceptance; passing unit tests and Forge CLI lint does not prove these surfaces are enabled on a site.
+
+The action bounds its output fields and each evidence category to 125 records to avoid oversized Rovo payloads. It does not connect telemetry, logs, traces or runtime controls, and it cannot establish root cause.
