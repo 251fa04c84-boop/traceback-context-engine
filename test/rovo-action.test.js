@@ -3,6 +3,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const Module = require('node:module');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const CLOUD_ID = 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e';
 
@@ -307,4 +309,16 @@ test('Rovo/MCP action honors an explicit valid issue key over contextual issue k
   assert.equal(result.issue.key, 'PAY-21');
   assert.match(calls.jira[0].url, /PAY-21/);
   assert.doesNotMatch(calls.jira[0].url, /DEMO-9/);
+});
+
+
+test('Forge manifest exposes only the read-only context action through Rovo Agent and MCP', () => {
+  const manifest = fs.readFileSync(path.join(__dirname, '..', 'manifest.yml'), 'utf8');
+  assert.match(manifest, /rovo:agent:/);
+  assert.match(manifest, /rovo:mcp:/);
+  assert.match(manifest, /get-traceback-context/);
+  assert.match(manifest, /actionVerb: GET/);
+  assert.match(manifest, /UNTRUSTED EVIDENCE DATA/);
+  assert.doesNotMatch(manifest, /actionVerb: (POST|PUT|DELETE)/);
+  assert.doesNotMatch(manifest, /- (write:|delete:|manage:)/);
 });
