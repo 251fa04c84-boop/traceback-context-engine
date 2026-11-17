@@ -29,6 +29,11 @@ modules:
         - Explain what evidence is missing
       actions:
         - get-traceback-investigation
+  rovo:mcp:
+    - key: traceback-investigation-tools
+      name: TraceBack Tools
+      tools:
+        - get-traceback-investigation
   action:
     - key: get-traceback-investigation
       name: Get Jira investigation evidence
