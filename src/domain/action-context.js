@@ -21,9 +21,15 @@ function resolveActionIssueKey(requestedIssueKey, contextualIssueKey, contextual
   const urlContextual = issueKeyFromContextUrl(contextualIssueUrl);
   const directContextual = contextual && isValidIssueKey(contextual) ? contextual : '';
   const activeContext = directContextual || urlContextual;
+  const hasContextKey = (typeof contextualIssueKey === 'string' && Boolean(contextual)) ||
+    (contextualIssueKey !== undefined && contextualIssueKey !== null && typeof contextualIssueKey !== 'string');
+  const hasContextUrl = typeof contextualIssueUrl === 'string' && Boolean(contextualIssueUrl.trim());
 
   if (directContextual && urlContextual && directContextual !== urlContextual) {
     throw new Error('The active Jira issue context is inconsistent.');
+  }
+  if ((hasContextKey && !directContextual && !urlContextual) || (hasContextUrl && !urlContextual && !directContextual)) {
+    throw new Error('The active Jira issue context is invalid.');
   }
   if (requested && !isValidIssueKey(requested)) {
     throw new Error('A valid Jira issue key is required.');
@@ -33,12 +39,7 @@ function resolveActionIssueKey(requestedIssueKey, contextualIssueKey, contextual
   }
 
   const issueKey = activeContext || requested;
-  if (!issueKey) {
-    if (contextual || (typeof contextualIssueUrl === 'string' && contextualIssueUrl.trim())) {
-      throw new Error('The active Jira issue context is invalid.');
-    }
-    throw new Error('A Jira issue key is required.');
-  }
+  if (!issueKey) throw new Error('A Jira issue key is required.');
   return issueKey;
 }
 
