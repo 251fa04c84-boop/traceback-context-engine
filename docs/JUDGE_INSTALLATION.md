@@ -64,9 +64,9 @@ Until those steps are complete, no install URL should be published or promised.
 
 ## Current verified limitations
 
-- The Rovo/MCP candidate is installed on `brand7.atlassian.net` in Forge staging. The connected Atlassian MCP integration still exposes only `251fa04c84.atlassian.net`; read-only inspection of the new test site is therefore blocked until that cloud ID is explicitly authorized.
+- The Rovo/MCP candidate is installed on `brand7.atlassian.net` in Forge staging. The ChatGPT Atlassian integration is now connected to that site (cloud ID `f3a80fda-b810-47e6-806b-ba68cca6507a`), but Jira inventory currently returns zero issues and no visible test project exists. Live app acceptance therefore remains blocked until a genuine staging Jira project and test issue are provisioned.
 - The inspected production-tenant Jira sample DEMO-7 has one related Jira work item, but the Teamwork Graph probe returned no linked goals, external deployments or external pull requests. This is not test-site evidence.
-- The four granular Teamwork Graph scopes were requested during installation, but the workflow did not auto-consent; actual administrator authorization and runtime usability remain unverified.
+- The four granular Teamwork Graph scopes are requested by the manifest, but administrator approval and runtime usability remain unverified. ChatGPT connector access does not prove Forge scope consent.
 - Rovo discovery, Rovo Studio MCP visibility, external OAuth 2.1 consent and real action invocation have not yet been live-accepted.
 - The public demo video and official judge installation URL do not yet exist.
 
