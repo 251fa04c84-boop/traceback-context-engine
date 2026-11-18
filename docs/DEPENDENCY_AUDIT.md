@@ -319,3 +319,10 @@ Atlassian's Marketplace Developer Community published advisory [CVE-2026-111497:
 TraceBack's current `manifest.yml` declares `app.runtime.name: nodejs24.x`; it does not declare Node.js 18 or 20. This satisfies the major-version migration direction in the advisory. However, the manifest selects a Forge-managed runtime major, not an independently pinned Node.js patch release. Repository inspection cannot prove which patched Node.js 24 patch level currently executes in Atlassian's managed runtime.
 
 **Follow-up:** retain Node.js 24.x, monitor Atlassian's Forge runtime update confirmation, and redeploy the app after the managed runtime fix is confirmed if Atlassian requires redeployment. Do not attempt to bundle or override the Forge-managed Node runtime from application dependencies. This platform-runtime advisory is tracked separately from the npm dependency audit counts above.
+
+
+## CI revalidation — 18 November 2026
+
+The Forge-managed runtime advisory note above was committed as `4b421fa7847f35fb8e0db4f72f6faef991f64d64`. Its push workflow [#44250805927](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44250805927) completed successfully. The job installed Node.js **24.22.2** on the GitHub Actions runner (the workflow requests Node.js 24), completed `npm ci`, ran the dependency audit, all **4,131 tests**, syntax checks, and frontend bundle compilation. The audit still reports **9 high, 4 moderate, 0 critical** vulnerabilities. The Forge CLI validation and deployment steps were skipped in this documentation-only run; this run does not verify the Forge-managed app runtime's patch level or constitute a new app deployment/live acceptance.
+
+Atlassian's current Forge CLI setup documentation requires Node.js **22.23.4 or later** on the 22.x line, or **24.22.1 or later** on the 24.x line. The observed CI runner version 24.22.2 satisfies that local CLI requirement. This is distinct from the Forge-hosted app runtime selected by `manifest.yml`, whose exact patch version remains platform-managed and unverified from this repository.
