@@ -83,3 +83,20 @@ test('test-site deployment runs tests and frontend checks before Forge lint and 
   const deploy = testSiteWorkflow.indexOf('deploy --non-interactive -e staging');
   assert.ok(tests >= 0 && syntax > tests && frontend > syntax && lint > frontend && deploy > lint);
 });
+
+const ciWorkflow = fs.readFileSync(
+  path.join(__dirname, '..', '.github', 'workflows', 'ci.yml'),
+  'utf8'
+);
+
+test('CI may deploy the Forge development environment but never installs or upgrades a site', () => {
+  assert.match(ciWorkflow, /deploy --non-interactive -e development/);
+  assert.doesNotMatch(ciWorkflow, /forge(?:\\s+cli@[^\\s]+)?\\s+install\\b/i);
+  assert.doesNotMatch(ciWorkflow, /--site\\s+251fa04c84\\.atlassian\\.net/i);
+  assert.doesNotMatch(ciWorkflow, /--upgrade\\s+all/i);
+});
+
+test('CI deployment step is explicitly documented as site-install-free', () => {
+  assert.match(ciWorkflow, /Deploy development environment without installing or upgrading any site/);
+  assert.match(ciWorkflow, /Detect app changes for development deployment only/);
+});
