@@ -1,5 +1,17 @@
 # Latest verified status — 18 November 2026, 14:50 IST
 
+## Exact-head CI and Ecoscanner preflight — 18 November 2026
+
+The latest Rovo/MCP candidate documentation head `7c399a125c2ea687eadd2cfb3cb1aca9ebe7eeb8` passed both exact-head GitHub Actions validations:
+
+- Push CI [#44307486988](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44307486988): lockfile install, dependency-audit reporting, unit tests, syntax lint, frontend bundle compilation and authenticated Forge CLI lint all passed. The documentation-only change correctly skipped deployment.
+- Pull-request CI [#44307445890](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44307445890): lockfile install, dependency-audit reporting, unit tests, syntax lint and frontend bundle compilation passed. Forge CLI lint and deployment were skipped on the PR event by workflow design.
+
+A repository-source preflight was also performed against the current manifest and application files in light of Atlassian's 12 November 2026 announcement of additional Ecoscanner checks (dynamic code execution, end-of-life Node runtimes, Atlassian API-token use, secrets in logs, SQL injection, and TLS/HSTS for Forge remotes). The inspected manifest selects `nodejs24.x`; the scanned application source had no matches for `eval()`, `new Function`, child-process execution, console logging, or SQL query construction. The observed Jira/Teamwork Graph requests use `api.asUser()`. This is a limited static source preflight, **not** an official Ecoscanner scan, full security audit, or proof of runtime behavior. The new announcement's checks are scheduled to roll out before 31 December 2026. Source: [Atlassian developer changelog, 12 November 2026](https://developer.atlassian.com/changelog/?rl_entry=70ad858955bb).
+
+The dependency audit remains open at 9 high / 4 moderate / 0 critical on the main candidate baseline. These CI successes do not clear the dependency findings or any live browser, Graph-scope, Rovo/MCP, judge-installation, or demo acceptance gate. PR #9 remains draft/unmerged; no production site was targeted.
+
+
 This is the current snapshot. Historical sections below are retained for audit history and must not override this snapshot.
 
 - **Rovo candidate staging deploy/install: PASS.** Guarded GitHub Actions run [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) deployed Forge app version **2.0.0** and completed Jira installation on the explicitly confirmed test site `brand7.atlassian.net`.
