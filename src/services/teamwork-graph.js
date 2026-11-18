@@ -142,7 +142,8 @@ async function readTeamworkGraphResponse(response) {
   }
 
   const status = Number(response.status);
-  const httpFailure = response.ok === false || (Number.isFinite(status) && status >= 400);
+  const hasHttpStatus = Number.isFinite(status) && status >= 100 && status <= 599;
+  const httpFailure = response.ok === false || (hasHttpStatus && (status < 200 || status >= 300));
   if (!httpFailure) return body;
 
   const errors = Array.isArray(body.errors) ? [...body.errors] : [];
