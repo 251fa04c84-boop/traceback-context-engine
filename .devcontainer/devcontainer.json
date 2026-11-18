@@ -1,0 +1,13 @@
+{
+  "name": "TraceBack Context Engine - Forge",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-24-bookworm",
+  "features": {},
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Atlassian.atlascode"
+      ]
+    }
+  }
+}

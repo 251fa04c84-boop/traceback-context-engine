@@ -1,0 +1,21 @@
+{
+  "name": "traceback-context-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Evidence-backed incident investigation and delivery context for Jira using Atlassian Forge.",
+  "scripts": {
+    "test": "node --test",
+    "lint:syntax": "node --check src/domain/evidence-copy.js && node --check src/index.js && node --check src/domain/incident.js && node --check src/domain/investigation.js && node --check src/domain/teamwork-graph.js && node --check src/services/teamwork-graph.js && node --check src/services/request-timeout.js && node --check src/services/jira-issue.js",
+    "lint:frontend": "npx --yes esbuild@0.25.5 src/frontend/index.jsx --bundle --platform=browser --external:@forge/* --external:react --outfile=/tmp/traceback-ui.js"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@forge/api": "^8.5.0",
+    "@forge/bridge": "^7.3.0",
+    "@forge/react": "^12.5.0",
+    "@forge/resolver": "^2.0.2",
+    "react": "^18.2.0"
+  }
+}

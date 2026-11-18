@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "codegeist/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Require and install the committed lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f package-lock.json ]]; then
+            echo "::error title=Lockfile required::Commit package-lock.json so CI never resolves an unreviewed dependency tree."
+            exit 1
+          fi
+          npm ci
+      - name: Report dependency audit findings without applying automatic upgrades
+        shell: bash
+        run: |
+          npm audit --json > /tmp/traceback-npm-audit.json || true
+          node -e '
+            const report = JSON.parse(require("node:fs").readFileSync("/tmp/traceback-npm-audit.json", "utf8"));
+            if (report.error || !report.metadata || !report.metadata.vulnerabilities) {
+              console.error("::error title=Dependency audit unavailable::npm audit did not return a complete vulnerability report. Check registry/network access and rerun CI.");
+              process.exit(1);
+            }
+            const rows = Object.entries(report.vulnerabilities || {}).map(([name, item]) => ({
+              package: name,
+              severity: item.severity,
+              direct: item.isDirect,
+              range: item.range,
+              fixAvailable: item.fixAvailable,
+              via: (item.via || []).map(v => typeof v === "string" ? v : ({
+                title: v.title,
+                url: v.url,
+                range: v.range,
+                severity: v.severity
+              }))
+            }));
+            const summary = report.metadata?.vulnerabilities || {};
+            console.log(JSON.stringify({ summary, packages: rows }, null, 2));
+            if ((summary.critical || 0) > 0) {
+              console.error("::error title=Critical dependency vulnerabilities::npm audit found " + summary.critical + " critical vulnerabilities.");
+              process.exit(1);
+            }
+            if ((summary.high || 0) > 0) {
+              console.warn("::warning title=High dependency vulnerabilities::npm audit found " + summary.high + " high and " + (summary.moderate || 0) + " moderate vulnerabilities. Review docs/DEPENDENCY_AUDIT.md; do not apply force upgrades without compatibility tests.");
+            }
+          '
+      - run: npm test
+      - run: npm run lint:syntax
+      - run: npm run lint:frontend
+      - name: Disable interactive Forge CLI analytics prompt
+        run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
+      - name: Validate Forge app with CLI when registered
+        if: github.event_name != 'pull_request'
+        env:
+          FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+          FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+        shell: bash
+        run: |
+          if grep -Eq '^  id:' manifest.yml; then
+            npx --yes @forge/cli@15.1.0 lint
+          else
+            echo "::warning title=Forge registration required::Forge CLI lint is skipped because manifest.yml has no app.id. Register this Forge app once with 'forge register' before deployment and judge installation."
+          fi
+      - name: Detect app changes for development deployment only
+        id: app-changes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation'
+        shell: bash
+        run: |
+          if git diff --quiet HEAD^ HEAD -- manifest.yml package.json package-lock.json src; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Documentation/workflow-only commit; skipping app deployment."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "App source, manifest, or dependency files changed; development deployment is eligible."
+          fi
+      - name: Deploy development environment without installing or upgrading any site
+        if: github.event_name == 'push' && github.ref == 'refs/heads/codegeist/forge-foundation' && steps.app-changes.outputs.changed == 'true'
+        env:
+          FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+          FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$FORGE_EMAIL" || -z "$FORGE_API_TOKEN" ]]; then
+            echo "::error title=Forge credentials missing::Development deployment requires the existing FORGE_EMAIL and FORGE_API_TOKEN repository secrets."
+            exit 1
+          fi
+          npx --yes @forge/cli@15.1.0 deploy --non-interactive -e development

@@ -1,0 +1,30 @@
+modules:
+  jira:issueContext:
+    - key: traceback-context-panel
+      resource: main-ui-kit/entry
+      resolver:
+        function: resolver
+      render: native
+      title: TraceBack Context Engine
+      label: Investigate
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main-ui-kit
+    path: src/frontend
+    entry:
+      entry: index.jsx
+app:
+  runtime:
+    name: nodejs24.x
+    memoryMB: 256
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/b7cbb6a8-de78-4ba8-91fb-48733c1c2157
+permissions:
+  scopes:
+    - read:jira-work
+    - read:graph:issue:jira
+    - read:graph:goal:atlassian
+    - read:graph:deployment:external
+    - read:graph:pull-request:external
