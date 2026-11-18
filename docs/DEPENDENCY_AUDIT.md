@@ -436,3 +436,10 @@ The current application source was inspected to determine whether an app-level P
 **Test applicability decision:** a browser/editor paste regression test cannot be meaningfully added to this app because there is no app-owned ProseMirror editing surface to exercise. The existing candidate CI still verifies the installed dependency tree, all 4,159 automated tests, syntax checks and frontend bundle compilation. The upstream XSS advisory concerns attacker-supplied HTML paste into a ProseMirror editor; this patch updates the transitive package version but does not create or validate an editor feature in TraceBack.
 
 This closes the *app-level editor test applicability investigation*, not the broader runtime acceptance gate. Forge UI Kit rendering in an authenticated staging site, authenticated Forge CLI validation on a push event, and the remaining six moderate audit findings still require separate decisions/evidence. PR #12 remains draft and unmerged.
+
+
+## CI event correction and Forge-validation trigger — 18 November 2026
+
+Correction to the earlier PR comment: GitHub's run metadata confirms run #44331631221 was triggered by **`pull_request`**, not `push`. Its successful result proves lockfile install, dependency-tree validation, tests, syntax/frontend lint, and the audit snapshot; it does **not** prove authenticated Forge CLI lint. The Forge CLI step was skipped by the workflow's explicit pull-request event guard.
+
+The workflow on this branch includes `security/**` in its push trigger, and `manifest.yml` contains the existing app ID. A subsequent commit to this security branch is therefore needed to exercise the authenticated Forge CLI step. No production or staging deployment is configured for this branch. Do not interpret a PR check as a push-event Forge validation.
