@@ -35,3 +35,44 @@ test('push events only validate the workflow definition and cannot deploy', () =
   assert.match(workflow, /register-lint-deploy-install:/);
   assert.match(workflow, /if: github\.event_name == 'workflow_dispatch'/);
 });
+
+
+const testSiteWorkflow = fs.readFileSync(
+  path.join(__dirname, '..', '.github', 'workflows', 'forge-test-site-deploy.yml'),
+  'utf8'
+);
+
+test('test-site deployment is pinned to immutable GitHub Actions releases', () => {
+  assert.match(testSiteWorkflow, /actions\/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1/);
+  assert.match(testSiteWorkflow, /actions\/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1/);
+  assert.match(testSiteWorkflow, /package-manager-cache: false/);
+  assert.doesNotMatch(testSiteWorkflow, /uses: actions\/(?:checkout|setup-node)@v\d/);
+});
+
+test('test-site deployment is restricted to the maintained core branch', () => {
+  assert.match(testSiteWorkflow, /options:\s*\n\s*- codegeist\/forge-foundation/);
+  assert.doesNotMatch(testSiteWorkflow, /codegeist\/rovo-investigator/);
+});
+
+test('test-site deployment rejects the connected production tenant and requires two explicit confirmations', () => {
+  assert.match(testSiteWorkflow, /TARGET_SITE" == "251fa04c84\.atlassian\.net"/);
+  assert.match(testSiteWorkflow, /CONFIRM_TEST_SITE_INSTALL" != "true"/);
+  assert.match(testSiteWorkflow, /CONFIRM_NOT_PRODUCTION_SITE" != "true"/);
+  assert.match(testSiteWorkflow, /TARGET_SITE" =~ \^\[a-z0-9\]/);
+});
+
+test('test-site deployment never auto-consents to Forge scopes or targets production', () => {
+  assert.doesNotMatch(testSiteWorkflow, /--confirm-scopes/);
+  assert.doesNotMatch(testSiteWorkflow, /-e production/);
+  assert.match(testSiteWorkflow, /deploy --non-interactive -e staging/);
+  assert.match(testSiteWorkflow, /install --site "\$TARGET_SITE" --product jira --non-interactive -e staging/);
+});
+
+test('test-site deployment runs tests and frontend checks before Forge lint and deployment', () => {
+  const tests = testSiteWorkflow.indexOf('run: npm test');
+  const syntax = testSiteWorkflow.indexOf('run: npm run lint:syntax');
+  const frontend = testSiteWorkflow.indexOf('run: npm run lint:frontend');
+  const lint = testSiteWorkflow.indexOf('run: npx --yes @forge/cli@15.1.0 lint');
+  const deploy = testSiteWorkflow.indexOf('deploy --non-interactive -e staging');
+  assert.ok(tests >= 0 && syntax > tests && frontend > syntax && lint > frontend && deploy > lint);
+});
