@@ -125,6 +125,21 @@ function unavailableEvidence(warning) {
 
 async function readTeamworkGraphResponse(response) {
   if (!response || typeof response !== 'object') return response;
+
+  // Reject non-success HTTP responses before reading their bodies. This avoids
+  // parsing redirects/error payloads and keeps upstream details out of UI state.
+  const status = Number(response.status);
+  const hasHttpStatus = Number.isFinite(status) && status >= 100 && status <= 599;
+  const httpFailure = response.ok === false || (hasHttpStatus && (status < 200 || status >= 300));
+  if (httpFailure) {
+    return {
+      data: null,
+      errors: [{
+        message: 'Teamwork Graph request failed (' + (hasHttpStatus ? status : 'HTTP') + ').'
+      }]
+    };
+  }
+
   if (typeof response.json !== 'function') return response;
 
   let body;
@@ -138,19 +153,9 @@ async function readTeamworkGraphResponse(response) {
   }
 
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    body = { data: null };
+    return { data: null };
   }
-
-  const status = Number(response.status);
-  const hasHttpStatus = Number.isFinite(status) && status >= 100 && status <= 599;
-  const httpFailure = response.ok === false || (hasHttpStatus && (status < 200 || status >= 300));
-  if (!httpFailure) return body;
-
-  const errors = Array.isArray(body.errors) ? [...body.errors] : [];
-  errors.push({
-    message: 'Teamwork Graph request failed (' + (Number.isFinite(status) ? status : 'HTTP') + ').'
-  });
-  return { ...body, errors };
+  return body;
 }
 
 function makeRequestVariables(issueAri, cursors, include) {
