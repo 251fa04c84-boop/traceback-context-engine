@@ -47,3 +47,21 @@ Reference: https://community.developer.atlassian.com/t/rovo-mcp-external-endpoin
 The staging deploy/install is verified separately. This note does not mark browser acceptance, Rovo discovery, Graph scope consent, live Graph data, action invocation, external MCP, OAuth, or judge distribution as passed. Keep PR #9 draft/unmerged until these gates and dependency security review are complete.
 
 No production tenant, production scope, or production installation is part of this acceptance plan.
+
+
+## 5. Official Atlassian API compatibility cross-check — 18 November 2026
+
+I compared the exact TraceBack query/service implementation on `codegeist/rovo-integrated` with the current Atlassian Forge and Teamwork Graph references:
+
+- The Forge `requestTeamworkGraph` reference explicitly supports backend calls through `@forge/api` using `api.asUser()`; the frontend bridge API is an alternative, not a requirement to move Graph calls into the browser. TraceBack's backend service uses `apiClient.asUser().requestTeamworkGraph(query, variables)`, so its execution model matches the documented backend path.
+- The official curated-query catalog lists all three relationship fields used by TraceBack: `jiraWorkItemGoals`, `jiraWorkItemLinkedExternalDeployments`, and `jiraWorkItemLinkedExternalPullRequests`. Each supports `first` and `after` pagination arguments.
+- The official catalog says curated queries return Relay-style `edges` and `pageInfo`, and caps `first` at 25. TraceBack requests `first: 25`, passes independent cursors, and continues while `hasNextPage` is true.
+- The Forge reference confirms calls execute as the current user and require declared scopes plus the user's underlying permissions. TraceBack declares the Jira issue, goal, external deployment and external pull-request object scopes and does not use app-level Graph authorization.
+- The official API documentation warns that missing scopes can silently omit records. TraceBack therefore correctly treats empty results as ambiguous and reports missing scopes/permissions/connectors as possible explanations rather than asserting that no linked records exist.
+
+Official references:
+- Forge `requestTeamworkGraph` API reference (last updated 10 Nov 2026): https://developer.atlassian.com/platform/forge/apis-reference/ui-api-bridge/requestTeamworkGraph/
+- Teamwork Graph curated-query catalog and pagination contract: https://developer.atlassian.com/platform/teamwork-graph/curated-queries/
+- Teamwork Graph scope reference: https://developer.atlassian.com/platform/teamwork-graph/scopes/
+
+**Review conclusion:** the current backend API choice, three curated relationship fields, page size, pagination shape, current-user authorization and manifest scope categories align with the official documentation reviewed on 18 November 2026. This is a documentation/schema cross-check only; it does not validate the query against the staging tenant's live schema, prove scope consent, or establish that real linked records are returned. Browser and tenant-level runtime acceptance remain pending.
