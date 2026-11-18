@@ -12,9 +12,8 @@ on:
         required: true
         type: choice
         options:
-          - codegeist/rovo-investigator
           - codegeist/forge-foundation
-        default: codegeist/rovo-investigator
+        default: codegeist/forge-foundation
       target_site:
         description: Free Atlassian developer-site domain only (example.atlassian.net; no https://)
         required: true
@@ -67,15 +66,16 @@ jobs:
       INSTALL_MODE: ${{ inputs.install_mode }}
     steps:
       - name: Check out selected candidate branch
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.source_branch }}
           persist-credentials: false
 
       - name: Set up Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
+          package-manager-cache: false
 
       - name: Verify credentials, site safety and explicit confirmations
         shell: bash
@@ -104,6 +104,15 @@ jobs:
 
       - name: Install locked dependencies
         run: npm ci
+
+      - name: Run core test suite
+        run: npm test
+
+      - name: Run syntax checks
+        run: npm run lint:syntax
+
+      - name: Compile the frontend bundle
+        run: npm run lint:frontend
 
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
