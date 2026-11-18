@@ -87,7 +87,8 @@ test('parses the backend HTTP response shape before normalizing Teamwork Graph e
   assert.equal(result.goals[0].id, 'goal-http-1');
 });
 
-test('preserves GraphQL errors and marks non-2xx backend HTTP responses unavailable', async () => {
+test('preserves safe failure state and does not parse non-2xx backend HTTP response bodies', async () => {
+  let bodyRead = false;
   const apiClient = {
     asUser() {
       return {
@@ -96,6 +97,7 @@ test('preserves GraphQL errors and marks non-2xx backend HTTP responses unavaila
             ok: false,
             status: 403,
             async json() {
+              bodyRead = true;
               return { data: null, errors: [{ message: 'Forbidden' }] };
             }
           };
@@ -111,6 +113,7 @@ test('preserves GraphQL errors and marks non-2xx backend HTTP responses unavaila
   );
 
   assert.equal(result.status, 'unavailable');
+  assert.equal(bodyRead, false);
   assert.match(result.warning, /Teamwork Graph/i);
 });
 
@@ -214,7 +217,8 @@ test('normalizes partial GraphQL data without throwing away linked evidence', as
   assert.equal(result.pullRequests.length, 0);
 });
 
-test('treats redirect HTTP responses as unavailable instead of accepting their JSON body', async () => {
+test('rejects redirects before parsing their response bodies', async () => {
+  let bodyRead = false;
   const apiClient = {
     asUser() {
       return {
@@ -222,6 +226,7 @@ test('treats redirect HTTP responses as unavailable instead of accepting their J
           return {
             status: 302,
             async json() {
+              bodyRead = true;
               return {
                 data: {
                   jiraWorkItemGoals: { edges: [], pageInfo: { hasNextPage: false, endCursor: null } },
@@ -243,5 +248,6 @@ test('treats redirect HTTP responses as unavailable instead of accepting their J
   );
 
   assert.equal(result.status, 'unavailable');
+  assert.equal(bodyRead, false);
   assert.match(result.warning, /Teamwork Graph/i);
 });
