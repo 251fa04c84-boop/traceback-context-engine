@@ -1,7 +1,7 @@
 'use strict';
 
 function isValidIssueKey(value) {
-  return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-[1-9]\d{0,9}$/.test(value.trim());
+  return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-[1-9]\\d{0,9}$/.test(value.trim());
 }
 
 function getIssueKeyFromProductContext(context) {
@@ -85,12 +85,20 @@ function normalizeRelatedIssues(issueLinks) {
 }
 
 function normalizeIssue(issue) {
-  if (!issue || typeof issue !== 'object' || !issue.key || !issue.fields) {
+  if (
+    !issue ||
+    typeof issue !== 'object' ||
+    Array.isArray(issue) ||
+    !isValidIssueKey(issue.key) ||
+    !issue.fields ||
+    typeof issue.fields !== 'object' ||
+    Array.isArray(issue.fields)
+  ) {
     throw new TypeError('A valid Jira issue is required');
   }
   const fields = issue.fields;
   return {
-    key: String(issue.key),
+    key: issue.key.trim(),
     summary: String(fields.summary || 'Untitled issue'),
     description: plainText(fields.description).slice(0, 4000),
     issueType: fields.issuetype?.name || 'Unknown',
