@@ -22,13 +22,13 @@ The workflow is on the repository's default `main` branch, so it appears under G
 
 1. Open [GitHub Actions → Forge test-site deploy](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-test-site-deploy.yml).
 2. Tap **Run workflow**.
-3. **First acceptance pass: select `codegeist/forge-foundation`** as the source branch. This is the maintained core Jira issue-context app and the only branch to use for baseline live acceptance. Do not deploy the Rovo/MCP candidate yet: `codegeist/rovo-investigator` is still a draft branch, 24 commits behind/diverged from core, and has not passed live acceptance. After the core app is accepted and the dependency release gate is resolved, synchronize the Rovo candidate with core, rerun exact-head CI, and deploy it as a separate second acceptance pass.
+3. Select **`codegeist/forge-foundation`** as the source branch. The workflow intentionally permits only this maintained core Jira issue-context branch. It blocks the Rovo/MCP candidate until that branch is synchronized with core, dependency release gates are resolved, and its exact-head CI passes. Rovo/MCP will require a separate second acceptance pass.
 4. Enter the new developer site domain exactly, such as `my-traceback-test.atlassian.net`.
 5. Choose `install` for the first install. Choose `upgrade` only if TraceBack is already installed in the Forge **staging** environment on that test site.
 6. Check both confirmations: that the target is a separate developer/test site and that it is not `251fa04c84.atlassian.net`.
 7. Tap **Run workflow**.
 
-This workflow uses the existing `FORGE_EMAIL` and `FORGE_API_TOKEN` repository secrets. It deploys to Forge **staging**, not the development environment already installed on the connected production tenant. It never registers/re-registers the app, never deploys to Forge production, and never uses `--confirm-scopes`.
+This workflow uses the existing `FORGE_EMAIL` and `FORGE_API_TOKEN` repository secrets. It checks out pinned GitHub Actions releases, runs the core unit tests, syntax checks and frontend bundle compilation, then runs Forge CLI lint. It deploys to Forge **staging**, not the development environment already installed on the connected production tenant. It never registers/re-registers the app, never deploys to Forge production, and never uses `--confirm-scopes`.
 
 ## 3. Review Teamwork Graph permissions
 
