@@ -56,8 +56,9 @@ test('test-site deployment is pinned to immutable GitHub Actions releases', () =
   assert.doesNotMatch(testSiteWorkflow, /uses: actions\/(?:checkout|setup-node)@v\d/);
 });
 
-test('test-site deployment is restricted to the maintained core branch', () => {
-  assert.match(testSiteWorkflow, /options:\s*\n\s*- codegeist\/forge-foundation/);
+test('test-site deployment allows only the maintained core and reviewed Rovo candidate branches', () => {
+  assert.match(testSiteWorkflow, /options:\s*\n\s*- codegeist\/forge-foundation\s*\n\s*- codegeist\/rovo-integrated/);
+  assert.match(testSiteWorkflow, /SOURCE_BRANCH" != "codegeist\/forge-foundation" && "\$SOURCE_BRANCH" != "codegeist\/rovo-integrated"/);
   assert.doesNotMatch(testSiteWorkflow, /codegeist\/rovo-investigator/);
 });
 
