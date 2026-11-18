@@ -1,3 +1,17 @@
+# Latest verified status — 18 November 2026, 14:35 IST
+
+This is the current snapshot. Historical sections below are retained for audit history and must not override this snapshot.
+
+- **Rovo candidate staging deploy/install: PASS.** Guarded GitHub Actions run [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) deployed Forge app version **2.0.0** to staging and completed Jira installation on `brand7.atlassian.net`.
+- **Deployment validation: PASS.** The exact staging workflow run passed **4,159 tests, 0 failures, 0 skips**, syntax checks, frontend compilation and authenticated Forge CLI lint (“No issues found”). The workflow did not use `--confirm-scopes`.
+- **PR #9 documentation refresh:** commit `4528b3e1959cfdd830a31da1e8c4119402b551be` records the successful staging install and explicit acceptance boundaries. Its follow-up CI [#44272287938](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44272287938) is currently running; test, syntax and frontend steps have passed, Forge CLI validation is still in progress. Do not call this latest docs head fully green until the run concludes.
+- **Live Jira/browser acceptance: NOT VERIFIED.** The connected Atlassian connector currently exposes only `251fa04c84.atlassian.net`; a read-only request to `brand7.atlassian.net` was denied because that cloud ID is not granted to the connector. This is separate from successful Forge installation.
+- **Teamwork Graph authorization/data: NOT ACCEPTED.** The staging workflow requested four granular Graph scopes but did not auto-consent. An administrator-authorized scope state and genuine linked goal/deployment/pull-request records have not been verified.
+- **Rovo/MCP: PARTIAL.** Forge candidate deployed and installed. Rovo discovery, Rovo Studio MCP visibility, OAuth 2.1 consent and real action invocation remain unverified.
+- **Dependency security: OPEN.** Core branch audit remains 9 high, 4 moderate, 0 critical. PR #11 is a ProseMirror-only partial remediation (0 high, 6 moderate) and remains draft. PR #2's zero-audit lockfile has an incompatible cross-major glob override and remains unmerged.
+- **Submission: NOT READY.** Judge guide and Devpost draft exist, but no official judge installation URL, accepted public demo video or final submission receipt is verified.
+- **Safety:** no production install, production deployment, production scope consent or synthetic evidence creation was performed.
+
 # Latest verified status — 18 November 2026, 14:08 IST
 
 This snapshot supersedes earlier status statements below when they conflict.
