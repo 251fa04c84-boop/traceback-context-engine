@@ -133,7 +133,7 @@ function normalizeTeamworkGraphResponse(response) {
     // A bounded result is not complete evidence, even when the first page
     // contains records. Keep the UI status honest so it cannot show green
     // "available" while additional linked records may have been omitted.
-    status = 'partial';
+    if (status !== 'unavailable') status = 'partial';
     const labels = truncatedCategories.map((category) => ({
       goals: 'goals',
       deployments: 'deployments',
