@@ -213,3 +213,35 @@ test('normalizes partial GraphQL data without throwing away linked evidence', as
   assert.equal(result.deployments.length, 1);
   assert.equal(result.pullRequests.length, 0);
 });
+
+test('treats redirect HTTP responses as unavailable instead of accepting their JSON body', async () => {
+  const apiClient = {
+    asUser() {
+      return {
+        async requestTeamworkGraph() {
+          return {
+            status: 302,
+            async json() {
+              return {
+                data: {
+                  jiraWorkItemGoals: { edges: [], pageInfo: { hasNextPage: false, endCursor: null } },
+                  jiraWorkItemLinkedExternalDeployments: { edges: [], pageInfo: { hasNextPage: false, endCursor: null } },
+                  jiraWorkItemLinkedExternalPullRequests: { edges: [], pageInfo: { hasNextPage: false, endCursor: null } }
+                }
+              };
+            }
+          };
+        }
+      };
+    }
+  };
+
+  const result = await fetchTeamworkGraphEvidence(
+    apiClient,
+    '10006',
+    'c0e47565-a2b1-472f-bd30-5c1e3684bb1e'
+  );
+
+  assert.equal(result.status, 'unavailable');
+  assert.match(result.warning, /Teamwork Graph/i);
+});
