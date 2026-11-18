@@ -14,7 +14,7 @@ test('Forge development deployment pins GitHub Actions and disables package-mana
   assert.match(workflow, /actions\/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1/);
   assert.match(workflow, /actions\/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1/);
   assert.match(workflow, /package-manager-cache: false/);
-  assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node)@v\\d/);
+  assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node)@v\d/);
 });
 
 test('Forge install workflow never automatically confirms or consents to scopes', () => {
