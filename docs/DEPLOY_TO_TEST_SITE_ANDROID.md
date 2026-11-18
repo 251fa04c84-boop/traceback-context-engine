@@ -22,7 +22,7 @@ The workflow is on the repository's default `main` branch, so it appears under G
 
 1. Open [GitHub Actions → Forge test-site deploy](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-test-site-deploy.yml).
 2. Tap **Run workflow**.
-3. Select **`codegeist/forge-foundation`** as the source branch. The workflow intentionally permits only this maintained core Jira issue-context branch. It blocks the Rovo/MCP candidate until that branch is synchronized with core, dependency release gates are resolved, and its exact-head CI passes. Rovo/MCP will require a separate second acceptance pass.
+3. After workflow PR [#10](https://github.com/251fa04c84-boop/traceback-context-engine/pull/10) is reviewed and merged into `main`, select **`codegeist/rovo-integrated`** to test the Rovo/MCP candidate, or **`codegeist/forge-foundation`** to test the core Jira panel. Until PR #10 is merged, the workflow offers only the core branch. The workflow enforces this two-branch allowlist in its shell validation as well as the UI choice.
 4. Enter the new developer site domain exactly, such as `my-traceback-test.atlassian.net`.
 5. Choose `install` for the first install. Choose `upgrade` only if TraceBack is already installed in the Forge **staging** environment on that test site.
 6. Check both confirmations: that the target is a separate developer/test site and that it is not `251fa04c84.atlassian.net`.
