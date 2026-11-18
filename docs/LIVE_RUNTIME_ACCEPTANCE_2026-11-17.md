@@ -1,3 +1,22 @@
+# Authoritative staging deployment update — 18 November 2026, 14:30 IST
+
+This entry supersedes the earlier statement above that the Rovo/MCP candidate had not been deployed or installed. It records a successful CI-driven Forge staging deployment and Jira installation; it does not claim browser or Rovo acceptance.
+
+- GitHub Actions workflow run [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) completed with conclusion **success**.
+- Workflow inputs verified from job logs: source branch `codegeist/rovo-integrated`; target `brand7.atlassian.net`; both explicit test-site confirmations `true`; install mode `install`.
+- Job `deploy-to-test-site` completed successfully. The workflow's safety validation, `npm ci`, test suite, syntax checks, frontend compilation, Forge CLI lint, Forge staging deployment and Jira installation all passed.
+- Automated tests: **4,159 passed, 0 failed, 0 cancelled, 0 skipped**.
+- Forge CLI lint: **No issues found**.
+- Forge deployed app version **2.0.0** to the Forge **staging** environment and reported deployment success.
+- Forge CLI confirmed: **Install in Jira complete!** The app was installed in Jira on `brand7.atlassian.net` in the staging environment.
+- The install command listed requested scopes: `read:jira-work`, `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. The workflow deliberately did not pass `--confirm-scopes`. The logs do not independently establish which granular scopes were administratively consented or usable at runtime; do not claim Graph authorization acceptance without checking the site's authorization state.
+- The CLI emitted a generic warning that a development app was being installed to a production site, but its explicit completion message identifies the target as `brand7.atlassian.net`; the workflow inputs and safety guard also verified this target was not `251fa04c84.atlassian.net`. No production tenant was targeted.
+- The connected Atlassian MCP account still exposes only `251fa04c84.atlassian.net`, so it cannot independently inspect the new site's Jira issue or app authorization state. Fresh browser acceptance, real linked Teamwork Graph records, Rovo agent discovery, MCP tool visibility and action invocation remain **not yet verified**.
+
+**Acceptance conclusion:** staging deployment and Jira installation are **PASS**. Live UI, granular Graph authorization/data, Rovo discovery and MCP invocation remain **PENDING**. No production install or scope consent was performed.
+
+---
+
 # Authoritative live probe update — 18 November 2026, 14:08 IST
 
 This entry supersedes earlier live-probe status where it conflicts. It records a read-only connector probe, not a Forge app browser acceptance.
