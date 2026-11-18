@@ -65,3 +65,21 @@ Official references:
 - Teamwork Graph scope reference: https://developer.atlassian.com/platform/teamwork-graph/scopes/
 
 **Review conclusion:** the current backend API choice, three curated relationship fields, page size, pagination shape, current-user authorization and manifest scope categories align with the official documentation reviewed on 18 November 2026. This is a documentation/schema cross-check only; it does not validate the query against the staging tenant's live schema, prove scope consent, or establish that real linked records are returned. Browser and tenant-level runtime acceptance remain pending.
+
+
+## 6. Official Rovo manifest and MCP contract cross-check — 18 November 2026
+
+The current Forge manifest references were checked against `manifest.yml` on this branch:
+
+- The Rovo Agent module supports a name, prompt, conversation starters and action keys; TraceBack declares these fields and references its investigation action.
+- The Action module requires a unique key, name, Forge function, action verb, description and inputs. TraceBack's action uses a valid key, a Forge function, `GET`, a read-only description and an optional issue key input.
+- The Action reference documents that Jira issue context is supplied in the action payload, including `payload.context.jira.url`; TraceBack derives and validates the issue key from this context and rejects a mismatch with the requested issue before making network requests.
+- The Rovo MCP module exposes action keys through its `tools` list and permits at most one module. TraceBack declares one MCP module and exposes the same read-only action.
+- External MCP exposure is disabled by default and must be enabled per app installation by a site/org administrator. The endpoint and OAuth 2.1 consent are separate from Rovo Studio tool visibility. TraceBack's release guide keeps these as separate acceptance checks.
+
+Official references:
+- Rovo Agent manifest: https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-agent/
+- Action manifest and payload context: https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-action/
+- Rovo MCP manifest, exposure controls and OAuth 2.1: https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-mcp/
+
+**Review conclusion:** the declared Agent → Action → MCP references and the issue-context handling align with the current Forge manifest references reviewed on 18 November 2026. This is a manifest/documentation review, not proof that Rovo discovers the agent, that a custom agent can invoke the tool, or that external MCP consent succeeds in the staging tenant.
