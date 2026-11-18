@@ -418,3 +418,8 @@ Registry references (checked 18 November 2026):
 - https://www.npmjs.com/package/%40forge/manifest
 
 The registry pages therefore do not currently show a newer stable Forge package release that can be applied as a compatible in-range remediation for the remaining `glob`/`minimatch` findings. Do not adopt `next`/experimental Forge packages or major downgrades merely to silence npm audit. Recheck stable package metadata before release; this is a dated registry snapshot, not a promise that no upstream fix will ship later.
+
+
+## Exact-head Forge CI event clarification — 18 November 2026
+
+GitHub Actions run [#44329499653](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44329499653) completed successfully for head `fb22c5e3bf99a60ecc1de61989367b6362f48b19`, but its event is `pull_request`. The workflow intentionally gates authenticated Forge CLI lint behind `github.event_name != 'pull_request'`, so the Forge lint step was skipped in this run; it must not be reported as a successful Forge validation. The workflow is configured to run on pushes to `security/**`, where the authenticated lint step can execute using repository secrets. No deployment is configured for this security branch. The candidate remains draft and unmerged pending that push-event validation and controlled staging acceptance.
