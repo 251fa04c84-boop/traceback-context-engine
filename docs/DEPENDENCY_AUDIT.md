@@ -1,3 +1,24 @@
+# Current candidate remediation status — 18 November 2026
+
+A separate candidate branch, `security/prosemirror-only` (PR [#11](https://github.com/251fa04c84-boop/traceback-context-engine/pull/11)), applies only `prosemirror-view@1.42.9`. It does not override `glob` or `minimatch`, and therefore does not cross the declared `@forge/manifest@13.9.0` `glob@^13.0.0` range.
+
+Exact-head push CI [#44261114554](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44261114554) and PR CI [#44261122390](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44261122390) both passed on `92bb5b8337bdbfc9123782f0006be16df42d00a4`:
+- `npm ci` passed.
+- `npm ls prosemirror-view --all` passed; all references resolve to `1.42.9` with no invalid dependency tree.
+- **4,143 tests passed, 0 failed, 0 skipped**; syntax and frontend checks passed.
+- Authenticated Forge CLI lint reported **No issues found** on push.
+- npm audit improved from **9 high + 4 moderate** on the base lockfile to **0 high + 6 moderate, 0 critical** on this candidate.
+
+This is a tested high-severity reduction, not a fully clean dependency tree. The remaining moderate findings include `glob` / `minimatch` and Forge SDK packages that npm traces to those transitive advisories. The remaining `glob` advisory is fixed in 14.0.2+, while `@forge/manifest@13.9.0` declares `glob@^13.0.0`; a `glob@14` override therefore remains outside the vendor-declared range. The separate zero-audit experiment in PR #2 still requires compatibility review.
+
+An Atlassian Developer Community discussion reports that a ProseMirror-only override to 1.42.3 resolved that advisory in another Forge UI Kit dependency tree: [Forge React / Bridge dependencies pin vulnerable prosemirror-view@1.41.5](https://community.developer.atlassian.com/t/forge-react-bridge-dependencies-pin-vulnerable-prosemirror-view-1-41-5-ghsa-c8x8-7fp4-3x9w/103359). This is community-reported evidence, not an Atlassian product-team endorsement. Our exact current candidate independently validates `1.42.9` through npm install, dependency-tree inspection, tests, and Forge CLI lint.
+
+Atlassian's [Marketplace Security Enforcement Policy](https://developer.atlassian.com/platform/marketplace/marketplace-security-enforcement-policy/) expects high-severity Cloud app findings to be fixed within 28 days and directs partners to the extension process when a fix is blocked by an upstream dependency or platform-owned change. The [Security Bug Fix Policy](https://developer.atlassian.com/platform/marketplace/security-bugfix-policy/) says extensions are case-by-case and not guaranteed. The prepared escalation packet is not a submitted support ticket; no Atlassian AMS vulnerability ticket is currently available to transition to `Extension Requested`.
+
+**Release decision:** keep PR #11 draft/unmerged pending independent review; do not deploy it yet. The base/core branch still has its original audit findings until the candidate is accepted and integrated. No production deployment or test-site install has been performed from this security branch.
+
+---
+
 > **Fresh package-level audit diagnosis — 18 November 2026, 12:30 IST.** I inspected the raw npm audit JSON printed by exact code/test CI run [#44254554894](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44254554894), rather than relying only on the aggregate count. It reports 13 vulnerable package entries: 9 high, 4 moderate, 0 critical.
 >
 > The high findings form one Atlaskit/Forge UI dependency chain: `@atlaskit/adf-schema`, `@atlaskit/adf-schema-generator`, `@atlaskit/adf-utils`, `@atlaskit/editor-json-transformer`, `@atlaskit/editor-prosemirror`, `@atlaskit/forge-react-types`, and `prosemirror-view`. The root ProseMirror advisory is [GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w), fixed at `prosemirror-view@1.42.3`; the current audit's automatic fix suggestion points to `@forge/bridge@5.5.0`, a major downgrade from the app's declared `^7.3.0`. npm also suggests `@forge/react@11.4.0` for the affected UI chain, a major downgrade from declared `^12.5.0`. Neither is an acceptable blind fix.
