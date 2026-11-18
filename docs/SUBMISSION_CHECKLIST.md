@@ -1,3 +1,16 @@
+# Latest verified status — 18 November 2026, 14:08 IST
+
+This snapshot supersedes earlier status statements below when they conflict.
+
+- **Automated tests:** refreshed Rovo/MCP app implementation head `ec91d08095cb09d57fd6d5d6274c80516db64696` passed exact-head push/PR CI with **4,159 passed, 0 failed, 0 skipped**. Authenticated Forge CLI lint reported no issues on push.
+- **Latest documentation refresh:** dependency-audit note commit `160f2b06a6a12c517e870c58f98bd6e67c7250bf` and live Teamwork Graph probe record commit `07e8e6ba7caf3737b31ceaf540c883e1d53051ce` are docs-only changes. CI is running on the latest docs head; do not attribute the prior 4,159 count to this new docs head until those runs complete.
+- **Forge validation:** exact Rovo app implementation head passed authenticated Forge CLI lint. The Rovo branch has not been deployed or installed. Last confirmed core development deployment is version **2.49.0** from core commit `a877c922ecc12b80f496d61009170fce4f74b240`; it is not the Rovo build.
+- **Dependency security:** exact Rovo CI audit remains **9 high, 4 moderate, 0 critical**. Latest stable Forge package versions checked on npm are `@forge/api@8.5.0`, `@forge/bridge@7.3.0`, `@forge/react@12.5.0`, and `@forge/manifest@13.9.0`; no compatible stable patched release was identified. The zero-audit PR #2 still uses a cross-major `glob@14` override and remains unmerged.
+- **Live Teamwork Graph:** a fresh read-only full-detail connector probe for `DEMO-7` targeting AtlassianGoal, ExternalDeployment and ExternalPullRequest returned **zero relationships**. Jira lookup showed one related Jira issue, `DEMO-8`. This is connector evidence on the connected production tenant, not Forge app acceptance.
+- **Rovo/MCP:** draft PR [#9](https://github.com/251fa04c84-boop/traceback-context-engine/pull/9) declares the read-only Rovo agent and MCP tool and its automated tests pass. Live discovery, Rovo Studio visibility, external MCP OAuth and action invocation remain unverified.
+- **Submission assets:** judge installation guide, Devpost draft, and 3:15–3:45 demo storyboard exist. There is no verified judge installation URL or public recorded demo video. The video must show real accepted app behavior, not mock or fabricate linked Graph evidence.
+- **External blockers:** only a production Atlassian tenant is connected. A separate test site, authorized organization administrator, approved four read-only Teamwork Graph scopes, and representative linked goal/deployment/pull-request test records are still required. No production scopes or production installs will be changed.
+
 # Current authoritative status — 18 November 2026
 
 > This section supersedes the historical status snapshots below. Keep the older records as an audit trail; do not use them as the current readiness statement.
