@@ -11,10 +11,10 @@ const workflow = fs.readFileSync(
 );
 
 test('Forge development deployment pins GitHub Actions and disables package-manager caching', () => {
-  assert.match(workflow, /actions\\/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1/);
-  assert.match(workflow, /actions\\/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1/);
+  assert.match(workflow, /actions\/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1/);
+  assert.match(workflow, /actions\/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1/);
   assert.match(workflow, /package-manager-cache: false/);
-  assert.doesNotMatch(workflow, /uses: actions\\/(?:checkout|setup-node)@v\\d/);
+  assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node)@v\\d/);
 });
 
 test('Forge install workflow never automatically confirms or consents to scopes', () => {
@@ -69,7 +69,7 @@ test('test-site deployment rejects the connected production tenant and requires 
 });
 
 test('test-site deployment never auto-consents to Forge scopes or targets production', () => {
-  assert.doesNotMatch(testSiteWorkflow, /(?:deploy|install)[^\\n]*--confirm-scopes/);
+  assert.doesNotMatch(testSiteWorkflow, /(?:deploy|install)[^\n]*--confirm-scopes/);
   assert.doesNotMatch(testSiteWorkflow, /-e production/);
   assert.match(testSiteWorkflow, /deploy --non-interactive -e staging/);
   assert.match(testSiteWorkflow, /install --site "\$TARGET_SITE" --product jira --non-interactive -e staging/);
