@@ -14,6 +14,12 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - Suggested next checks prioritized from observed deployment, pull-request and linked Jira-work states/timestamps, with a rationale and source link where available; they are not root-cause findings.
 - Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, request deadlines including hanging response bodies, graph evidence normalization, pagination timeouts, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
 
+## Rovo Agent and MCP (draft implementation)
+
+This branch adds **TraceBack Investigator**, a read-only Rovo Agent, and **TraceBack Tools**, a Rovo MCP module exposing the same source-linked investigation action. The action reads Jira and Teamwork Graph evidence as the invoking user, validates issue keys, and rejects a key that conflicts with the active Jira issue context. It exposes no Jira or production mutation tools.
+
+The Forge `rovo:mcp` module is currently a Preview feature, not GA. External MCP exposure is disabled by default and requires explicit site/org administrator enablement and OAuth consent. Rovo enablement, Teamwork Graph scope approval, live agent/MCP invocation, and browser acceptance are still outstanding. See [docs/ROVO_AGENT.md](docs/ROVO_AGENT.md). This is a draft implementation, not yet a judge-verified integration.
+
 ## Why TraceBack
 
 An engineer investigating a Jira incident needs more than an issue description. TraceBack assembles existing Jira-linked work plus delivery context already connected to that work item: goals, deployments, and pull requests. It shows where each record came from and what is still missing, so the engineer can investigate without confusing correlation with causation.
@@ -100,5 +106,7 @@ The `jira:issueContext` module does not work in Jira's old issue view. Teamwork 
 - Live Jira installation, organization-administrator scope grants, and end-to-end Teamwork Graph retrieval still require a registered and deployed Forge app.
 
 ## Codegeist submission status
+
+An evidence-grounded, explicitly provisional submission draft is maintained in [docs/CODEGEIST_SUBMISSION_DRAFT.md](docs/CODEGEIST_SUBMISSION_DRAFT.md). It distinguishes implemented core behavior from the unaccepted Rovo/MCP candidate and lists the remaining release gates.
 
 This branch is still under development and PR #1 remains a draft. Do not submit until app registration, Forge lint, deployment, installation, the live judge journey, and the public demo video have all been verified.
