@@ -13,6 +13,7 @@ on:
         type: choice
         options:
           - codegeist/forge-foundation
+          - codegeist/rovo-integrated
         default: codegeist/forge-foundation
       target_site:
         description: Free Atlassian developer-site domain only (example.atlassian.net; no https://)
@@ -83,6 +84,10 @@ jobs:
           set -euo pipefail
           if [[ -z "$FORGE_EMAIL" || -z "$FORGE_API_TOKEN" ]]; then
             echo "::error title=Forge credentials missing::Add FORGE_EMAIL and FORGE_API_TOKEN as repository Actions secrets."
+            exit 1
+          fi
+          if [[ "$SOURCE_BRANCH" != "codegeist/forge-foundation" && "$SOURCE_BRANCH" != "codegeist/rovo-integrated" ]]; then
+            echo "::error title=Unapproved source branch::Only the maintained core and reviewed Rovo/MCP candidate branches may be installed to the isolated staging site."
             exit 1
           fi
           if [[ ! "$TARGET_SITE" =~ ^[a-z0-9][a-z0-9-]*\.atlassian\.net$ ]]; then
