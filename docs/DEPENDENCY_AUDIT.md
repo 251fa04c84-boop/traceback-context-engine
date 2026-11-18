@@ -1,3 +1,17 @@
+## Current upstream package recheck — 18 November 2026, 14:08 IST
+
+The exact-head Rovo candidate CI [#44261385532](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44261385532) reran the committed lockfile audit. It still reports **13 vulnerable package entries: 9 high, 4 moderate, 0 critical**. The same run passed **4,159 tests, 0 failures, 0 skipped**, syntax/frontend checks, and authenticated Forge CLI lint (No issues found).
+
+The audit package list remains:
+- High: `@atlaskit/adf-schema`, `@atlaskit/adf-schema-generator`, `@atlaskit/adf-utils`, `@atlaskit/editor-json-transformer`, `@atlaskit/editor-prosemirror`, `@atlaskit/forge-react-types`, `@forge/bridge`, `@forge/react`, and `prosemirror-view`.
+- Moderate: `@forge/api`, `@forge/manifest`, `glob`, and `minimatch`.
+
+A fresh public npm registry check on 18 November shows the latest stable Atlassian Forge releases are still `@forge/api@8.5.0`, `@forge/bridge@7.3.0`, `@forge/react@12.5.0`, and `@forge/manifest@13.9.0`. Those match the app's current declared dependency lines; the current npm audit still flags the installed tree. Sources: [@forge/api](https://www.npmjs.com/package/%40forge/api), [@forge/bridge](https://www.npmjs.com/package/%40forge/bridge), [@forge/react](https://www.npmjs.com/package/%40forge/react), [@forge/manifest](https://www.npmjs.com/package/%40forge/manifest).
+
+The latest Forge package listings show prerelease `next`/experimental versions, but no stable patched release was identified in this check. Do not substitute prereleases in a production dependency tree without explicit Atlassian support and full compatibility testing. npm's suggested automatic fixes still propose major downgrades (including `@forge/bridge@5.5.0`, `@forge/react@11.4.0`, and `@forge/api@6.1.1`), which are not acceptable blind fixes.
+
+**Current decision:** the core/rovo-integrated lockfile is still not audit-clean. The isolated dependency candidate's zero-vulnerability result remains a separate, cross-major override experiment, not the supported fix. Keep issue #6 open and PR #2 isolated. Next safe step is upstream Atlassian confirmation or a stable compatible Forge/Atlaskit release; then regenerate the lockfile and repeat npm audit, dependency-tree checks, tests, Forge lint, development deploy, and live test-site acceptance.
+ 
 > **Fresh package-level audit diagnosis — 18 November 2026, 12:30 IST.** I inspected the raw npm audit JSON printed by exact code/test CI run [#44254554894](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44254554894), rather than relying only on the aggregate count. It reports 13 vulnerable package entries: 9 high, 4 moderate, 0 critical.
 >
 > The high findings form one Atlaskit/Forge UI dependency chain: `@atlaskit/adf-schema`, `@atlaskit/adf-schema-generator`, `@atlaskit/adf-utils`, `@atlaskit/editor-json-transformer`, `@atlaskit/editor-prosemirror`, `@atlaskit/forge-react-types`, and `prosemirror-view`. The root ProseMirror advisory is [GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w), fixed at `prosemirror-view@1.42.3`; the current audit's automatic fix suggestion points to `@forge/bridge@5.5.0`, a major downgrade from the app's declared `^7.3.0`. npm also suggests `@forge/react@11.4.0` for the affected UI chain, a major downgrade from declared `^12.5.0`. Neither is an acceptable blind fix.
