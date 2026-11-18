@@ -30,6 +30,11 @@
 **Conditional bonus candidates:** Teamwork Graph integration, Best Agents, or Best app with Atlassian MCP — select at most one, and only after that integration passes live acceptance.  
 **Current state:** Development draft; not ready to submit.
 
+**Latest verification — 18 November 2026:** Core commit `a877c922ecc12b80f496d61009170fce4f74b240` passed push and PR CI [#44258873412](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44258873412) and [#44258866313](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44258866313): **4,143 tests passed, 0 failed, 0 skipped**. Authenticated Forge CLI lint reported no issues, and Forge development deployment completed successfully as version **2.49.0** without installing/upgrading any Jira site. The npm audit still reports **9 high, 4 moderate, 0 critical**.
+
+A refreshed candidate branch `codegeist/rovo-integrated` adds the read-only Rovo Agent and MCP action on top of that core. Its exact-head CI is running; it has not been deployed or live-accepted. The original Rovo PR #5 remains draft/unmerged. The connected Jira sample DEMO-7 has one Jira issue link but no returned linked goals, deployments or external pull requests. No separate test site, approved Teamwork Graph scopes, official judge installation URL, public demo video, or final Devpost submission is verified.
+
+
 ## Latest verified build status — 17 November 2026
 
 - **Core app / PR #1:** exact head `0779c1d15e0c2d545ecd1b11f075644cabc3671a`; push CI [#44120823676](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44120823676) succeeded with **4,131 tests, 0 failed** and authenticated Forge CLI manifest lint passed. This latest commit changes documentation only; the last app-source deployment remains Forge development version **2.44.0** from [#44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512). Fresh browser acceptance of v2.44.0 is not recorded.
