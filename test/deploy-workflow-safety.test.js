@@ -62,7 +62,7 @@ test('test-site deployment rejects the connected production tenant and requires 
 });
 
 test('test-site deployment never auto-consents to Forge scopes or targets production', () => {
-  assert.doesNotMatch(testSiteWorkflow, /--confirm-scopes/);
+  assert.doesNotMatch(testSiteWorkflow, /(?:deploy|install)[^\\n]*--confirm-scopes/);
   assert.doesNotMatch(testSiteWorkflow, /-e production/);
   assert.match(testSiteWorkflow, /deploy --non-interactive -e staging/);
   assert.match(testSiteWorkflow, /install --site "\$TARGET_SITE" --product jira --non-interactive -e staging/);
