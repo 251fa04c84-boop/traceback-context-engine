@@ -310,3 +310,12 @@ Atlassian's current [cloud-app security requirements](https://developer.atlassia
 The core branch still reports **9 high, 4 moderate, 0 critical**. The isolated zero-finding candidate remains unmerged because its `glob@14.0.2` override crosses the declared `@forge/manifest@13.9.0` `^13.0.0` range. Passing integration tests and Forge CLI lint do not constitute Atlassian compatibility approval.
 
 **Release decision:** do not merge the candidate or claim Marketplace security compliance until a supported upstream dependency tree or written Atlassian mitigation is available, followed by exact-head CI and controlled live acceptance. Keep the existing fail-closed audit-report guard.
+
+
+## Additional Forge-managed Node.js runtime advisory — 18 November 2026
+
+Atlassian's Marketplace Developer Community published advisory [CVE-2026-111497: Node.js dependencies](https://community.developer.atlassian.com/t/security-advisory-cve-2026-111497-node-js-dependencies/103572). It describes a Brotli decompression issue that can affect Node.js applications processing attacker-influenced Brotli-encoded responses. Atlassian states that it is updating Forge-managed runtimes and directs developers still using end-of-life Node.js 18.x or 20.x to move to Node.js 22.x or 24.x and redeploy. The advisory lists upstream fixed versions **22.23.4, 24.22.1 and 26.12.1**.
+
+TraceBack's current `manifest.yml` declares `app.runtime.name: nodejs24.x`; it does not declare Node.js 18 or 20. This satisfies the major-version migration direction in the advisory. However, the manifest selects a Forge-managed runtime major, not an independently pinned Node.js patch release. Repository inspection cannot prove which patched Node.js 24 patch level currently executes in Atlassian's managed runtime.
+
+**Follow-up:** retain Node.js 24.x, monitor Atlassian's Forge runtime update confirmation, and redeploy the app after the managed runtime fix is confirmed if Atlassian requires redeployment. Do not attempt to bundle or override the Forge-managed Node runtime from application dependencies. This platform-runtime advisory is tracked separately from the npm dependency audit counts above.
