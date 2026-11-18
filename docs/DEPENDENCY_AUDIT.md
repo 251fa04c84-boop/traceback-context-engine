@@ -7,10 +7,21 @@ Exact-head PR CI [#44326084189](https://github.com/251fa04c84-boop/traceback-con
 - `npm ls prosemirror-view --all` confirmed all reported copies resolve to `prosemirror-view@1.42.9`; npm marks the override explicitly.
 - **4,159 tests passed, 0 failed**.
 - Syntax and frontend checks passed.
-- npm audit reports **6 moderate vulnerabilities**; the CI log did not report any high or critical findings for this candidate.
+- npm audit reports **6 moderate, 0 high, 0 critical** vulnerabilities. The CI log includes the complete parsed package report.
 - Forge CLI validation and deployment were skipped by the PR workflow condition. No staging/browser acceptance occurred.
 
-This is a meaningful reduction from the current application baseline's 9 high / 4 moderate findings, but it is **not audit-clean**: six moderate findings remain and their exact package/advisory breakdown must be retrieved from a complete `npm audit --json` report before further remediation. Do not claim zero vulnerabilities or Marketplace security compliance.
+The six affected package entries and the npm-reported fix suggestions are:
+
+| Package | Severity | Advisory / dependency path | npm suggested fix |
+| --- | --- | --- | --- |
+| `@forge/api` | Moderate | Via `@forge/manifest` | `@forge/api@6.1.1` (major downgrade) |
+| `@forge/bridge` | Moderate | Via `@forge/manifest` | `@forge/bridge@5.5.0` (major downgrade) |
+| `@forge/manifest` | Moderate | Via `glob` | `@forge/api@6.1.1` (major downgrade) |
+| `@forge/react` | Moderate | Via `@forge/bridge` | `@forge/react@11.4.0` (major downgrade) |
+| `glob` | Moderate | [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4), plus transitive `minimatch` | No safe in-range fix reported |
+| `minimatch` | Moderate | [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) | No safe in-range fix reported |
+
+These are six package entries, not necessarily six independent root causes: the Forge package findings are propagated through the dependency chain. npm's suggested direct Forge fixes are major downgrades and are not safe to apply blindly. The audit JSON also reports `glob` affected through 14.0.1 and `minimatch` affected through 11.0.0; this narrow candidate does not override either package. This is a meaningful reduction from the baseline's 9 high / 4 moderate findings, but it is **not audit-clean**. Do not claim zero vulnerabilities or Marketplace security compliance.
 
 The candidate changes only the `prosemirror-view@1.42.9` override, matching lockfile entries, and CI dependency-tree validation/branch coverage. It does not include the experimental `glob@14` override. PR #12 remains draft and unmerged pending independent dependency compatibility review, exact audit JSON review, authenticated Forge CLI lint, and controlled staging acceptance.
 
