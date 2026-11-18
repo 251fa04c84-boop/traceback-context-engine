@@ -1,4 +1,18 @@
-# Latest verified status — 18 November 2026, 14:35 IST
+# Latest verified status — 18 November 2026, 14:45 IST
+
+This is the current snapshot. Historical sections below are retained for audit history and must not override this snapshot.
+
+- **Rovo candidate staging deploy/install: PASS.** Guarded GitHub Actions run [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) deployed Forge app version **2.0.0** and completed Jira installation on the explicitly confirmed test site `brand7.atlassian.net`.
+- **Staging validation: PASS.** That exact run passed **4,159 tests, 0 failures, 0 skips**, syntax checks, frontend compilation and authenticated Forge CLI lint (“No issues found”). The workflow did not use `--confirm-scopes`.
+- **Latest documentation CI: PASS.** Devpost draft update commit `bb7b8224e4b984b1cfdf092e5a45e7278dd2a90b` passed [CI #44272627348](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44272627348). PR #9 description has also been refreshed to distinguish verified staging installation from unverified live acceptance.
+- **PR #9:** remains open, draft and unmerged. No production tenant was targeted.
+- **Live Jira/browser acceptance: NOT VERIFIED.** The connected Atlassian connector currently exposes only `251fa04c84.atlassian.net`; read-only access to `brand7.atlassian.net` is not authorized to the connector. Successful Forge installation does not prove browser acceptance.
+- **Teamwork Graph authorization/data: NOT ACCEPTED.** Administrator-approved effective Graph scopes and genuine linked goal/deployment/pull-request records have not been verified.
+- **Rovo/MCP: PARTIAL.** Deployment and installation passed. Rovo discovery, action invocation, Rovo Studio MCP visibility, external MCP enablement and OAuth 2.1 consent remain unverified.
+- **Dependency security: OPEN.** Main candidate baseline remains 9 high, 4 moderate, 0 critical. PR #11 is a separately tested partial reduction (0 high, 6 moderate) and remains draft; PR #2's cross-major `glob@14` override remains incompatible/unmergeable.
+- **Submission: NOT READY.** Judge guide and Devpost draft exist, but no independently verified judge-install URL, accepted public demo video or submission receipt exists. The user-provided deadline of 9 November 2026 has passed; current event acceptance status must be checked against official Codegeist rules before any submission claim.
+- **Safety:** no production install, production deployment, production scope consent or synthetic evidence creation was performed.
+
 
 This is the current snapshot. Historical sections below are retained for audit history and must not override this snapshot.
 
