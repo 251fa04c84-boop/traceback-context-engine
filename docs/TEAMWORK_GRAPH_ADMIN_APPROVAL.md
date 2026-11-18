@@ -1,3 +1,7 @@
+> **Permission boundary status — 18 November 2026.** No Teamwork Graph scope has been granted or changed. The only connected site is `251fa04c84.atlassian.net`, a production tenant. The four granular Graph scopes remain unapproved. Do not use this tenant for the new Graph-scope acceptance or grant organization-wide access without explicit organization/security-owner approval. A separate developer/test site and an authorized organization administrator are still required for safe live validation.
+>
+> Core code/docs CI passed on head `ae5555a37069b02a0fd6a8f2cdc370735741a164` (4,131 tests, 0 failures), but this docs-only run did not deploy the app or validate Graph access. Last confirmed Forge development deployment is version 2.44.0; no real linked goal, deployment or external PR has been accepted through the Forge panel. Read-only connector probing of DEMO-7/DEMO-8 is not a substitute for the app's own live Graph acceptance.
+>
 # Teamwork Graph administrator approval request
 
 > **Use a separate Atlassian test organization with test data.** Do not approve these scopes on a production organization unless the organization's security/data owner has explicitly reviewed and approved that use.
