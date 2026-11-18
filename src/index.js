@@ -10,6 +10,9 @@ if (typeof Resolver !== 'function') {
 const api = require('@forge/api');
 const { route } = require('@forge/api');
 const { resolveIssueKey, normalizeIssue } = require('./domain/incident');
+const { runTracebackInvestigationAction } = require('./domain/rovo-investigation-action');
+const { resolveActionIssueKey } = require('./domain/action-context');
+const { buildInvestigationLeads } = require('./domain/investigation');
 const { fetchTeamworkGraphEvidence } = require('./services/teamwork-graph');
 const { fetchJiraIssue, DEFAULT_JIRA_REQUEST_TIMEOUT_MS } = require('./services/jira-issue');
 
@@ -34,6 +37,20 @@ resolver.define('getIssueContext', async ({ payload, context }) => {
     ...normalizedIssue,
     teamworkGraph
   };
+});
+
+// Rovo action: all reads run as the invoking user; action input never grants
+// authorization. Active issue context is authoritative when Atlassian supplies it.
+exports.getTracebackInvestigation = (payload = {}) => runTracebackInvestigationAction({
+  payload,
+  api,
+  route,
+  fetchJiraIssue,
+  defaultJiraRequestTimeoutMs: DEFAULT_JIRA_REQUEST_TIMEOUT_MS,
+  resolveActionIssueKey,
+  normalizeIssue,
+  fetchTeamworkGraphEvidence,
+  buildInvestigationLeads
 });
 
 exports.handler = resolver.getDefinitions();
