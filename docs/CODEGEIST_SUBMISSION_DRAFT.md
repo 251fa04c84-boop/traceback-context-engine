@@ -1,3 +1,7 @@
+> **Submission readiness update — 18 November 2026.** This remains a draft, not a final submission. Core automated validation is healthy (4,131 tests, 0 failures on exact head `ae5555a37069b02a0fd6a8f2cdc370735741a164`), but the dependency audit still reports 9 high and 4 moderate findings. The app has not received a fresh live browser acceptance pass; no separate test-site install, approved Teamwork Graph scopes, real linked external records in the Forge panel, live Rovo/MCP acceptance, public YouTube video, judge installation link, or final Devpost submission is verified. Do not claim Teamwork Graph, Best Agents or MCP bonus eligibility until their corresponding live acceptance evidence exists.
+>
+> The Rovo/MCP candidate PR #5 remains draft/unmerged and its branch is 19 commits behind core; exact-head automated tests passed, but the feature has not been deployed or live-accepted. Dependency PR #2 remains draft/unmerged and its `glob@14` major override is not yet supported by the declared Forge manifest dependency range. Keep the product description and demo storyboard evidence-bounded.
+>
 # TraceBack Context Engine — Codegeist 2026 submission draft
 
 > **Status: draft only.** This copy is prepared from the current repository implementation and recorded acceptance evidence. Do not submit it as final until the release gates at the end are complete. Replace bracketed fields only with verified facts. Never present the Rovo/MCP branch as live until it has been deployed and accepted.
