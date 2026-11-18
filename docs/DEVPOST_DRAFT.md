@@ -47,18 +47,19 @@ TraceBack focuses on evidence integrity rather than an impressive but unsupporte
 ## Current validation evidence
 
 - Core build: **4,143 automated tests passed, 0 failed, 0 skipped** on 18 November 2026.
-- Refreshed Rovo/MCP candidate: **4,159 automated tests passed, 0 failed, 0 skipped** on its exact push head; authenticated Forge CLI lint reported no issues.
-- Core Forge development deployment succeeded as version **2.49.0**. No site installation or upgrade was performed by that workflow.
+- Refreshed Rovo/MCP candidate: **4,159 automated tests passed, 0 failed, 0 skipped** on its exact app implementation head; authenticated Forge CLI lint reported no issues.
+- Guarded staging workflow [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) successfully deployed Forge app version **2.0.0** to staging and installed it on the separate Jira site `brand7.atlassian.net`. This verifies deployment and installation, not browser-level feature acceptance.
+- Follow-up documentation-only CI is tracked in [push run #44272485865](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44272485865) and [PR run #44272496682](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44272496682); their final conclusions must be checked before claiming the latest documentation heads are green.
 - The npm audit still reports **9 high and 4 moderate** findings in the current core dependency tree; see the dependency audit and upstream escalation packet.
 
 ## Live demo and integration claims — fill only after acceptance
 
-- Test-site Jira issue: `[VERIFIED ISSUE KEY]`
-- Verified linked Jira issue: `[VERIFIED KEY]`
-- Verified Teamwork Graph records: `[LIST ONLY THE TYPES AND RECORDS ACTUALLY SHOWN]`
-- Rovo Agent discovery/invocation: `[VERIFIED / NOT VERIFIED]`
-- Rovo MCP Studio visibility: `[VERIFIED / NOT VERIFIED]`
-- External MCP invocation: `[VERIFIED / NOT VERIFIED]`
+- Test-site Jira issue: **not yet independently inspected**; the connected Atlassian connector currently exposes only `251fa04c84.atlassian.net`, not `brand7.atlassian.net`.
+- Verified linked Jira issue: **not yet verified on the test site**.
+- Verified Teamwork Graph records: **none verified on the test site**; the staging install workflow did not auto-consent to the four requested Graph scopes.
+- Rovo Agent discovery/invocation: **not yet live-verified**.
+- Rovo MCP Studio visibility: **not yet live-verified**.
+- External MCP invocation: **not yet live-verified**.
 - Judge installation URL: `[OFFICIAL FORGE DISTRIBUTION LINK]`
 - Public demo video: `[PUBLIC YOUTUBE URL, UNDER FIVE MINUTES]`
 
