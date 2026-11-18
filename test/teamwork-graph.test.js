@@ -123,7 +123,7 @@ test('reports bounded pagination when a category still has more linked records',
     truncatedCategories: ['goals', 'unknown', 'goals']
   });
 
-  assert.equal(result.status, 'available');
+  assert.equal(result.status, 'partial');
   assert.deepEqual(result.truncatedCategories, ['goals']);
   assert.match(result.warning, /pagination could not be completed.*goals/i);
   assert.match(result.warning, /additional linked records may exist/i);
@@ -175,4 +175,20 @@ test('ignores graph nodes without immutable item identifiers', () => {
   assert.deepEqual(result.goals, []);
   assert.deepEqual(result.deployments, []);
   assert.deepEqual(result.pullRequests, []);
+});
+
+test('marks an empty but truncated graph result as partial rather than complete', () => {
+  const normalizeTeamworkGraphResponse = productionFunction('normalizeTeamworkGraphResponse');
+  const result = normalizeTeamworkGraphResponse({
+    data: {
+      jiraWorkItemGoals: { edges: [] },
+      jiraWorkItemLinkedExternalDeployments: { edges: [] },
+      jiraWorkItemLinkedExternalPullRequests: { edges: [] }
+    },
+    truncatedCategories: ['pullRequests']
+  });
+
+  assert.equal(result.status, 'partial');
+  assert.deepEqual(result.truncatedCategories, ['pullRequests']);
+  assert.match(result.warning, /pagination could not be completed.*pull requests/i);
 });
