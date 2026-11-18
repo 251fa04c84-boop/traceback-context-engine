@@ -12,9 +12,8 @@ on:
         required: true
         type: choice
         options:
-          - codegeist/rovo-investigator
           - codegeist/forge-foundation
-        default: codegeist/rovo-investigator
+        default: codegeist/forge-foundation
       target_site:
         description: Free Atlassian developer-site domain only (example.atlassian.net; no https://)
         required: true
@@ -105,6 +104,15 @@ jobs:
 
       - name: Install locked dependencies
         run: npm ci
+
+      - name: Run core test suite
+        run: npm test
+
+      - name: Run syntax checks
+        run: npm run lint:syntax
+
+      - name: Compile the frontend bundle
+        run: npm run lint:frontend
 
       - name: Disable interactive Forge CLI analytics prompt
         run: npx --yes @forge/cli@15.1.0 settings set usage-analytics false
