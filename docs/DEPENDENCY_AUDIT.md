@@ -1,3 +1,9 @@
+> **Current package-version and release-gate update — 18 November 2026.** The latest core CI run [#44253146366](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44253146366) passed **4,131 tests, 0 failures** on core head `ae5555a37069b02a0fd6a8f2cdc370735741a164`; it used Node.js 24.22.2, passed syntax/frontend checks, and still reported **9 high, 4 moderate, 0 critical**. This was a documentation-only run; Forge CLI lint and deployment were skipped.
+>
+> A fresh npm registry check finds `@forge/manifest@13.9.0` still current, while `glob@14.0.6` and `minimatch@11.0.9` are newer than the isolated candidate's locked `glob@14.0.2` / `minimatch@11.0.8`. Sources: [@forge/manifest](https://www.npmjs.com/package/%40forge/manifest), [glob](https://www.npmjs.com/package/glob), [minimatch](https://www.npmjs.com/package/minimatch). These newer package versions have **not** been integrated into a lockfile or validated in TraceBack. The manifest package still declares the `glob@^13.0.0` compatibility range, so moving to glob 14 remains an override outside the upstream declared range. Updating the isolated experiment to newer patch releases may improve advisory coverage but does not resolve this compatibility issue. Do not merge or represent the candidate as upstream-supported until an Atlassian-compatible dependency tree is established and tested.
+>
+> Dependency candidate PR #2 remains draft and unmergeable; its branch is 57 commits ahead / 12 behind core. Core remains at 9 high / 4 moderate. No `npm audit fix --force`, production dependency override, or deployment has been performed.
+>
 ## Authoritative current snapshot — 17 November 2026
 
 > This section supersedes earlier historical statements below where they list `minimatch@11.0.1` as the current lockfile version or imply that an npm audit alone is sufficient.
