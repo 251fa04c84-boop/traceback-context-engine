@@ -5,6 +5,7 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 ## Current implementation
 
 - A Forge `jira:issueContext` module named **TraceBack Context Engine**.
+- A read-only **TraceBack Investigator** Rovo Agent and **TraceBack Tools** `rovo:mcp` module in the `codegeist/rovo-integrated` candidate branch; live Rovo/MCP acceptance remains pending.
 - A read-only resolver that reads the active Jira issue as the signed-in user.
 - Normalized Jira issue summary, description, status, type, priority, project, and timestamps.
 - Existing inward/outward Jira issue links, including relationship, status, type, priority and safe same-site issue links.
@@ -70,7 +71,7 @@ Use [docs/DEPLOY_TO_TEST_SITE_ANDROID.md](docs/DEPLOY_TO_TEST_SITE_ANDROID.md) t
 
 ## Deploy without Codespaces
 
-Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register, lint, deploy, and install through a consent-gated GitHub Actions workflow. It uses repository secrets; never put an Atlassian API token in chat or source control. See [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the evidence-safe under-five-minute demo storyboard; it is a plan, not a recorded video.
+Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register, lint, deploy, and install through a consent-gated GitHub Actions workflow. It uses repository secrets; never put an Atlassian API token in chat or source control. See [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the evidence-safe under-five-minute demo storyboard; it is a plan, not a recorded video. See [docs/ROVO_AGENT.md](docs/ROVO_AGENT.md) and [docs/JUDGE_INSTALLATION.md](docs/JUDGE_INSTALLATION.md) for the Rovo/MCP design and judge acceptance instructions.
 
 ## Dependency security
 
