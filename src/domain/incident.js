@@ -1,7 +1,7 @@
 'use strict';
 
 function isValidIssueKey(value) {
-  return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-[1-9]\\d{0,9}$/.test(value.trim());
+  return typeof value === 'string' && /^[A-Z][A-Z0-9_]*-[1-9]\d{0,9}$/.test(value.trim());
 }
 
 function getIssueKeyFromProductContext(context) {
