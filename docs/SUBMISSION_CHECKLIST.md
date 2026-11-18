@@ -1,4 +1,4 @@
-# Latest verified status — 18 November 2026, 14:45 IST
+# Latest verified status — 18 November 2026, 14:50 IST
 
 This is the current snapshot. Historical sections below are retained for audit history and must not override this snapshot.
 
@@ -10,7 +10,7 @@ This is the current snapshot. Historical sections below are retained for audit h
 - **Teamwork Graph authorization/data: NOT ACCEPTED.** Administrator-approved effective Graph scopes and genuine linked goal/deployment/pull-request records have not been verified.
 - **Rovo/MCP: PARTIAL.** Deployment and installation passed. Rovo discovery, action invocation, Rovo Studio MCP visibility, external MCP enablement and OAuth 2.1 consent remain unverified.
 - **Dependency security: OPEN.** Main candidate baseline remains 9 high, 4 moderate, 0 critical. PR #11 is a separately tested partial reduction (0 high, 6 moderate) and remains draft; PR #2's cross-major `glob@14` override remains incompatible/unmergeable.
-- **Submission: NOT READY.** Judge guide and Devpost draft exist, but no independently verified judge-install URL, accepted public demo video or submission receipt exists. The user-provided deadline of 9 November 2026 has passed; current event acceptance status must be checked against official Codegeist rules before any submission claim.
+- **Submission: NOT READY, but the event is still open.** Official Codegeist 2026 rules list the submission deadline as **22 December 2026 at 12:00 pm Pacific Time**. The required package includes a judge installation link, setup instructions and a public YouTube demo under five minutes. Judge-install URL, accepted public demo video and submission receipt are not yet verified. Source: [official Devpost rules](https://codegeist2026.devpost.com/rules).
 - **Safety:** no production install, production deployment, production scope consent or synthetic evidence creation was performed.
 
 
