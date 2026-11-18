@@ -20,10 +20,12 @@ async function fetchJiraIssue(requestJira, timeoutMs = DEFAULT_JIRA_REQUEST_TIME
     if (response?.status === 404) {
       throw new Error('Issue not found or you do not have permission to view it.');
     }
-    if (!response || response.ok !== true) {
-      const status = Number(response?.status);
+    const status = Number(response?.status);
+    const hasHttpStatus = Number.isFinite(status) && status >= 100 && status <= 599;
+    const httpFailure = response?.ok === false || (hasHttpStatus && (status < 200 || status >= 300));
+    if (!response || response.ok !== true || httpFailure) {
       throw new Error(
-        Number.isFinite(status)
+        hasHttpStatus
           ? `Jira request failed (${status}). Please retry.`
           : 'Jira request failed. Please retry.'
       );
