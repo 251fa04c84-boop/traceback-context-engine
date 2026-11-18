@@ -53,3 +53,27 @@ test('returns a safe message when the Jira request itself rejects', async () => 
     /Jira request failed/i
   );
 });
+
+test('does not parse a redirect response even if its ok flag is inconsistent', async () => {
+  await assert.rejects(
+    fetchJiraIssue(async () => ({
+      ok: true,
+      status: 302,
+      json() { throw new Error('must not parse redirect body'); }
+    }), 100),
+    /Jira request failed \(302\)/i
+  );
+});
+
+test('rejects non-success statuses before reading their response body', async () => {
+  for (const status of [204, 304, 401, 429, 500]) {
+    await assert.rejects(
+      fetchJiraIssue(async () => ({
+        ok: true,
+        status,
+        json() { throw new Error('must not parse non-success body'); }
+      }), 100),
+      new RegExp('Jira request failed \\(' + status + '\\)')
+    );
+  }
+});
