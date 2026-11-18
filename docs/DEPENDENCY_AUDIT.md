@@ -398,3 +398,23 @@ The repository's isolated PR #11 goes further to `prosemirror-view@1.42.9`, with
 **Escalation action:** request written Atlassian guidance on (1) the Marketplace treatment of this transitive high-severity finding when the dependency is pinned by Atlassian's own Forge UI packages, (2) the supported patched dependency version or release ETA, and (3) whether a temporary documented mitigation/extension is available while the upstream pin is corrected. Attach the exact `npm ls prosemirror-view --all`, `npm audit --json`, lockfile, and CI evidence from PR #11. Do not claim that the community thread grants a Marketplace exception.
 
 **Decision unchanged:** main candidate baseline remains 9 high, 4 moderate, 0 critical; PR #11 remains draft/unmerged; the cross-major glob override experiment remains rejected for release. No dependency override is promoted to the release branch by this documentation update.
+
+
+## Upstream Forge stable-release recheck — 18 November 2026
+
+Checked the public npm package pages for the exact direct Forge dependencies in this candidate. The latest stable tags shown on the registry remain the versions already declared by the app:
+
+| Package | App range | Latest stable shown by npm | Assessment |
+| --- | --- | --- | --- |
+| `@forge/api` | `^8.5.0` | `8.5.0` | No newer stable release shown |
+| `@forge/bridge` | `^7.3.0` | `7.3.0` | `7.3.1-next` exists, but is prerelease, not a stable security fix |
+| `@forge/react` | `^12.5.0` | `12.5.0` | `12.5.1-next` exists, but is prerelease, not a stable security fix |
+| `@forge/manifest` (transitive) | lockfile resolves `13.9.0` | `13.9.0` | No newer stable release shown |
+
+Registry references (checked 18 November 2026):
+- https://www.npmjs.com/package/%40forge/api
+- https://www.npmjs.com/package/%40forge/bridge?activeTab=versions
+- https://www.npmjs.com/package/%40forge/react?activeTab=versions
+- https://www.npmjs.com/package/%40forge/manifest
+
+The registry pages therefore do not currently show a newer stable Forge package release that can be applied as a compatible in-range remediation for the remaining `glob`/`minimatch` findings. Do not adopt `next`/experimental Forge packages or major downgrades merely to silence npm audit. Recheck stable package metadata before release; this is a dated registry snapshot, not a promise that no upstream fix will ship later.
