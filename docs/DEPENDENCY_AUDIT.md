@@ -299,3 +299,14 @@ The branch was synchronized with the latest core acceptance documentation and CI
 - The synchronized security branch intentionally skips Forge deployment. No new scope consent, production installation, or live browser acceptance occurred.
 
 The candidate remains draft and unmerged pending independent compatibility review. The core app's 9 high and 4 moderate audit findings are not cleared by this isolated zero-finding result.
+
+
+## Release-gate tracking — 18 November 2026
+
+GitHub issue [#6: Resolve Forge transitive high-severity advisories with an upstream-supported dependency tree](https://github.com/251fa04c84-boop/traceback-context-engine/issues/6) is now the canonical open release blocker.
+
+Atlassian's current [cloud-app security requirements](https://developer.atlassian.com/platform/marketplace/security-requirements/) prohibit known high- or critical-severity third-party dependencies. The [Marketplace Security Enforcement Policy](https://developer.atlassian.com/platform/marketplace/marketplace-security-enforcement-policy/) specifies remediation timelines and an extension process for genuine upstream/platform-owned blockers.
+
+The core branch still reports **9 high, 4 moderate, 0 critical**. The isolated zero-finding candidate remains unmerged because its `glob@14.0.2` override crosses the declared `@forge/manifest@13.9.0` `^13.0.0` range. Passing integration tests and Forge CLI lint do not constitute Atlassian compatibility approval.
+
+**Release decision:** do not merge the candidate or claim Marketplace security compliance until a supported upstream dependency tree or written Atlassian mitigation is available, followed by exact-head CI and controlled live acceptance. Keep the existing fail-closed audit-report guard.
