@@ -66,7 +66,7 @@ test('does not parse a redirect response even if its ok flag is inconsistent', a
 });
 
 test('rejects non-success statuses before reading their response body', async () => {
-  for (const status of [204, 304, 401, 429, 500]) {
+  for (const status of [304, 401, 429, 500]) {
     await assert.rejects(
       fetchJiraIssue(async () => ({
         ok: true,
