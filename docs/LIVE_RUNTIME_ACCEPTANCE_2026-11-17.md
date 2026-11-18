@@ -1,3 +1,19 @@
+# Authoritative live probe update — 18 November 2026, 14:08 IST
+
+This entry supersedes earlier live-probe status where it conflicts. It records a read-only connector probe, not a Forge app browser acceptance.
+
+- The connected Atlassian account still exposes only `251fa04c84.atlassian.net`, which is a production tenant. No separate test site or organization is available through this connection.
+- Read-only Jira lookup of `DEMO-7` succeeded. It returned one related Jira work item, `DEMO-8`, and issue metadata from the Demo service space. This is a service-desk sample, not a representative Jira Software incident.
+- A fresh Teamwork Graph `detailLevel=full` probe restricted to target types `AtlassianGoal`, `ExternalDeployment`, and `ExternalPullRequest` returned **zero relationships**, with `hasNextPage=false`. This confirms no matching linked records were returned for this sample issue by this connector query. It does not prove that no such records exist elsewhere in the organization.
+- The four app Teamwork Graph scopes remain unapproved on a separate test site: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. No scope was changed or consented.
+- The refreshed Rovo/MCP candidate is PR [#9](https://github.com/251fa04c84-boop/traceback-context-engine/pull/9), head `e131a5b147bc1aa660a0a9059989d0d26899a0c8` for app implementation, plus documentation-only head `160f2b06a6a12c517e870c58f98bd6e67c7250bf`. Exact app-head push/PR CI passed 4,159 tests, and authenticated Forge CLI lint passed on push. Latest documentation-head CI is running separately.
+- PR #9 has not been installed or deployed. Rovo discovery, Rovo Studio MCP visibility, external MCP OAuth 2.1 consent, and live action invocation remain unverified.
+- No production Jira data was modified, no production scope was approved, and no app was installed or upgraded in this probe.
+
+**Acceptance conclusion:** Teamwork Graph code paths have automated coverage and the connector can inspect Jira context, but real goal/deployment/pull-request retrieval through the TraceBack Forge app remains **not accepted**. A separate test site, organization-admin approval, and representative linked test records are still required.
+
+---
+
 # Authoritative follow-up — 17 November 2026, 15:38 UTC
 
 This entry supersedes older build/version summaries below; older entries remain as history.
