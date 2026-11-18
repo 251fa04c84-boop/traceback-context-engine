@@ -1,3 +1,19 @@
+# Authoritative staging connector access update — 18 November 2026
+
+This entry supersedes the prior statement that the connected Atlassian integration could not access the staging site. The user reconnected Atlassian and the integration now exposes `brand7.atlassian.net`.
+
+- Read-only resource discovery returned staging cloud ID `f3a80fda-b810-47e6-806b-ba68cca6507a` and URL `https://brand7.atlassian.net`.
+- The connected resource reports Jira and Goals as read-write products. This confirms connector-level access only; it does not prove Forge app OAuth scopes or Teamwork Graph scopes are granted.
+- Read-only `listJiraProjects` returned **0 projects** (`total=0`).
+- Read-only `searchGoals` returned **0 goals**.
+- Bounded JQL searches for issues returned no issues; a prior known sample key `DEMO-7` returned 404 on this site.
+- No Jira project, issue, goal, link, scope, or app setting was created or changed during these probes.
+- Therefore there is currently no existing Jira issue or genuine linked goal/deployment/pull-request data on this staging site to exercise TraceBack against. The user has not yet supplied a project/issue identifier.
+
+**Acceptance conclusion:** staging connector access is now **PASS**. Staging test-data readiness is **BLOCKED / EMPTY**. Forge app browser UI, effective granular Graph scope consent, real linked Graph data, Rovo discovery, MCP tool visibility and action invocation remain **PENDING**. Production tenant `251fa04c84.atlassian.net` was not accessed or changed in this update.
+
+---
+
 # Authoritative staging deployment update — 18 November 2026, 14:30 IST
 
 This entry supersedes the earlier statement above that the Rovo/MCP candidate had not been deployed or installed. It records a successful CI-driven Forge staging deployment and Jira installation; it does not claim browser or Rovo acceptance.
