@@ -1,6 +1,6 @@
 # TraceBack Context Engine — judge installation and acceptance guide
 
-> **Status: prepared, not yet a working installation link.** The app has not been deployed to the Forge production environment or distributed. Do not use this guide as proof that judges can install it today.
+> **Status: staging install verified; judge distribution is not ready.** Forge app version 2.0.0 was successfully deployed to the staging environment and installed on the separate test site `brand7.atlassian.net` by workflow [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973). This is not a production distribution or judge installation link. Do not use the staging site as a public judge installation target.
 
 ## What judges should evaluate
 
@@ -64,10 +64,10 @@ Until those steps are complete, no install URL should be published or promised.
 
 ## Current verified limitations
 
-- The connected Atlassian account currently exposes only a production Jira tenant, not an isolated test site.
-- The inspected Jira sample DEMO-7 has one related Jira work item, but the Teamwork Graph probe returned no linked goals, external deployments or external pull requests.
-- Teamwork Graph scopes remain unapproved on a separate test site.
-- The integrated Rovo/MCP candidate has not yet been installed or live-accepted.
+- The Rovo/MCP candidate is installed on `brand7.atlassian.net` in Forge staging. The connected Atlassian MCP integration still exposes only `251fa04c84.atlassian.net`; read-only inspection of the new test site is therefore blocked until that cloud ID is explicitly authorized.
+- The inspected production-tenant Jira sample DEMO-7 has one related Jira work item, but the Teamwork Graph probe returned no linked goals, external deployments or external pull requests. This is not test-site evidence.
+- The four granular Teamwork Graph scopes were requested during installation, but the workflow did not auto-consent; actual administrator authorization and runtime usability remain unverified.
+- Rovo discovery, Rovo Studio MCP visibility, external OAuth 2.1 consent and real action invocation have not yet been live-accepted.
 - The public demo video and official judge installation URL do not yet exist.
 
 For the test-site deployment workflow and admin scope request, see [DEPLOY_TO_TEST_SITE_ANDROID.md](DEPLOY_TO_TEST_SITE_ANDROID.md) and [TEAMWORK_GRAPH_ADMIN_APPROVAL.md](TEAMWORK_GRAPH_ADMIN_APPROVAL.md).
