@@ -1,3 +1,20 @@
+# Latest verified status — 18 November 2026, 19:03 IST
+
+## Staging connector restored; Jira test data still absent
+
+- **Atlassian connector access: PASS.** The connected resource list now exposes `https://brand7.atlassian.net` with Jira, Confluence, JSM, Goals and other products. The earlier statement that only the production tenant was connected is superseded.
+- **Jira project inventory: EMPTY.** Read-only `listJiraProjects` on the staging site returned `total: 0`. A second query filtered to projects where the caller can create also returned `total: 0`. No existing Jira project or issue is available for safe live app acceptance.
+- **Project-creation capability: NOT AVAILABLE THROUGH THE CONNECTED TOOL CATALOG.** Discovery returned an Atlassian `createProject` operation (Atlassian Projects/Goals portfolio object), not a Jira Software/business/JSM project-creation operation. I did not create an unrelated Atlassian portfolio project or a board without a Jira project. No Jira issue was created.
+- **PR #9 current head:** `cce0440498d9d78f89440e328c55ef0e1b8223fa`; remains open, draft and unmerged. [PR #9](https://github.com/251fa04c84-boop/traceback-context-engine/pull/9).
+- **Exact-head CI: PASS.** Push run [#44314787091](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44314787091) completed successfully. Lockfile install, dependency-audit reporting, unit tests, syntax lint, frontend lint and authenticated Forge CLI lint all passed; development deployment was correctly skipped for this docs-only change.
+- **Teamwork Graph/Rovo live acceptance: BLOCKED BY MISSING TEST FIXTURES.** Connector access alone does not prove Forge runtime scope consent or Rovo action discovery. No real staging Jira issue exists to exercise the issue-context action; no linked goal/deployment/pull-request records have been verified. No synthetic evidence was created.
+- **Dependency security: OPEN.** Main candidate baseline remains 9 high / 4 moderate / 0 critical. PR #11 remains a separate draft partial remediation at 0 high / 6 moderate; neither PR was merged.
+- **Production safety:** no production tenant was accessed, changed, installed or granted new scopes.
+
+**Next safe step:** create one dedicated Jira test project on `brand7.atlassian.net` through Jira's own project-creation UI (the user account must have Jira project-creation permission), then create a clearly labelled test issue. Once that exists, read-only app acceptance can continue. Do not create test data in production.
+
+---
+
 # Latest verified status — 18 November 2026, 14:50 IST
 
 ## Exact-head CI and Ecoscanner preflight — 18 November 2026
