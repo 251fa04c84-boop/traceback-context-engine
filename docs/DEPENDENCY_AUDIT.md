@@ -423,3 +423,16 @@ The registry pages therefore do not currently show a newer stable Forge package 
 ## Exact-head Forge CI event clarification — 18 November 2026
 
 GitHub Actions run [#44329499653](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44329499653) completed successfully for head `fb22c5e3bf99a60ecc1de61989367b6362f48b19`, but its event is `pull_request`. The workflow intentionally gates authenticated Forge CLI lint behind `github.event_name != 'pull_request'`, so the Forge lint step was skipped in this run; it must not be reported as a successful Forge validation. The workflow is configured to run on pushes to `security/**`, where the authenticated lint step can execute using repository secrets. No deployment is configured for this security branch. The candidate remains draft and unmerged pending that push-event validation and controlled staging acceptance.
+
+
+## Application-surface compatibility review — 18 November 2026
+
+The current application source was inspected to determine whether an app-level ProseMirror editor regression test is applicable to this candidate.
+
+- `package.json` declares Forge UI Kit dependencies (`@forge/react`, `@forge/bridge`, and Forge API/resolver packages); it does not declare ProseMirror as an application dependency.
+- `src/frontend/index.jsx` renders Forge UI Kit components through `ForgeReconciler`. It contains no ProseMirror editor, editable document surface, paste handler, or direct ProseMirror import.
+- The `prosemirror-view` dependency is therefore transitive through Atlassian's Forge/Atlaskit UI dependency graph, rather than an editor instantiated by TraceBack's own frontend.
+
+**Test applicability decision:** a browser/editor paste regression test cannot be meaningfully added to this app because there is no app-owned ProseMirror editing surface to exercise. The existing candidate CI still verifies the installed dependency tree, all 4,159 automated tests, syntax checks and frontend bundle compilation. The upstream XSS advisory concerns attacker-supplied HTML paste into a ProseMirror editor; this patch updates the transitive package version but does not create or validate an editor feature in TraceBack.
+
+This closes the *app-level editor test applicability investigation*, not the broader runtime acceptance gate. Forge UI Kit rendering in an authenticated staging site, authenticated Forge CLI validation on a push event, and the remaining six moderate audit findings still require separate decisions/evidence. PR #12 remains draft and unmerged.
