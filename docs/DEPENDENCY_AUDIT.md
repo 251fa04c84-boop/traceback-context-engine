@@ -1,3 +1,19 @@
+## Current-head ProseMirror-only remediation validation — 18 November 2026, 14:36 IST
+
+The narrow remediation was carried onto the current Rovo application base in draft PR [#12](https://github.com/251fa04c84-boop/traceback-context-engine/pull/12), head `0b9ea00a2553ea912a0c7a4d3732af227486b80b`.
+
+Exact-head PR CI [#44326084189](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44326084189) completed successfully:
+- `npm ci` installed 403 packages and audited 404.
+- `npm ls prosemirror-view --all` confirmed all reported copies resolve to `prosemirror-view@1.42.9`; npm marks the override explicitly.
+- **4,159 tests passed, 0 failed**.
+- Syntax and frontend checks passed.
+- npm audit reports **6 moderate vulnerabilities**; the CI log did not report any high or critical findings for this candidate.
+- Forge CLI validation and deployment were skipped by the PR workflow condition. No staging/browser acceptance occurred.
+
+This is a meaningful reduction from the current application baseline's 9 high / 4 moderate findings, but it is **not audit-clean**: six moderate findings remain and their exact package/advisory breakdown must be retrieved from a complete `npm audit --json` report before further remediation. Do not claim zero vulnerabilities or Marketplace security compliance.
+
+The candidate changes only the `prosemirror-view@1.42.9` override, matching lockfile entries, and CI dependency-tree validation/branch coverage. It does not include the experimental `glob@14` override. PR #12 remains draft and unmerged pending independent dependency compatibility review, exact audit JSON review, authenticated Forge CLI lint, and controlled staging acceptance.
+
 ## Current upstream package recheck — 18 November 2026, 14:08 IST
 
 The exact-head Rovo candidate CI [#44261385532](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44261385532) reran the committed lockfile audit. It still reports **13 vulnerable package entries: 9 high, 4 moderate, 0 critical**. The same run passed **4,159 tests, 0 failures, 0 skipped**, syntax/frontend checks, and authenticated Forge CLI lint (No issues found).
