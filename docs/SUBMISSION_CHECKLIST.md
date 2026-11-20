@@ -1,19 +1,29 @@
-# Latest verified status — 18 November 2026, 19:03 IST
+# Latest verified status — 20 November 2026, 08:45 IST
 
-## Staging connector restored; Jira test data still absent
+## Staging Rovo candidate deployment/install — PASS; live acceptance — PENDING
 
-- **Atlassian connector access: PASS.** The connected resource list now exposes `https://brand7.atlassian.net` with Jira, Confluence, JSM, Goals and other products. The earlier statement that only the production tenant was connected is superseded.
-- **Jira project inventory: EMPTY.** Read-only `listJiraProjects` on the staging site returned `total: 0`. A second query filtered to projects where the caller can create also returned `total: 0`. No existing Jira project or issue is available for safe live app acceptance.
-- **Project-creation capability: NOT AVAILABLE THROUGH THE CONNECTED TOOL CATALOG.** Discovery returned an Atlassian `createProject` operation (Atlassian Projects/Goals portfolio object), not a Jira Software/business/JSM project-creation operation. I did not create an unrelated Atlassian portfolio project or a board without a Jira project. No Jira issue was created.
-- **PR #9 current head:** `cce0440498d9d78f89440e328c55ef0e1b8223fa`; remains open, draft and unmerged. [PR #9](https://github.com/251fa04c84-boop/traceback-context-engine/pull/9).
-- **Exact-head CI: PASS.** Push run [#44314787091](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44314787091) completed successfully. Lockfile install, dependency-audit reporting, unit tests, syntax lint, frontend lint and authenticated Forge CLI lint all passed; development deployment was correctly skipped for this docs-only change.
-- **Teamwork Graph/Rovo live acceptance: BLOCKED BY MISSING TEST FIXTURES.** Connector access alone does not prove Forge runtime scope consent or Rovo action discovery. No real staging Jira issue exists to exercise the issue-context action; no linked goal/deployment/pull-request records have been verified. No synthetic evidence was created.
-- **Dependency security: OPEN.** Main candidate baseline remains 9 high / 4 moderate / 0 critical. PR #11 remains a separate draft partial remediation at 0 high / 6 moderate; neither PR was merged.
-- **Production safety:** no production tenant was accessed, changed, installed or granted new scopes.
+- **Candidate staging install: PASS.** Workflow [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) selected source branch `codegeist/rovo-integrated`, target `brand7.atlassian.net`, install mode `install`, and Forge environment `staging`. Job logs confirm app version **2.0.0** deployed and Jira installation completed. This corrects the earlier 19 November note that incorrectly attributed the install to `codegeist/forge-foundation`.
+- **Scope consent: NOT VERIFIED.** The CLI listed the four read-only Teamwork Graph scopes, but the workflow did not use `--confirm-scopes`. Do not infer administrator consent or Forge runtime access from installation success.
+- **Staging Jira inventory:** read-only `listJiraProjects` shows exactly one Jira Software project, **My Kanban Space (KAN)**, ID `10000`; `listJiraBoards` shows one **KAN board**, ID `1`; project insight and JQL both show **0 issues**.
+- **Teamwork Graph connector probe:** JiraSpace KAN returned **0 relationships** through the ChatGPT Atlassian connector. This does not test the Forge app's `api.asUser()` runtime.
+- **No test fixtures:** no staging issue or genuine linked goal/deployment/external pull-request evidence is available. No Jira data, Graph links, permissions or scopes were created or changed.
 
-**Next safe step:** create one dedicated Jira test project on `brand7.atlassian.net` through Jira's own project-creation UI (the user account must have Jira project-creation permission), then create a clearly labelled test issue. Once that exists, read-only app acceptance can continue. Do not create test data in production.
+## CI and dependency security
+
+- **PR #9 current head:** `55f034324dd5a00eaf2eb0338d1637deeaa8490a`; remains open, draft and unmerged. Push CI [#44666217162](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44666217162) and PR CI [#44666222590](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44666222590) both completed successfully. Push logs confirm **4,159 passed, 0 failed, 0 skipped**, syntax/frontend checks and authenticated Forge CLI lint (**No issues found**). The PR event correctly skipped authenticated Forge CLI lint. The main candidate audit remains **9 high, 4 moderate, 0 critical**; no deployment occurred on the documentation-only head.
+- **Current security candidate PR #12:** head `1b6a1fecaf53b20d85f01ead6f46b0fa4d546e0a`, base `codegeist/rovo-integrated`, open/draft/unmerged. Exact-head push CI [#44334621435](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44334621435) passed **4,159 tests**, `npm ls prosemirror-view --all` resolved all editor paths to **1.42.9**, authenticated Forge CLI lint reported no issues, and audit reported **0 high, 6 moderate, 0 critical**. Deployment was skipped. This is a partial remediation, not a clean audit.
+- **Other dependency candidates:** PR #11 is an earlier separate ProseMirror-only draft based on the older core branch. PR #2's zero-audit experiment uses a cross-major `glob@14` override outside `@forge/manifest@13.9.0`'s declared range; it is not accepted as a release fix. The npm audit suggestions for the remaining Forge findings point to semver-major downgrades, not a safe compatible upgrade.
+
+## Remaining release gates
+
+- Provide an existing staging issue key with genuine linked evidence, or have the staging owner create one clearly labelled test issue and link authentic records.
+- An Atlassian site/org administrator must explicitly review and approve the four read-only Teamwork Graph scopes before runtime availability can be claimed.
+- Complete browser acceptance of the installed candidate, Rovo agent discovery/action invocation, Rovo Studio MCP visibility, and external MCP enablement/OAuth only if required.
+- Judge installation URL, public demo recording and final submission are not ready.
+- PRs #9 and #12 remain draft/unmerged. No production tenant was accessed, deployed to, installed on, or granted scopes.
 
 ---
+
 
 # Latest verified status — 18 November 2026, 14:50 IST
 
