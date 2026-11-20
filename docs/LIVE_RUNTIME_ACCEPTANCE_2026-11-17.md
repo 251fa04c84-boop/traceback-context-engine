@@ -1,10 +1,40 @@
-# Authoritative staging connector access update — 18 November 2026
+# Authoritative staging inventory and Rovo candidate install correction — 20 November 2026
+
+This entry supersedes conflicting earlier statements in this historical log, especially the recorded result of zero visible Jira projects and the claim that workflow #44271541973 installed only the older core branch.
+
+## Read-only staging Jira inventory
+
+- The connected Atlassian resource is `https://brand7.atlassian.net`, cloud ID `f3a80fda-b810-47e6-806b-ba68cca6507a`.
+- `listJiraProjects` with `action=view` returned exactly **one** project: **My Kanban Space (KAN)**, ID `10000`, Jira Software, team-managed/next-gen style. Its project insight reports **0 total issues**.
+- `listJiraBoards` returned exactly **one** board: **KAN board**, ID `1`, located in project KAN.
+- JQL `project = KAN ORDER BY updated DESC` returned **0 issues**.
+- A read-only Teamwork Graph lookup for JiraSpace ARI `ari:cloud:jira:f3a80fda-b810-47e6-806b-ba68cca6507a:project/10000` returned **0 relationships**. This is the ChatGPT Atlassian connector's view, not the Forge app's `api.asUser()` runtime.
+- No Jira issue, goal, deployment, pull request, relationship, permission, scope or app setting was created or changed during this recheck.
+
+## Forge staging deployment and installation correction
+
+- Workflow [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) completed successfully on 18 November 2026. Its job log explicitly records source branch `codegeist/rovo-integrated`, target `brand7.atlassian.net`, install mode `install`, and Forge environment `staging`.
+- The deployment log reports Forge app version **2.0.0**; the install log says **“Install in Jira complete!”** and confirms installation on `brand7.atlassian.net`. Therefore, the Rovo/MCP candidate branch—not the older `codegeist/forge-foundation` branch—was deployed and installed on the staging site.
+- The CLI listed the requested Graph scopes: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. The workflow did **not** use `--confirm-scopes`; installation success is not evidence that an administrator consented to those scopes or that the Forge app can use them at runtime.
+- The latest candidate branch head at the time of installation was `71f9af078948b1899350857c449b8d2c81fe140c`. Subsequent comparisons through current head `e15a5972b063a7fdab6c1577a90591ec37e5ae03` show documentation-only changes; no application source files changed after the staging install.
+- The current candidate's browser UI, effective Forge Graph scope access, linked evidence rendering, Rovo discovery/action invocation, Rovo Studio MCP visibility and external MCP OAuth 2.1 flow have **not** been independently exercised.
+
+## Remaining acceptance blockers
+
+- Staging project KAN has no Jira issues. A real, clearly labelled staging test issue with genuine linked goal, deployment and external pull-request records (or an existing issue key that already has those links) is needed to exercise issue-context and evidence behavior. No test data was fabricated.
+- An Atlassian site/org administrator must explicitly review and approve the four read-only Graph scopes before their runtime availability can be claimed.
+- Browser-level acceptance and Rovo/MCP discovery/invocation must then be performed against the installed staging candidate.
+- The production tenant `251fa04c84.atlassian.net` was not accessed or changed.
+
+---
+
+# Historical staging connector access update — 18 November 2026 (superseded by the 20 November recheck)
 
 This entry supersedes the prior statement that the connected Atlassian integration could not access the staging site. The user reconnected Atlassian and the integration now exposes `brand7.atlassian.net`.
 
 - Read-only resource discovery returned staging cloud ID `f3a80fda-b810-47e6-806b-ba68cca6507a` and URL `https://brand7.atlassian.net`.
 - The connected resource reports Jira and Goals as read-write products. This confirms connector-level access only; it does not prove Forge app OAuth scopes or Teamwork Graph scopes are granted.
-- Read-only `listJiraProjects` returned **0 projects** (`total=0`).
+- This 18 November snapshot recorded `listJiraProjects` as **0 projects**; the 20 November recheck above supersedes that result and confirms one visible project (KAN).
 - Read-only `searchGoals` returned **0 goals**.
 - Bounded JQL searches for issues returned no issues; a prior known sample key `DEMO-7` returned 404 on this site.
 - No Jira project, issue, goal, link, scope, or app setting was created or changed during these probes.
