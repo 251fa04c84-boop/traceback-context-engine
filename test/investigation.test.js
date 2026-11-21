@@ -355,3 +355,12 @@ test('accepts valid fractional seconds and reports normalized source time', () =
   assert.equal(leads[0].temporalEvidence.occurredAt, '2026-11-16T09:59:59.500Z');
   assert.equal(leads[0].temporalEvidence.distanceHours, 0);
 });
+
+
+test('rejects ISO offsets beyond 14 hours for temporal investigation evidence', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-21T10:00:00Z' },
+    teamworkGraph: { deployments: [{ id: 'dep-invalid-offset', environment: 'Production', environmentType: 'PRODUCTION', state: 'SUCCESSFUL', createdAt: '2026-11-21T23:00:00+14:01' }] }
+  });
+  assert.equal(leads.length, 0);
+});
