@@ -267,7 +267,7 @@ test('uses the nearest valid created or updated timestamp and exposes its proven
   assert.equal(leads[0].temporalEvidence.field, 'updatedAt');
   assert.equal(leads[0].temporalEvidence.occurredAt, '2026-11-16T09:30:00.000Z');
   assert.equal(leads[0].temporalEvidence.distanceHours, 0.5);
-  assert.match(leads[0].rationale, /updatedAt timestamp is 0.5 hours/);
+  assert.match(leads[0].rationale, /updatedAt at 0\.5 hours/);
 });
 
 test('accepts an exact 24-hour temporal boundary with an explicit timezone offset', () => {
