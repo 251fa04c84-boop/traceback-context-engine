@@ -149,6 +149,7 @@ function App() {
             </Inline>
             <Text>{lead.sourceLabel} · Evidence type: {lead.evidenceKind}</Text>
             <Text>{lead.rationale}</Text>
+            {lead.temporalEvidence ? <Text>Time evidence: {lead.temporalEvidence.field} · {lead.temporalEvidence.occurredAt} · {lead.temporalEvidence.distanceHours} hours from issue creation</Text> : null}
             <Text>{lead.scoreMeaning}</Text>
             {lead.url ? <SourceLink url={lead.url} label="Open supporting source" /> : null}
           </Stack>

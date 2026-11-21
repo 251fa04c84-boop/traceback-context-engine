@@ -75,3 +75,15 @@ No external source code was copied. No third-party runtime dependency was added.
 This branch is a code/test improvement only. CI must pass on the exact PR head before it is accepted. It does not establish live Teamwork Graph access, live Rovo discovery, external MCP OAuth, or two-user permission isolation. Those remain separate staging gates requiring genuine linked Jira evidence and an authorized staging site.
 
 Keep the PR draft and unmerged until exact-head CI and the existing live acceptance gates are evidenced.
+
+
+## Temporal evidence validation hardening — 21 November 2026
+
+The follow-up temporal evidence change tightens the rule for time-based leads:
+
+- Only timezone-qualified ISO-8601 timestamps with valid calendar/time components are accepted. Locale-specific, timezone-free, malformed and impossible dates are ignored.
+- Both source `createdAt` and `updatedAt` fields are checked. The closest valid timestamp within 24 hours of Jira issue creation is selected.
+- The lead carries the exact selected field, normalized UTC instant and distance in hours. The Jira panel renders those values.
+- A time association remains a review clue only; it is not evidence of causation.
+
+The test matrix covers explicit timezone offsets, the exact 24-hour boundary, fractional seconds, malformed/ambiguous dates, impossible calendar dates, and fallback to another valid source timestamp. This change does not add telemetry or claim to identify a root cause.
