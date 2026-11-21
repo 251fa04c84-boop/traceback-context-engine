@@ -12,6 +12,7 @@ Evidence-backed incident and delivery context inside Jira, built as an Atlassian
 - A Teamwork Graph client that retrieves linked goals, external deployments, and pull requests through Atlassian's curated GraphQL queries, following cursors for up to five pages (125 records) per category and reporting when the safety cap or bounded request-time budget is reached.
 - Source-linked evidence with status, environment, provider, timestamps, and verified HTTPS links.
 - Explicit graph states: available, empty, partial, and unavailable. Empty results are not treated as proof that no upstream data exists. Jira requests including response-body parsing and optional Graph requests have deadlines sized below Forge's 25-second resolver invocation ceiling; timed-out Graph pagination preserves already loaded evidence.
+- An explicit evidence coverage ledger showing Jira and Teamwork Graph states alongside observability sources that are not integrated (telemetry, logs, traces, alerts, feature flags, and runtime configuration); not-integrated means not queried, never empty.
 - Suggested next checks prioritized from observed deployment, pull-request and linked Jira-work states/timestamps, with a rationale and source link where available; they are not root-cause findings.
 - Tests for issue normalization, related Jira work links, UI Kit issue-context extraction, investigation-lead prioritization and non-causal wording, issue ARI validation, request deadlines including hanging response bodies, graph evidence normalization, pagination timeouts, adapter behavior, empty results, partial GraphQL responses, and unsafe source URLs.
 
@@ -26,7 +27,7 @@ An engineer investigating a Jira incident needs more than an issue description. 
 - The server derives the Jira issue ARI from the fetched issue ID and Forge invocation cloud context; it does not trust a client- or model-supplied ARI.
 - Teamwork Graph records are permission-filtered and may be omitted when a scope or permission is missing. An empty result therefore includes a visible warning.
 - Only verified HTTPS source URLs are clickable.
-- Missing telemetry, service logs, traces, and alert history remain missing; no metrics or incidents are synthesized.
+- Missing telemetry, service logs, traces, alert history, feature-flag history, and runtime configuration remain explicitly marked not integrated/not queried; no metrics or incidents are synthesized.
 - Linked changes are context, not proof of incident causation. Suggested next checks explain the observed state and link to the source record; they are not root-cause findings or probabilities.
 - The app is read-only: no rollback, feature-flag change, deployment trigger, issue update, or production mutation.
 
