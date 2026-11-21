@@ -4,6 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { runTracebackInvestigationAction } = require('../src/domain/rovo-investigation-action');
 const { resolveActionIssueKey } = require('../src/domain/action-context');
+const { fetchTeamworkGraphEvidence } = require('../src/services/teamwork-graph');
 
 function route(strings, ...values) {
   return strings.reduce((result, part, index) => result + part + (values[index] ?? ''), '');
@@ -67,7 +68,7 @@ test('runs the action as the invoking user and passes the documented Jira contex
   assert.equal(calls.asUser, 1);
   assert.equal(calls.asApp, 0);
   assert.equal(calls.jira.length, 1);
-  assert.match(calls.jira[0].url, /\/issue\/PAY-123\?/);
+  assert.ok(calls.jira[0].url.includes('/issue/PAY-123?'));
   assert.deepEqual(calls.jira[0].options, { headers: { Accept: 'application/json' } });
   assert.equal(calls.graph[0].client, deps.api);
   assert.equal(calls.graph[0].issueId, '10001');
@@ -87,7 +88,7 @@ test('uses an explicit issue key only when it matches active Jira context', asyn
     }
   });
   assert.equal(calls.jira.length, 1);
-  assert.match(calls.jira[0].url, /\/issue\/PAY-123\?/);
+  assert.ok(calls.jira[0].url.includes('/issue/PAY-123?'));
 });
 
 test('rejects a mismatched issue key before making any Jira or Graph request', async () => {
@@ -130,4 +131,49 @@ test('propagates Jira read failures without attempting Graph access', async () =
     /Jira read failed/
   );
   assert.equal(calls.graph.length, 0);
+});
+
+test('preserves Jira investigation when the Rovo action Graph request is denied', async () => {
+  const calls = { asUser: 0, jira: 0, graph: 0, asApp: 0 };
+  const api = {
+    asUser() {
+      calls.asUser += 1;
+      return {
+        async requestJira() {
+          calls.jira += 1;
+          return { ok: true };
+        },
+        async requestTeamworkGraph() {
+          calls.graph += 1;
+          throw new Error('User is not permitted to query this organization: private upstream detail');
+        }
+      };
+    },
+    asApp() {
+      calls.asApp += 1;
+      throw new Error('App-level authorization is prohibited.');
+    }
+  };
+  const { dependencies: deps } = dependencies({
+    api,
+    fetchTeamworkGraphEvidence
+  });
+
+  const result = await runTracebackInvestigationAction({
+    ...deps,
+    payload: {
+      context: {
+        cloudId: 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e',
+        jira: { issueKey: 'PAY-123' }
+      }
+    }
+  });
+
+  assert.equal(result.key, 'PAY-123');
+  assert.equal(result.teamworkGraph.status, 'unavailable');
+  assert.ok(result.teamworkGraph.warning.length > 0);
+  assert.doesNotMatch(result.teamworkGraph.warning, /private upstream detail|not permitted/i);
+  assert.equal(calls.jira, 1);
+  assert.equal(calls.graph, 1);
+  assert.equal(calls.asApp, 0);
 });
