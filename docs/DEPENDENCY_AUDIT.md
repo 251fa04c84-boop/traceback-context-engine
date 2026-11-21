@@ -1,3 +1,20 @@
+## Latest exact-head audit snapshot — 21 November 2026
+
+This snapshot was captured from the successful PR #19 validation run [#44916569914](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44916569914), exact application commit `345de19c801ee2a8ed314246ae392ed31b0c8250`.
+
+- `npm ci` completed from the committed lockfile.
+- `npm ls prosemirror-view --all` dependency-tree validation passed.
+- The audit reported **0 critical, 0 high, 6 moderate** vulnerable package entries.
+- The six package entries are `@forge/api@8.5.0`, `@forge/bridge@7.3.0`, `@forge/manifest@13.9.0`, `@forge/react@12.5.0`, `glob@13.0.7`, and `minimatch@10.2.6`.
+- The report traces the Forge package findings through the `@forge/manifest` / `@forge/bridge` dependency chain; `glob` is affected by [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4), and `minimatch` by [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249).
+- npm's suggested automatic fixes would downgrade direct Forge packages across major versions (including `@forge/api@6.1.1`, `@forge/bridge@5.5.0`, and `@forge/react@11.4.0`). These are not safe compatibility fixes and were not applied.
+- The exact run passed **4,181 tests, 0 failed, 0 skipped**, JavaScript syntax checks, and frontend bundle compilation.
+- Forge CLI lint and deployment were skipped by workflow conditions. No live Forge installation or runtime acceptance is established.
+
+**Decision:** retain the current Forge major lines and the narrow ProseMirror remediation. Do not apply `npm audit fix --force`, downgrade Forge packages, or introduce an out-of-range transitive override simply to obtain a zero-finding report. Track the six moderate entries as an open dependency risk and re-evaluate only against a supported upstream release or written Atlassian compatibility guidance.
+
+---
+
 ## Authoritative exact-head snapshot — 21 November 2026
 
 This section supersedes older aggregate counts below for the current evidence-ledger/security candidate stack.
