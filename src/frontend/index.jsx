@@ -109,7 +109,7 @@ function App() {
 
       <Stack space="space.100">
         <Heading size="medium">Suggested next checks ({investigationLeads.length})</Heading>
-        <Text>Prioritized follow-ups derived from linked record states and timestamps. These are investigation leads, not root-cause findings.</Text>
+        <Text>Deterministic review scores rank what to inspect first; they are not causal probabilities or root-cause findings.</Text>
         {investigationLeads.length > 0 ? investigationLeads.map((lead) => (
           <Stack key={lead.id} space="space.050">
             <Inline space="space.100" shouldWrap alignBlock="center">
@@ -117,9 +117,11 @@ function App() {
               <Badge appearance={lead.priority === 'high' ? 'danger' : lead.priority === 'medium' ? 'warning' : 'default'}>
                 {lead.priority}
               </Badge>
+              <Badge appearance="default">Review score: {lead.rankScore}/100</Badge>
             </Inline>
-            <Text>{lead.sourceLabel}</Text>
+            <Text>{lead.sourceLabel} · Evidence type: {lead.evidenceKind}</Text>
             <Text>{lead.rationale}</Text>
+            <Text>{lead.scoreMeaning}</Text>
             {lead.url ? <SourceLink url={lead.url} label="Open supporting source" /> : null}
           </Stack>
         )) : <Text>No specific follow-up checks could be derived from the records currently available.</Text>}
