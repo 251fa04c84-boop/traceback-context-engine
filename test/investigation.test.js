@@ -334,3 +334,24 @@ test('uses a valid created timestamp when updated timestamp is malformed', () =>
   assert.equal(leads[0].temporalEvidence.field, 'createdAt');
   assert.equal(leads[0].temporalEvidence.distanceHours, 0.25);
 });
+
+test('accepts valid fractional seconds and reports normalized source time', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00.000Z' },
+    teamworkGraph: {
+      status: 'available',
+      deployments: [{
+        id: 'fractional-time',
+        state: 'SUCCESSFUL',
+        environmentType: 'PRODUCTION',
+        createdAt: '2026-11-16T09:59:59.500Z'
+      }],
+      pullRequests: [],
+      goals: []
+    }
+  });
+
+  assert.equal(leads.length, 1);
+  assert.equal(leads[0].temporalEvidence.occurredAt, '2026-11-16T09:59:59.500Z');
+  assert.equal(leads[0].temporalEvidence.distanceHours, 0);
+});
