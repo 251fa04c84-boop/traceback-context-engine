@@ -1,3 +1,23 @@
+## Authoritative exact-head snapshot — 21 November 2026
+
+This section supersedes older aggregate counts below for the current evidence-ledger/security candidate stack.
+
+- Candidate PR: [#18](https://github.com/251fa04c84-boop/traceback-context-engine/pull/18)
+- Exact head: `0161fad54403bc3a18ea2539666315e34c91ddde`
+- Exact-head PR CI: [#44906812892](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44906812892) completed successfully.
+- Test suite: **4,176 passed, 0 failed, 0 skipped**.
+- `npm ls prosemirror-view --all` passed; all resolved entries are `prosemirror-view@1.42.9`.
+- Audit: **0 high, 6 moderate, 0 critical** (6 vulnerable package entries).
+- The narrow ProseMirror fix removes the prior high-severity ProseMirror/Atlaskit chain from this candidate. It does not clear the remaining moderate findings.
+- Remaining moderate package entries: `@forge/api`, `@forge/bridge`, `@forge/manifest`, `@forge/react`, `glob`, and `minimatch`.
+- Do not blindly apply npm's suggested major Forge downgrades or a `glob@14` override outside `@forge/manifest`'s declared range. Keep remaining dependency work isolated until an upstream-compatible resolution is verified.
+- Syntax checks and frontend compilation passed. Forge CLI validation was skipped on the PR event. Development deployment and site installation were skipped.
+- No live Forge, Rovo, MCP, Teamwork Graph, or judge-install acceptance is established by this CI run.
+
+This is a candidate validation record, not a claim that all dependencies are vulnerability-free or that the app is production-ready.
+
+---
+
 ## Current upstream package recheck — 18 November 2026, 14:08 IST
 
 The exact-head Rovo candidate CI [#44261385532](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44261385532) reran the committed lockfile audit. It still reports **13 vulnerable package entries: 9 high, 4 moderate, 0 critical**. The same run passed **4,159 tests, 0 failures, 0 skipped**, syntax/frontend checks, and authenticated Forge CLI lint (No issues found).
