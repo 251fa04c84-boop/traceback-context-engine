@@ -11,6 +11,7 @@ const api = require('@forge/api');
 const { route } = require('@forge/api');
 const { resolveIssueKey, normalizeIssue } = require('./domain/incident');
 const { runTracebackInvestigationAction } = require('./domain/rovo-investigation-action');
+const { runIssueContextResolver } = require('./domain/issue-context-resolver');
 const { resolveActionIssueKey } = require('./domain/action-context');
 const { buildInvestigationLeads } = require('./domain/investigation');
 const { buildIncidentTimeline } = require('./domain/timeline');
@@ -22,24 +23,17 @@ const { fetchJiraIssue, DEFAULT_JIRA_REQUEST_TIMEOUT_MS } = require('./services/
 // normalization and the optional Graph request instead of waiting indefinitely.
 const resolver = new Resolver();
 
-resolver.define('getIssueContext', async ({ payload, context }) => {
-  const issueKey = resolveIssueKey(payload?.issueKey, context);
-
-  const issue = await fetchJiraIssue(
-    () => api.asUser().requestJira(
-      route`/rest/api/3/issue/${issueKey}?fields=summary,description,status,priority,issuetype,created,updated,project,issuelinks`,
-      { headers: { Accept: 'application/json' } }
-    ),
-    DEFAULT_JIRA_REQUEST_TIMEOUT_MS
-  );
-  const normalizedIssue = normalizeIssue(issue);
-  const teamworkGraph = await fetchTeamworkGraphEvidence(api, issue.id, context?.cloudId);
-
-  return {
-    ...normalizedIssue,
-    teamworkGraph
-  };
-});
+resolver.define('getIssueContext', async ({ payload, context }) => runIssueContextResolver({
+  payload,
+  context,
+  api,
+  route,
+  fetchJiraIssue,
+  defaultJiraRequestTimeoutMs: DEFAULT_JIRA_REQUEST_TIMEOUT_MS,
+  resolveIssueKey,
+  normalizeIssue,
+  fetchTeamworkGraphEvidence
+}));
 
 // Rovo action: all reads run as the invoking user; action input never grants
 // authorization. Active issue context is authoritative when Atlassian supplies it.

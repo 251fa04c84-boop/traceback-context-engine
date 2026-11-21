@@ -3,11 +3,13 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { runTracebackInvestigationAction } = require('../src/domain/rovo-investigation-action');
+const { runIssueContextResolver } = require('../src/domain/issue-context-resolver');
 const { resolveActionIssueKey } = require('../src/domain/action-context');
-const { normalizeIssue } = require('../src/domain/incident');
+const { resolveIssueKey, normalizeIssue } = require('../src/domain/incident');
 const { buildInvestigationLeads } = require('../src/domain/investigation');
 const { buildIncidentTimeline } = require('../src/domain/timeline');
 const { buildEvidenceCoverage } = require('../src/domain/evidence-coverage');
+const { fetchTeamworkGraphEvidence } = require('../src/services/teamwork-graph');
 
 const issuePayload = {
   id: '10042',
@@ -36,6 +38,7 @@ const issuePayload = {
   }
 };
 
+const cloudId = 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e';
 const graphFixtures = [
   {
     name: 'available linked evidence',
@@ -114,8 +117,61 @@ function route(strings, ...values) {
   return strings.reduce((result, part, index) => result + part + (values[index] ?? ''), '');
 }
 
+function graphResponseFor(fixture) {
+  if (fixture.status === 'unavailable') {
+    return { data: null, errors: [{ message: 'Graph access denied for this user.' }] };
+  }
+
+  return {
+    data: {
+      jiraWorkItemGoals: {
+        edges: fixture.goals.map((goal) => ({ node: {
+          __typename: 'AtlassianGoal',
+          id: goal.id,
+          key: goal.key,
+          name: goal.name,
+          url: goal.url,
+          archived: goal.archived
+        } })),
+        pageInfo: { hasNextPage: false, endCursor: null }
+      },
+      jiraWorkItemLinkedExternalDeployments: {
+        edges: fixture.deployments.map((deployment) => ({ node: {
+          __typename: 'ExternalDeployment',
+          id: deployment.id,
+          displayName: deployment.title,
+          state: deployment.state,
+          environment: { displayName: deployment.environment, type: deployment.environmentType },
+          provider: { name: deployment.provider },
+          url: deployment.url,
+          createdAt: deployment.createdAt,
+          lastUpdatedAt: deployment.updatedAt
+        } })),
+        pageInfo: { hasNextPage: false, endCursor: null }
+      },
+      jiraWorkItemLinkedExternalPullRequests: {
+        edges: fixture.pullRequests.map((pullRequest) => ({ node: {
+          __typename: 'ExternalPullRequest',
+          id: pullRequest.id,
+          title: pullRequest.title,
+          displayId: pullRequest.displayId,
+          status: pullRequest.status,
+          provider: { name: pullRequest.provider },
+          url: pullRequest.url,
+          createdAt: pullRequest.createdAt,
+          lastUpdatedAt: pullRequest.updatedAt
+        } })),
+        pageInfo: { hasNextPage: false, endCursor: null }
+      }
+    },
+    errors: fixture.status === 'partial'
+      ? [{ message: 'One linked evidence category was unavailable.' }]
+      : []
+  };
+}
+
 for (const fixture of graphFixtures) {
-  test('keeps Jira panel and Rovo evidence outputs identical for ' + fixture.name, async () => {
+  test('compares actual Jira panel resolver and Rovo action outputs for ' + fixture.name, async () => {
     const calls = { asUser: 0, asApp: 0, jira: 0, graph: 0 };
     const api = {
       asUser() {
@@ -124,6 +180,10 @@ for (const fixture of graphFixtures) {
           async requestJira() {
             calls.jira += 1;
             return { ok: true };
+          },
+          async requestTeamworkGraph() {
+            calls.graph += 1;
+            return graphResponseFor(fixture.graph);
           }
         };
       },
@@ -132,54 +192,66 @@ for (const fixture of graphFixtures) {
         throw new Error('Investigation must never use app-level authorization.');
       }
     };
-
-    const result = await runTracebackInvestigationAction({
-      payload: {
-        context: {
-          cloudId: 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e',
-          jira: { issueKey: 'PAY-123' }
-        }
-      },
+    const dependencies = {
       api,
       route,
-      fetchJiraIssue: async (request) => {
+      fetchJiraIssue: async (request, timeoutMs) => {
+        assert.equal(timeoutMs, 8000);
         await request();
         return issuePayload;
       },
       defaultJiraRequestTimeoutMs: 8000,
-      resolveActionIssueKey,
       normalizeIssue,
-      fetchTeamworkGraphEvidence: async (client, issueId, cloudId) => {
-        calls.graph += 1;
-        assert.equal(client, api);
-        assert.equal(issueId, '10042');
-        assert.equal(cloudId, 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e');
-        return fixture.graph;
+      fetchTeamworkGraphEvidence
+    };
+
+    // Exercise the same production function used by the actual Jira issue panel.
+    const panelIncident = await runIssueContextResolver({
+      ...dependencies,
+      payload: {},
+      context: { cloudId, extension: { issue: { key: 'PAY-123' } } },
+      resolveIssueKey
+    });
+
+    // Exercise the production Rovo action independently against the same source fixtures.
+    const rovoResult = await runTracebackInvestigationAction({
+      ...dependencies,
+      payload: {
+        context: {
+          cloudId,
+          jira: { issueKey: 'PAY-123' }
+        }
       },
+      resolveActionIssueKey,
       buildInvestigationLeads,
       buildIncidentTimeline,
       buildEvidenceCoverage
     });
 
-    // The Jira issue panel derives these three views from the resolver's
-    // normalized issue and Graph payload. Rovo must expose the same results.
-    const panelInputs = {
-      issue: result,
-      relatedWorkItems: result.relatedWorkItems,
-      teamworkGraph: result.teamworkGraph
-    };
-    const panelLeads = buildInvestigationLeads(panelInputs);
-    const panelTimeline = buildIncidentTimeline(panelInputs);
-    const panelCoverage = buildEvidenceCoverage(panelInputs);
+    const panelLeads = buildInvestigationLeads({
+      issue: panelIncident,
+      relatedWorkItems: panelIncident.relatedWorkItems,
+      teamworkGraph: panelIncident.teamworkGraph
+    });
+    const panelTimeline = buildIncidentTimeline({
+      issue: panelIncident,
+      teamworkGraph: panelIncident.teamworkGraph
+    });
+    const panelCoverage = buildEvidenceCoverage({
+      issue: panelIncident,
+      teamworkGraph: panelIncident.teamworkGraph
+    });
 
-    assert.deepEqual(result.investigationLeads, panelLeads);
-    assert.deepEqual(result.incidentTimeline, panelTimeline);
-    assert.deepEqual(result.evidenceCoverage, panelCoverage);
-    assert.equal(calls.asUser, 1);
+    assert.deepEqual(rovoResult.investigationLeads, panelLeads);
+    assert.deepEqual(rovoResult.incidentTimeline, panelTimeline);
+    assert.deepEqual(rovoResult.evidenceCoverage, panelCoverage);
+    assert.equal(calls.asUser, 4);
     assert.equal(calls.asApp, 0);
-    assert.equal(calls.jira, 1);
-    assert.equal(calls.graph, 1);
-    assert.equal(result.key, 'PAY-123');
-    assert.equal(result.teamworkGraph.status, fixture.graph.status);
+    assert.equal(calls.jira, 2);
+    assert.equal(calls.graph, 2);
+    assert.equal(panelIncident.key, 'PAY-123');
+    assert.equal(rovoResult.key, 'PAY-123');
+    assert.equal(panelIncident.teamworkGraph.status, fixture.graph.status);
+    assert.equal(rovoResult.teamworkGraph.status, fixture.graph.status);
   });
 }
