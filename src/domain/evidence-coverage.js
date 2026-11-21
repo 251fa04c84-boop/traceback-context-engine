@@ -49,7 +49,11 @@ function buildEvidenceCoverage({ issue = {}, teamworkGraph = {} } = {}) {
 
   return {
     sources,
-    connectedSourceCount: sources.filter((source) => ['observed', 'available'].includes(source.status)).length,
+    connectedSourceCount: sources.filter((source) => (
+      source.status === 'observed'
+      || source.status === 'available'
+      || (source.status === 'partial' && source.recordCount > 0)
+    )).length,
     notIntegrated: NOT_INTEGRATED_SOURCES.map((source) => source.key),
     completeness: 'partial-by-design',
     boundary: 'Coverage describes only the connectors TraceBack queried. Not-integrated sources were not queried; empty or unavailable results are not proof that evidence does not exist.'
