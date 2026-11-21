@@ -47,6 +47,11 @@ function dependencies(overrides = {}) {
     buildInvestigationLeads: (input) => [{
       sourceType: 'jiraIssue',
       sourceId: input.relatedWorkItems[0].key
+    }],
+    buildIncidentTimeline: (input) => [{
+      sourceType: 'jiraIssue',
+      sourceId: input.issue.key,
+      graphStatus: input.teamworkGraph.status
     }]
   };
   return { dependencies: { ...defaults, ...overrides }, calls };
@@ -73,6 +78,11 @@ test('runs the action as the invoking user and passes the documented Jira contex
   assert.equal(calls.graph[0].issueId, '10001');
   assert.equal(calls.graph[0].cloudId, 'cloud-123');
   assert.deepEqual(result.investigationLeads, [{ sourceType: 'jiraIssue', sourceId: 'PAY-122' }]);
+  assert.deepEqual(result.incidentTimeline, [{
+    sourceType: 'jiraIssue',
+    sourceId: 'PAY-123',
+    graphStatus: 'available'
+  }]);
   assert.match(result.accessBoundary, /invoking user/);
   assert.match(result.evidenceBoundary, /not proof of causation/);
 });
