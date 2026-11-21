@@ -76,7 +76,7 @@ Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to 
 
 ## Dependency security
 
-The inspected npm audit reported unresolved high and moderate dependency findings. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the dated report and [docs/UPSTREAM_DEPENDENCY_ESCALATION.md](docs/UPSTREAM_DEPENDENCY_ESCALATION.md) for the prepared Atlassian escalation packet. The lockfile is committed and `npm ci` is verified; upstream high and moderate advisories remain unresolved. Do not apply `npm audit fix --force` without compatibility testing.
+The current evidence-ledger/security candidate exact-head CI reports **0 high, 6 moderate, 0 critical** after the narrow `prosemirror-view@1.42.9` fix; all ProseMirror view entries resolve to 1.42.9. Six moderate package entries remain across Forge packages, glob and minimatch. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the exact-head record and [docs/UPSTREAM_DEPENDENCY_ESCALATION.md](docs/UPSTREAM_DEPENDENCY_ESCALATION.md) for the prepared Atlassian escalation packet. This is not an audit-clean result. Do not apply `npm audit fix --force` or out-of-range overrides without compatibility testing.
 
 ## Jira installation and acceptance
 
