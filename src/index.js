@@ -14,6 +14,7 @@ const { runTracebackInvestigationAction } = require('./domain/rovo-investigation
 const { resolveActionIssueKey } = require('./domain/action-context');
 const { buildInvestigationLeads } = require('./domain/investigation');
 const { buildIncidentTimeline } = require('./domain/timeline');
+const { buildEvidenceCoverage } = require('./domain/evidence-coverage');
 const { fetchTeamworkGraphEvidence } = require('./services/teamwork-graph');
 const { fetchJiraIssue, DEFAULT_JIRA_REQUEST_TIMEOUT_MS } = require('./services/jira-issue');
 
@@ -52,7 +53,8 @@ exports.getTracebackInvestigation = (payload = {}) => runTracebackInvestigationA
   normalizeIssue,
   fetchTeamworkGraphEvidence,
   buildInvestigationLeads,
-  buildIncidentTimeline
+  buildIncidentTimeline,
+  buildEvidenceCoverage
 });
 
 exports.handler = resolver.getDefinitions();
