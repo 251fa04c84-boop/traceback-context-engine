@@ -17,7 +17,7 @@ const PRIORITY_THRESHOLDS = { high: 70, medium: 40 };
 function parseTimestamp(value) {
   if (typeof value !== 'string') return null;
   const normalized = value.trim();
-  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\\.(\d+))?(Z|[+-]\d{2}:?\d{2})$/i.exec(normalized);
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?(Z|[+-]\d{2}:?\d{2})$/i.exec(normalized);
   if (!match) return null;
 
   const [, yearText, monthText, dayText, hourText, minuteText, secondText, , offset] = match;
