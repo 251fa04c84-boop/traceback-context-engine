@@ -5,7 +5,7 @@
   "description": "Evidence-backed incident investigation and delivery context for Jira using Atlassian Forge.",
   "scripts": {
     "test": "node --test",
-    "lint:syntax": "node --check src/domain/evidence-copy.js && node --check src/index.js && node --check src/domain/incident.js && node --check src/domain/investigation.js && node --check src/domain/teamwork-graph.js && node --check src/services/teamwork-graph.js && node --check src/services/request-timeout.js && node --check src/services/jira-issue.js",
+    "lint:syntax": "node --check src/domain/evidence-copy.js && node --check src/index.js && node --check src/domain/incident.js && node --check src/domain/investigation.js && node --check src/domain/rovo-investigation-action.js && node --check src/domain/timeline.js && node --check src/domain/teamwork-graph.js && node --check src/services/teamwork-graph.js && node --check src/services/request-timeout.js && node --check src/services/jira-issue.js",
     "lint:frontend": "npx --yes esbuild@0.25.5 src/frontend/index.jsx --bundle --platform=browser --external:@forge/* --external:react --outfile=/tmp/traceback-ui.js"
   },
   "engines": {

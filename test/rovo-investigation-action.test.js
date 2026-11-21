@@ -47,6 +47,11 @@ function dependencies(overrides = {}) {
     buildInvestigationLeads: (input) => [{
       sourceType: 'jiraIssue',
       sourceId: input.relatedWorkItems[0].key
+    }],
+    buildIncidentTimeline: (input) => [{
+      sourceType: 'jiraIssue',
+      sourceId: input.issue.key,
+      graphStatus: input.teamworkGraph.status
     }]
   };
   return { dependencies: { ...defaults, ...overrides }, calls };
@@ -73,6 +78,11 @@ test('runs the action as the invoking user and passes the documented Jira contex
   assert.equal(calls.graph[0].issueId, '10001');
   assert.equal(calls.graph[0].cloudId, 'cloud-123');
   assert.deepEqual(result.investigationLeads, [{ sourceType: 'jiraIssue', sourceId: 'PAY-122' }]);
+  assert.deepEqual(result.incidentTimeline, [{
+    sourceType: 'jiraIssue',
+    sourceId: 'PAY-123',
+    graphStatus: 'available'
+  }]);
   assert.match(result.accessBoundary, /invoking user/);
   assert.match(result.evidenceBoundary, /not proof of causation/);
 });
@@ -130,4 +140,32 @@ test('propagates Jira read failures without attempting Graph access', async () =
     /Jira read failed/
   );
   assert.equal(calls.graph.length, 0);
+});
+
+
+test('uses the same normalized Jira and current-user Graph evidence for the Rovo timeline', async () => {
+  let timelineInput;
+  const { dependencies: deps } = dependencies({
+    buildIncidentTimeline: (input) => {
+      timelineInput = input;
+      return [{ eventType: 'issue-created', sourceId: input.issue.key }];
+    }
+  });
+
+  const result = await runTracebackInvestigationAction({
+    ...deps,
+    payload: {
+      context: {
+        cloudId: 'cloud-123',
+        jira: { issueKey: 'PAY-123' }
+      }
+    }
+  });
+
+  assert.equal(timelineInput.issue.key, 'PAY-123');
+  assert.equal(timelineInput.teamworkGraph.status, 'available');
+  assert.deepEqual(result.incidentTimeline, [{
+    eventType: 'issue-created',
+    sourceId: 'PAY-123'
+  }]);
 });

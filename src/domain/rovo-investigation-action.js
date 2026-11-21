@@ -9,7 +9,8 @@ async function runTracebackInvestigationAction({
   resolveActionIssueKey,
   normalizeIssue,
   fetchTeamworkGraphEvidence,
-  buildInvestigationLeads
+  buildInvestigationLeads,
+  buildIncidentTimeline
 }) {
   const actionContext = payload.context || {};
   const issueKey = resolveActionIssueKey(
@@ -32,11 +33,16 @@ async function runTracebackInvestigationAction({
     relatedWorkItems: normalizedIssue.relatedWorkItems,
     teamworkGraph
   });
+  const incidentTimeline = buildIncidentTimeline({
+    issue: normalizedIssue,
+    teamworkGraph
+  });
 
   return {
     ...normalizedIssue,
     teamworkGraph,
     investigationLeads,
+    incidentTimeline,
     accessBoundary: 'All Jira and Teamwork Graph reads were requested as the invoking user. Missing permissions or unavailable connectors may limit evidence.',
     evidenceBoundary: 'Linked records and timing are investigation leads, not proof of causation. No production or Jira mutations are available through this action.'
   };

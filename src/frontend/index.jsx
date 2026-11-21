@@ -14,6 +14,7 @@ import ForgeReconciler, {
 import { invoke } from '@forge/bridge';
 import { getIssueKeyFromProductContext, getRetryIssueKey } from '../domain/incident';
 import { buildInvestigationLeads } from '../domain/investigation';
+import { buildIncidentTimeline } from '../domain/timeline';
 import { getCategoryEmptyStateMessage } from '../domain/evidence-copy';
 
 const EMPTY_GRAPH = {
@@ -82,6 +83,10 @@ function App() {
     relatedWorkItems: incident.relatedWorkItems,
     teamworkGraph: graph
   });
+  const incidentTimeline = buildIncidentTimeline({
+    issue: incident,
+    teamworkGraph: graph
+  });
 
   return (
     <Stack space="space.300">
@@ -125,6 +130,23 @@ function App() {
             {lead.url ? <SourceLink url={lead.url} label="Open supporting source" /> : null}
           </Stack>
         )) : <Text>No specific follow-up checks could be derived from the records currently available.</Text>}
+      </Stack>
+
+      <Stack space="space.100">
+        <Heading size="medium">Incident timeline ({incidentTimeline.length})</Heading>
+        <Text>Chronological source-record timestamps. This is not a complete audit history; missing timestamps and unavailable sources are not filled in.</Text>
+        {incidentTimeline.length > 0 ? incidentTimeline.map((event) => (
+          <Stack key={event.id} space="space.050">
+            <Inline space="space.100" shouldWrap alignBlock="center">
+              <Text>{event.title}</Text>
+              <Badge appearance="default">{event.sourceType}</Badge>
+            </Inline>
+            <Text>{event.occurredAt}</Text>
+            <Text>{event.summary}</Text>
+            <Text>{event.provenance}</Text>
+            <SourceLink url={event.url} label={`Open ${event.sourceLabel}`} />
+          </Stack>
+        )) : <Text>No usable source timestamps were returned. The timeline will not invent dates.</Text>}
       </Stack>
 
       <Stack space="space.100">
