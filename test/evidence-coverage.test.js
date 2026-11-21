@@ -76,3 +76,17 @@ test('does not infer source coverage from array contents when Graph status is un
   assert.equal(coverage.sources[1].recordCount, 1);
   assert.match(coverage.sources[1].detail, /could not be confirmed/i);
 });
+
+test('counts partial Graph results only when at least one usable record was returned', () => {
+  const withRecords = buildEvidenceCoverage({
+    issue: { key: 'PAY-42' },
+    teamworkGraph: { status: 'partial', deployments: [{ id: 'dep-1' }] }
+  });
+  const withoutRecords = buildEvidenceCoverage({
+    issue: { key: 'PAY-42' },
+    teamworkGraph: { status: 'partial', deployments: [] }
+  });
+
+  assert.equal(withRecords.connectedSourceCount, 2);
+  assert.equal(withoutRecords.connectedSourceCount, 1);
+});
