@@ -29,6 +29,8 @@ jobs:
             exit 1
           fi
           npm ci
+      - name: Validate patched ProseMirror dependency tree
+        run: npm ls prosemirror-view --all
       - name: Report dependency audit findings without applying automatic upgrades
         shell: bash
         run: |
