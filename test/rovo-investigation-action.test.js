@@ -141,3 +141,31 @@ test('propagates Jira read failures without attempting Graph access', async () =
   );
   assert.equal(calls.graph.length, 0);
 });
+
+
+test('uses the same normalized Jira and current-user Graph evidence for the Rovo timeline', async () => {
+  let timelineInput;
+  const { dependencies: deps } = dependencies({
+    buildIncidentTimeline: (input) => {
+      timelineInput = input;
+      return [{ eventType: 'issue-created', sourceId: input.issue.key }];
+    }
+  });
+
+  const result = await runTracebackInvestigationAction({
+    ...deps,
+    payload: {
+      context: {
+        cloudId: 'cloud-123',
+        jira: { issueKey: 'PAY-123' }
+      }
+    }
+  });
+
+  assert.equal(timelineInput.issue.key, 'PAY-123');
+  assert.equal(timelineInput.teamworkGraph.status, 'available');
+  assert.deepEqual(result.incidentTimeline, [{
+    eventType: 'issue-created',
+    sourceId: 'PAY-123'
+  }]);
+});
