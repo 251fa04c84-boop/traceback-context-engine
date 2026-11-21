@@ -136,3 +136,15 @@ test('does not show a last-updated marker when it represents the same instant as
     'issue-created'
   ]);
 });
+
+
+test('rejects impossible calendar dates and out-of-range offsets in every timeline source', () => {
+  const timeline = buildIncidentTimeline({
+    issue: { key: 'PAY-45', created: '2026-02-30T10:00:00Z' },
+    teamworkGraph: {
+      deployments: [{ id: 'dep-impossible', createdAt: '2026-04-31T10:00:00Z' }],
+      pullRequests: [{ id: 'pr-offset', createdAt: '2026-11-21T10:00:00+14:01' }]
+    }
+  });
+  assert.deepEqual(timeline, []);
+});
