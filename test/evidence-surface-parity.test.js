@@ -9,6 +9,7 @@ const { resolveIssueKey, normalizeIssue } = require('../src/domain/incident');
 const { buildInvestigationLeads } = require('../src/domain/investigation');
 const { buildIncidentTimeline } = require('../src/domain/timeline');
 const { buildEvidenceCoverage } = require('../src/domain/evidence-coverage');
+const { fetchTeamworkGraphEvidence } = require('../src/services/teamwork-graph');
 
 const issuePayload = {
   id: '10042',
@@ -116,6 +117,59 @@ function route(strings, ...values) {
   return strings.reduce((result, part, index) => result + part + (values[index] ?? ''), '');
 }
 
+function graphResponseFor(fixture) {
+  if (fixture.status === 'unavailable') {
+    return { data: null, errors: [{ message: 'Graph access denied for this user.' }] };
+  }
+
+  return {
+    data: {
+      jiraWorkItemGoals: {
+        edges: fixture.goals.map((goal) => ({ node: {
+          __typename: 'AtlassianGoal',
+          id: goal.id,
+          key: goal.key,
+          name: goal.name,
+          url: goal.url,
+          archived: goal.archived
+        } })),
+        pageInfo: { hasNextPage: false, endCursor: null }
+      },
+      jiraWorkItemLinkedExternalDeployments: {
+        edges: fixture.deployments.map((deployment) => ({ node: {
+          __typename: 'ExternalDeployment',
+          id: deployment.id,
+          displayName: deployment.title,
+          state: deployment.state,
+          environment: { displayName: deployment.environment, type: deployment.environmentType },
+          provider: { name: deployment.provider },
+          url: deployment.url,
+          createdAt: deployment.createdAt,
+          lastUpdatedAt: deployment.updatedAt
+        } })),
+        pageInfo: { hasNextPage: false, endCursor: null }
+      },
+      jiraWorkItemLinkedExternalPullRequests: {
+        edges: fixture.pullRequests.map((pullRequest) => ({ node: {
+          __typename: 'ExternalPullRequest',
+          id: pullRequest.id,
+          title: pullRequest.title,
+          displayId: pullRequest.displayId,
+          status: pullRequest.status,
+          provider: { name: pullRequest.provider },
+          url: pullRequest.url,
+          createdAt: pullRequest.createdAt,
+          lastUpdatedAt: pullRequest.updatedAt
+        } })),
+        pageInfo: { hasNextPage: false, endCursor: null }
+      }
+    },
+    errors: fixture.status === 'partial'
+      ? [{ message: 'One linked evidence category was unavailable.' }]
+      : []
+  };
+}
+
 for (const fixture of graphFixtures) {
   test('compares actual Jira panel resolver and Rovo action outputs for ' + fixture.name, async () => {
     const calls = { asUser: 0, asApp: 0, jira: 0, graph: 0 };
@@ -126,6 +180,10 @@ for (const fixture of graphFixtures) {
           async requestJira() {
             calls.jira += 1;
             return { ok: true };
+          },
+          async requestTeamworkGraph() {
+            calls.graph += 1;
+            return graphResponseFor(fixture.graph);
           }
         };
       },
@@ -144,13 +202,7 @@ for (const fixture of graphFixtures) {
       },
       defaultJiraRequestTimeoutMs: 8000,
       normalizeIssue,
-      fetchTeamworkGraphEvidence: async (client, issueId, requestedCloudId) => {
-        calls.graph += 1;
-        assert.equal(client, api);
-        assert.equal(issueId, '10042');
-        assert.equal(requestedCloudId, cloudId);
-        return fixture.graph;
-      }
+      fetchTeamworkGraphEvidence
     };
 
     // Exercise the same production function used by the actual Jira issue panel.
@@ -193,7 +245,7 @@ for (const fixture of graphFixtures) {
     assert.deepEqual(rovoResult.investigationLeads, panelLeads);
     assert.deepEqual(rovoResult.incidentTimeline, panelTimeline);
     assert.deepEqual(rovoResult.evidenceCoverage, panelCoverage);
-    assert.equal(calls.asUser, 2);
+    assert.equal(calls.asUser, 4);
     assert.equal(calls.asApp, 0);
     assert.equal(calls.jira, 2);
     assert.equal(calls.graph, 2);
