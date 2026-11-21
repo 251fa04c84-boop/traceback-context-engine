@@ -48,6 +48,7 @@ function dependencies(overrides = {}) {
       sourceType: 'jiraIssue',
       sourceId: input.relatedWorkItems[0].key
     }],
+    buildEvidenceCoverage: (input) => ({ issueKey: input.issue.key, graphStatus: input.teamworkGraph.status }),
     buildIncidentTimeline: (input) => [{
       sourceType: 'jiraIssue',
       sourceId: input.issue.key,
@@ -83,6 +84,7 @@ test('runs the action as the invoking user and passes the documented Jira contex
     sourceId: 'PAY-123',
     graphStatus: 'available'
   }]);
+  assert.deepEqual(result.evidenceCoverage, { issueKey: 'PAY-123', graphStatus: 'available' });
   assert.match(result.accessBoundary, /invoking user/);
   assert.match(result.evidenceBoundary, /not proof of causation/);
 });
@@ -143,9 +145,14 @@ test('propagates Jira read failures without attempting Graph access', async () =
 });
 
 
-test('uses the same normalized Jira and current-user Graph evidence for the Rovo timeline', async () => {
+test('uses the same normalized Jira and current-user Graph evidence for the Rovo timeline and coverage ledger', async () => {
   let timelineInput;
+  let coverageInput;
   const { dependencies: deps } = dependencies({
+    buildEvidenceCoverage: (input) => {
+      coverageInput = input;
+      return { issueKey: input.issue.key, graphStatus: input.teamworkGraph.status };
+    },
     buildIncidentTimeline: (input) => {
       timelineInput = input;
       return [{ eventType: 'issue-created', sourceId: input.issue.key }];
@@ -164,6 +171,9 @@ test('uses the same normalized Jira and current-user Graph evidence for the Rovo
 
   assert.equal(timelineInput.issue.key, 'PAY-123');
   assert.equal(timelineInput.teamworkGraph.status, 'available');
+  assert.equal(coverageInput.issue.key, 'PAY-123');
+  assert.equal(coverageInput.teamworkGraph.status, 'available');
+  assert.deepEqual(result.evidenceCoverage, { issueKey: 'PAY-123', graphStatus: 'available' });
   assert.deepEqual(result.incidentTimeline, [{
     eventType: 'issue-created',
     sourceId: 'PAY-123'

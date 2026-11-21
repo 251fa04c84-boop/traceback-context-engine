@@ -15,6 +15,7 @@ import { invoke } from '@forge/bridge';
 import { getIssueKeyFromProductContext, getRetryIssueKey } from '../domain/incident';
 import { buildInvestigationLeads } from '../domain/investigation';
 import { buildIncidentTimeline } from '../domain/timeline';
+import { buildEvidenceCoverage } from '../domain/evidence-coverage';
 import { getCategoryEmptyStateMessage } from '../domain/evidence-copy';
 
 const EMPTY_GRAPH = {
@@ -87,6 +88,10 @@ function App() {
     issue: incident,
     teamworkGraph: graph
   });
+  const evidenceCoverage = buildEvidenceCoverage({
+    issue: incident,
+    teamworkGraph: graph
+  });
 
   return (
     <Stack space="space.300">
@@ -111,6 +116,24 @@ function App() {
           <Text>Jira links and external delivery records are context only; a relationship does not prove cause.</Text>
         </Stack>
       </SectionMessage>
+
+      <Stack space="space.100">
+        <Heading size="medium">Evidence coverage</Heading>
+        <Text>{evidenceCoverage.connectedSourceCount} connected source groups returned usable records. This is not a complete observability picture.</Text>
+        {evidenceCoverage.sources.map((source) => (
+          <Stack key={source.key} space="space.050">
+            <Inline space="space.100" alignBlock="center" shouldWrap>
+              <Text>{source.label}</Text>
+              <Badge appearance={source.status === 'observed' || source.status === 'available' ? 'success' : source.status === 'partial' ? 'warning' : 'default'}>
+                {source.status}
+              </Badge>
+              {typeof source.recordCount === 'number' ? <Badge appearance="default">{source.recordCount} records</Badge> : null}
+            </Inline>
+            <Text>{source.detail}</Text>
+          </Stack>
+        ))}
+        <Text>{evidenceCoverage.boundary}</Text>
+      </Stack>
 
       <Stack space="space.100">
         <Heading size="medium">Suggested next checks ({investigationLeads.length})</Heading>
