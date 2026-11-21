@@ -160,3 +160,87 @@ test('does not assign production-level priority to a failed non-production deplo
   assert.match(leads[0].rationale, /FAILED/);
   assert.match(leads[0].rationale, /does not establish/i);
 });
+
+
+test('assigns a transparent deterministic review score without implying causal confidence', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00Z' },
+    teamworkGraph: {
+      status: 'available',
+      deployments: [{
+        id: 'production-failure',
+        title: 'Production rollout',
+        state: 'FAILED',
+        environmentType: 'PRODUCTION'
+      }],
+      pullRequests: [],
+      goals: []
+    }
+  });
+
+  assert.equal(leads[0].rankScore, 90);
+  assert.equal(leads[0].priority, 'high');
+  assert.equal(leads[0].evidenceKind, 'direct-status');
+  assert.match(leads[0].scoreMeaning, /not a probability/i);
+  assert.match(leads[0].rationale, /does not establish/i);
+});
+
+test('ranks independent evidence types by fixed review-priority rules and preserves source links', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00Z' },
+    relatedWorkItems: [{
+      key: 'DEMO-8',
+      summary: 'Blocked task',
+      status: 'In Progress',
+      relationship: 'blocks',
+      url: '/browse/DEMO-8'
+    }],
+    teamworkGraph: {
+      status: 'available',
+      deployments: [{
+        id: 'deployment-1',
+        title: 'Production failure',
+        state: 'FAILED',
+        environmentType: 'PRODUCTION',
+        url: 'https://example.test/deployments/1'
+      }],
+      pullRequests: [{
+        id: 'pr-1',
+        title: 'Pending change',
+        status: 'OPEN',
+        url: 'https://example.test/pull/1'
+      }],
+      goals: [{ id: 'goal-1', name: 'Archived goal', archived: true }]
+    }
+  });
+
+  assert.deepEqual(leads.map((lead) => lead.rankScore), [90, 52, 38, 18]);
+  assert.deepEqual(leads.map((lead) => lead.priority), ['high', 'medium', 'low', 'low']);
+  assert.equal(leads[0].url, 'https://example.test/deployments/1');
+  assert.equal(leads[1].url, 'https://example.test/pull/1');
+  assert.equal(leads[2].evidenceKind, 'relationship');
+  assert.equal(leads[3].evidenceKind, 'lifecycle-status');
+});
+
+test('keeps temporal clues distinct from direct status evidence', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00Z' },
+    teamworkGraph: {
+      status: 'available',
+      deployments: [{
+        id: 'recent-production',
+        title: 'Recent production release',
+        state: 'SUCCESSFUL',
+        environmentType: 'PRODUCTION',
+        createdAt: '2026-11-16T09:00:00Z'
+      }],
+      pullRequests: [],
+      goals: []
+    }
+  });
+
+  assert.equal(leads[0].rankScore, 60);
+  assert.equal(leads[0].evidenceKind, 'temporal-association');
+  assert.match(leads[0].scoreMeaning, /not a probability/i);
+  assert.match(leads[0].rationale, /does not establish causation/i);
+});
