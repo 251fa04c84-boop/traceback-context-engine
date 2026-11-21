@@ -15,17 +15,50 @@ const TERMINAL_JIRA_STATUSES = new Set([
 const PRIORITY_THRESHOLDS = { high: 70, medium: 40 };
 
 function parseTimestamp(value) {
-  if (typeof value !== 'string' || !value.trim()) return null;
-  const time = Date.parse(value);
+  if (typeof value !== 'string') return null;
+  const normalized = value.trim();
+  const match = /^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d+))?(Z|[+-]\\d{2}:?\\d{2})$/i.exec(normalized);
+  if (!match) return null;
+
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , offset] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const second = Number(secondText);
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  if (month < 1 || month > 12 || day < 1 || day > daysInMonth
+    || hour > 23 || minute > 59 || second > 59) return null;
+
+  if (offset.toUpperCase() !== 'Z') {
+    const offsetParts = offset.slice(1).replace(':', '');
+    const offsetHours = Number(offsetParts.slice(0, 2));
+    const offsetMinutes = Number(offsetParts.slice(2, 4));
+    if (offsetHours > 23 || offsetMinutes > 59) return null;
+  }
+
+  const time = Date.parse(normalized);
   return Number.isFinite(time) ? time : null;
 }
 
-function withinOneDay(first, second) {
-  const firstTime = parseTimestamp(first);
-  const secondTime = parseTimestamp(second);
-  return firstTime !== null
-    && secondTime !== null
-    && Math.abs(firstTime - secondTime) <= ONE_DAY_MS;
+function nearestTimestampWithinOneDay(reference, candidates) {
+  const referenceTime = parseTimestamp(reference);
+  if (referenceTime === null) return null;
+
+  const matches = candidates
+    .map(({ field, value }) => ({ field, time: parseTimestamp(value) }))
+    .filter((candidate) => candidate.time !== null)
+    .map((candidate) => ({ ...candidate, distance: Math.abs(candidate.time - referenceTime) }))
+    .filter((candidate) => candidate.distance <= ONE_DAY_MS)
+    .sort((a, b) => a.distance - b.distance || a.field.localeCompare(b.field));
+
+  if (matches.length === 0) return null;
+  return {
+    field: matches[0].field,
+    occurredAt: new Date(matches[0].time).toISOString(),
+    distanceHours: Math.round((matches[0].distance / (60 * 60 * 1000)) * 100) / 100
+  };
 }
 
 function priorityForScore(score) {
@@ -66,7 +99,10 @@ function buildInvestigationLeads({
     const state = String(deployment.state || '').toUpperCase();
     const production = String(deployment.environmentType || '').toUpperCase() === 'PRODUCTION'
       || String(deployment.environment || '').toLowerCase() === 'production';
-    const recent = withinOneDay(issue.created, deployment.createdAt || deployment.updatedAt);
+    const temporalEvidence = nearestTimestampWithinOneDay(issue.created, [
+      { field: 'createdAt', value: deployment.createdAt },
+      { field: 'updatedAt', value: deployment.updatedAt }
+    ]);
 
     if (state === 'FAILED') {
       addLead({
@@ -90,7 +126,7 @@ function buildInvestigationLeads({
         rationale: 'The linked deployment is still IN_PROGRESS. Check its current state and completion record; this does not establish that it caused the Jira issue.',
         url: deployment.url || ''
       });
-    } else if (production && recent) {
+    } else if (production && temporalEvidence) {
       addLead({
         sourceType: 'deployment',
         sourceId: deployment.id || deployment.title || 'recent-production-deployment',
@@ -98,7 +134,8 @@ function buildInvestigationLeads({
         title: 'Review recent production deployment',
         rankScore: 60,
         evidenceKind: 'temporal-association',
-        rationale: 'This linked production deployment was recorded within 24 hours of issue creation. Timing is a follow-up clue only and does not establish causation.',
+        temporalEvidence,
+        rationale: 'This linked production deployment ' + temporalEvidence.field + ' timestamp is ' + temporalEvidence.distanceHours + ' hours from issue creation. Timing is a follow-up clue only and does not establish causation.',
         url: deployment.url || ''
       });
     }
@@ -106,10 +143,10 @@ function buildInvestigationLeads({
 
   for (const pullRequest of pullRequests) {
     const status = String(pullRequest.status || '').toUpperCase();
-    const recent = withinOneDay(
-      issue.created,
-      pullRequest.updatedAt || pullRequest.createdAt
-    );
+    const temporalEvidence = nearestTimestampWithinOneDay(issue.created, [
+      { field: 'createdAt', value: pullRequest.createdAt },
+      { field: 'updatedAt', value: pullRequest.updatedAt }
+    ]);
 
     if (status === 'OPEN' || status === 'DRAFT') {
       addLead({
@@ -122,7 +159,7 @@ function buildInvestigationLeads({
         rationale: 'The linked pull request is still ' + status + '. Review its changes and review status; its open state does not establish that it caused the Jira issue.',
         url: pullRequest.url || ''
       });
-    } else if (status === 'MERGED' && recent) {
+    } else if (status === 'MERGED' && temporalEvidence) {
       addLead({
         sourceType: 'pullRequest',
         sourceId: pullRequest.id || pullRequest.displayId || pullRequest.title || 'recent-merged-pull-request',
@@ -130,7 +167,8 @@ function buildInvestigationLeads({
         title: 'Compare recent merged change',
         rankScore: 58,
         evidenceKind: 'temporal-association',
-        rationale: 'The linked pull request was updated within 24 hours of issue creation. Compare the change with the issue timeline; timing is not proof of causation.',
+        temporalEvidence,
+        rationale: 'The linked pull request ' + temporalEvidence.field + ' timestamp is ' + temporalEvidence.distanceHours + ' hours from issue creation. Compare the change with the issue timeline; timing is not proof of causation.',
         url: pullRequest.url || ''
       });
     }
