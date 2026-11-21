@@ -1,7 +1,7 @@
 'use strict';
 
 function parseEventTime(value) {
-  if (typeof value !== 'string' || !value.trim()) return null;
+  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{4}|[+-]\\d{2}:\\d{2})$/i.test(value.trim())) return null;
   const milliseconds = Date.parse(value);
   return Number.isFinite(milliseconds) ? new Date(milliseconds).toISOString() : null;
 }
@@ -40,7 +40,7 @@ function buildIncidentTimeline({ issue = {}, teamworkGraph = {} } = {}) {
     }, issue.created);
   }
 
-  if (issueKey && issue.updated && issue.updated !== issue.created) {
+  if (issueKey && issue.updated && parseEventTime(issue.updated) !== parseEventTime(issue.created)) {
     addEvent({
       id: 'jiraIssue:' + issueKey + ':updated',
       eventType: 'issue-last-updated',
@@ -76,7 +76,7 @@ function buildIncidentTimeline({ issue = {}, teamworkGraph = {} } = {}) {
       timestampField: 'createdAt',
       provenance: 'Deployment createdAt timestamp from Atlassian Teamwork Graph.'
     }, deployment.createdAt);
-    if (deployment.updatedAt && deployment.updatedAt !== deployment.createdAt) {
+    if (deployment.updatedAt && parseEventTime(deployment.updatedAt) !== parseEventTime(deployment.createdAt)) {
       addEvent({
         ...base,
         id: 'deployment:' + id + ':updated',
@@ -110,7 +110,7 @@ function buildIncidentTimeline({ issue = {}, teamworkGraph = {} } = {}) {
       timestampField: 'createdAt',
       provenance: 'Pull request createdAt timestamp from Atlassian Teamwork Graph.'
     }, pullRequest.createdAt);
-    if (pullRequest.updatedAt && pullRequest.updatedAt !== pullRequest.createdAt) {
+    if (pullRequest.updatedAt && parseEventTime(pullRequest.updatedAt) !== parseEventTime(pullRequest.createdAt)) {
       addEvent({
         ...base,
         id: 'pullRequest:' + id + ':updated',
