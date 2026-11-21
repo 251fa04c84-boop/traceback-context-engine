@@ -14,40 +14,14 @@ const TERMINAL_JIRA_STATUSES = new Set([
 // These are deterministic triage-priority bands, not probabilities or root-cause confidence.
 const PRIORITY_THRESHOLDS = { high: 70, medium: 40 };
 
-function parseTimestamp(value) {
-  if (typeof value !== 'string') return null;
-  const normalized = value.trim();
-  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?(Z|[+-]\d{2}:?\d{2})$/i.exec(normalized);
-  if (!match) return null;
-
-  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , offset] = match;
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const day = Number(dayText);
-  const hour = Number(hourText);
-  const minute = Number(minuteText);
-  const second = Number(secondText);
-  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
-  if (month < 1 || month > 12 || day < 1 || day > daysInMonth
-    || hour > 23 || minute > 59 || second > 59) return null;
-
-  if (offset.toUpperCase() !== 'Z') {
-    const offsetParts = offset.slice(1).replace(':', '');
-    const offsetHours = Number(offsetParts.slice(0, 2));
-    const offsetMinutes = Number(offsetParts.slice(2, 4));
-    if (offsetHours > 23 || offsetMinutes > 59) return null;
-  }
-
-  const time = Date.parse(normalized);
-  return Number.isFinite(time) ? time : null;
-}
+const { parseIsoTimestamp } = require('./iso-timestamp');
 
 function nearestTimestampWithinOneDay(reference, candidates) {
-  const referenceTime = parseTimestamp(reference);
+  const referenceTime = parseIsoTimestamp(reference);
   if (referenceTime === null) return null;
 
   const matches = candidates
-    .map(({ field, value }) => ({ field, time: parseTimestamp(value) }))
+    .map(({ field, value }) => ({ field, time: parseIsoTimestamp(value) }))
     .filter((candidate) => candidate.time !== null)
     .map((candidate) => ({ ...candidate, distance: Math.abs(candidate.time - referenceTime) }))
     .filter((candidate) => candidate.distance <= ONE_DAY_MS)
