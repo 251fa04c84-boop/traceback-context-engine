@@ -46,6 +46,8 @@
 - Each event retains source type, source identifier, source label, source URL (where the source supplied one), timestamp field and provenance statement.
 - Invalid or missing timestamps are omitted rather than guessed.
 - Last-updated markers explicitly state that they are not a complete issue, deployment, commit or review history.
+- UI and the Rovo investigation action both call the same pure timeline builder with the same normalized Jira issue and current-user Teamwork Graph evidence.
+- Rovo returns the timeline alongside the existing evidence-ranked leads; no additional authorization path or source request is introduced.
 - UI renders the timeline and direct source links while stating the view is not a complete audit history.
 - Adds regression tests for chronological order, stable ordering, duplicate suppression, invalid/missing timestamps, source links and provenance.
 - Adds the new domain module to `lint:syntax`.
@@ -64,4 +66,5 @@
 2. Verify with a real Jira incident linked to real deployment and pull-request records on an authorized staging site.
 3. Verify a user with restricted source access cannot see hidden source records or links.
 4. Confirm Rovo and issue-panel outputs use the same evidence semantics.
-5. Keep the PR draft and unmerged until the above gates are evidenced.
+5. Verify the Rovo agent presents the returned timeline without inventing events or claiming causation.
+6. Keep the PR draft and unmerged until the above gates are evidenced.
