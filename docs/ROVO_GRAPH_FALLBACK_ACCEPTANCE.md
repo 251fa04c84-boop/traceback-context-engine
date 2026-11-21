@@ -32,7 +32,7 @@ The test uses the real `fetchTeamworkGraphEvidence` service with a mocked curren
 - Exactly one Jira request and one Graph request occur.
 - No app-level authorization is attempted.
 
-This is deterministic unit-level evidence only. It does not prove the live Forge Rovo action is permitted to query Teamwork Graph.
+This is deterministic unit-level evidence only. It does not prove the live Forge Rovo action is permitted to query Teamwork Graph. The test checks the stable status and non-disclosure boundary rather than exact warning copy, because the service may add pagination-incomplete wording when the initial Graph request is denied.
 
 ## Live acceptance still required
 
