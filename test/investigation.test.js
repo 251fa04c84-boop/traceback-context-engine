@@ -244,3 +244,93 @@ test('keeps temporal clues distinct from direct status evidence', () => {
   assert.match(leads[0].scoreMeaning, /not a probability/i);
   assert.match(leads[0].rationale, /does not establish causation/i);
 });
+
+
+test('uses the nearest valid created or updated timestamp and exposes its provenance', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00Z' },
+    teamworkGraph: {
+      status: 'available',
+      deployments: [],
+      pullRequests: [{
+        id: 'merged-pr-nearest',
+        title: 'Recent merged change',
+        status: 'MERGED',
+        createdAt: '2026-11-10T10:00:00Z',
+        updatedAt: '2026-11-16T09:30:00+00:00'
+      }],
+      goals: []
+    }
+  });
+
+  assert.equal(leads.length, 1);
+  assert.equal(leads[0].temporalEvidence.field, 'updatedAt');
+  assert.equal(leads[0].temporalEvidence.occurredAt, '2026-11-16T09:30:00.000Z');
+  assert.equal(leads[0].temporalEvidence.distanceHours, 0.5);
+  assert.match(leads[0].rationale, /updatedAt timestamp is 0.5 hours/);
+});
+
+test('accepts an exact 24-hour temporal boundary with an explicit timezone offset', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00+05:30' },
+    teamworkGraph: {
+      status: 'available',
+      deployments: [{
+        id: 'boundary-deployment',
+        title: 'Production deployment',
+        state: 'SUCCESSFUL',
+        environmentType: 'PRODUCTION',
+        createdAt: '2026-11-15T10:00:00+05:30'
+      }],
+      pullRequests: [],
+      goals: []
+    }
+  });
+
+  assert.equal(leads.length, 1);
+  assert.equal(leads[0].temporalEvidence.field, 'createdAt');
+  assert.equal(leads[0].temporalEvidence.distanceHours, 24);
+});
+
+test('rejects ambiguous, malformed and impossible calendar timestamps for temporal scoring', () => {
+  const invalidIssueDates = ['11/16/2026 10:00', '2026-02-30T10:00:00Z', '2026-11-16 10:00:00Z'];
+  for (const created of invalidIssueDates) {
+    const leads = buildInvestigationLeads({
+      issue: { created },
+      teamworkGraph: {
+        status: 'available',
+        deployments: [{
+          id: 'recent-production',
+          state: 'SUCCESSFUL',
+          environmentType: 'PRODUCTION',
+          createdAt: '2026-11-16T09:00:00Z'
+        }],
+        pullRequests: [],
+        goals: []
+      }
+    });
+    assert.deepEqual(leads, [], 'invalid issue timestamp must not create a temporal lead: ' + created);
+  }
+});
+
+test('uses a valid created timestamp when updated timestamp is malformed', () => {
+  const leads = buildInvestigationLeads({
+    issue: { created: '2026-11-16T10:00:00Z' },
+    teamworkGraph: {
+      status: 'available',
+      deployments: [{
+        id: 'production-fallback',
+        state: 'SUCCESSFUL',
+        environmentType: 'PRODUCTION',
+        createdAt: '2026-11-16T09:45:00Z',
+        updatedAt: 'yesterday'
+      }],
+      pullRequests: [],
+      goals: []
+    }
+  });
+
+  assert.equal(leads.length, 1);
+  assert.equal(leads[0].temporalEvidence.field, 'createdAt');
+  assert.equal(leads[0].temporalEvidence.distanceHours, 0.25);
+});
