@@ -135,7 +135,7 @@ function buildInvestigationLeads({
         rankScore: 60,
         evidenceKind: 'temporal-association',
         temporalEvidence,
-        rationale: 'This linked production deployment ' + temporalEvidence.field + ' timestamp is ' + temporalEvidence.distanceHours + ' hours from issue creation. Timing is a follow-up clue only and does not establish causation.',
+        rationale: 'This linked production deployment falls within 24 hours of issue creation; the closest source timestamp is ' + temporalEvidence.field + ' at ' + temporalEvidence.distanceHours + ' hours from issue creation. Timing is a follow-up clue only and does not establish causation.',
         url: deployment.url || ''
       });
     }
@@ -168,7 +168,7 @@ function buildInvestigationLeads({
         rankScore: 58,
         evidenceKind: 'temporal-association',
         temporalEvidence,
-        rationale: 'The linked pull request ' + temporalEvidence.field + ' timestamp is ' + temporalEvidence.distanceHours + ' hours from issue creation. Compare the change with the issue timeline; timing is not proof of causation.',
+        rationale: 'The linked pull request falls within 24 hours of issue creation; the closest source timestamp is ' + temporalEvidence.field + ' at ' + temporalEvidence.distanceHours + ' hours from issue creation. Compare the change with the issue timeline; timing is not proof of causation.',
         url: pullRequest.url || ''
       });
     }
