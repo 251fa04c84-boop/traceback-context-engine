@@ -1,3 +1,84 @@
+# Authoritative staging inventory and Rovo candidate install correction — 20 November 2026
+
+This entry supersedes conflicting earlier statements in this historical log, especially the recorded result of zero visible Jira projects and the claim that workflow #44271541973 installed only the older core branch.
+
+## Read-only staging Jira inventory
+
+- The connected Atlassian resource is `https://brand7.atlassian.net`, cloud ID `f3a80fda-b810-47e6-806b-ba68cca6507a`.
+- `listJiraProjects` with `action=view` returned exactly **one** project: **My Kanban Space (KAN)**, ID `10000`, Jira Software, team-managed/next-gen style. Its project insight reports **0 total issues**.
+- `listJiraBoards` returned exactly **one** board: **KAN board**, ID `1`, located in project KAN.
+- JQL `project = KAN ORDER BY updated DESC` returned **0 issues**.
+- A read-only Teamwork Graph lookup for JiraSpace ARI `ari:cloud:jira:f3a80fda-b810-47e6-806b-ba68cca6507a:project/10000` returned **0 relationships**. This is the ChatGPT Atlassian connector's view, not the Forge app's `api.asUser()` runtime.
+- No Jira issue, goal, deployment, pull request, relationship, permission, scope or app setting was created or changed during this recheck.
+
+## Forge staging deployment and installation correction
+
+- Workflow [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) completed successfully on 18 November 2026. Its job log explicitly records source branch `codegeist/rovo-integrated`, target `brand7.atlassian.net`, install mode `install`, and Forge environment `staging`.
+- The deployment log reports Forge app version **2.0.0**; the install log says **“Install in Jira complete!”** and confirms installation on `brand7.atlassian.net`. Therefore, the Rovo/MCP candidate branch—not the older `codegeist/forge-foundation` branch—was deployed and installed on the staging site.
+- The CLI listed the requested Graph scopes: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. The workflow did **not** use `--confirm-scopes`; installation success is not evidence that an administrator consented to those scopes or that the Forge app can use them at runtime.
+- The latest candidate branch head at the time of installation was `71f9af078948b1899350857c449b8d2c81fe140c`. Subsequent comparisons through current head `55f034324dd5a00eaf2eb0338d1637deeaa8490a` show documentation-only changes; no application source files changed after the staging install.
+- The current candidate's browser UI, effective Forge Graph scope access, linked evidence rendering, Rovo discovery/action invocation, Rovo Studio MCP visibility and external MCP OAuth 2.1 flow have **not** been independently exercised.
+
+## Remaining acceptance blockers
+
+- Staging project KAN has no Jira issues. A real, clearly labelled staging test issue with genuine linked goal, deployment and external pull-request records (or an existing issue key that already has those links) is needed to exercise issue-context and evidence behavior. No test data was fabricated.
+- An Atlassian site/org administrator must explicitly review and approve the four read-only Graph scopes before their runtime availability can be claimed.
+- Browser-level acceptance and Rovo/MCP discovery/invocation must then be performed against the installed staging candidate.
+- The production tenant `251fa04c84.atlassian.net` was not accessed or changed.
+
+---
+
+# Historical staging connector access update — 18 November 2026 (superseded by the 20 November recheck)
+
+This entry supersedes the prior statement that the connected Atlassian integration could not access the staging site. The user reconnected Atlassian and the integration now exposes `brand7.atlassian.net`.
+
+- Read-only resource discovery returned staging cloud ID `f3a80fda-b810-47e6-806b-ba68cca6507a` and URL `https://brand7.atlassian.net`.
+- The connected resource reports Jira and Goals as read-write products. This confirms connector-level access only; it does not prove Forge app OAuth scopes or Teamwork Graph scopes are granted.
+- This 18 November snapshot recorded `listJiraProjects` as **0 projects**; the 20 November recheck above supersedes that result and confirms one visible project (KAN).
+- Read-only `searchGoals` returned **0 goals**.
+- Bounded JQL searches for issues returned no issues; a prior known sample key `DEMO-7` returned 404 on this site.
+- No Jira project, issue, goal, link, scope, or app setting was created or changed during these probes.
+- Therefore there is currently no existing Jira issue or genuine linked goal/deployment/pull-request data on this staging site to exercise TraceBack against. The user has not yet supplied a project/issue identifier.
+
+**Acceptance conclusion:** staging connector access is now **PASS**. Staging test-data readiness is **BLOCKED / EMPTY**. Forge app browser UI, effective granular Graph scope consent, real linked Graph data, Rovo discovery, MCP tool visibility and action invocation remain **PENDING**. Production tenant `251fa04c84.atlassian.net` was not accessed or changed in this update.
+
+---
+
+# Authoritative staging deployment update — 18 November 2026, 14:30 IST
+
+This entry supersedes the earlier statement above that the Rovo/MCP candidate had not been deployed or installed. It records a successful CI-driven Forge staging deployment and Jira installation; it does not claim browser or Rovo acceptance.
+
+- GitHub Actions workflow run [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) completed with conclusion **success**.
+- Workflow inputs verified from job logs: source branch `codegeist/rovo-integrated`; target `brand7.atlassian.net`; both explicit test-site confirmations `true`; install mode `install`.
+- Job `deploy-to-test-site` completed successfully. The workflow's safety validation, `npm ci`, test suite, syntax checks, frontend compilation, Forge CLI lint, Forge staging deployment and Jira installation all passed.
+- Automated tests: **4,159 passed, 0 failed, 0 cancelled, 0 skipped**.
+- Forge CLI lint: **No issues found**.
+- Forge deployed app version **2.0.0** to the Forge **staging** environment and reported deployment success.
+- Forge CLI confirmed: **Install in Jira complete!** The app was installed in Jira on `brand7.atlassian.net` in the staging environment.
+- The install command listed requested scopes: `read:jira-work`, `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. The workflow deliberately did not pass `--confirm-scopes`. The logs do not independently establish which granular scopes were administratively consented or usable at runtime; do not claim Graph authorization acceptance without checking the site's authorization state.
+- The CLI emitted a generic warning that a development app was being installed to a production site, but its explicit completion message identifies the target as `brand7.atlassian.net`; the workflow inputs and safety guard also verified this target was not `251fa04c84.atlassian.net`. No production tenant was targeted.
+- The connected Atlassian MCP account still exposes only `251fa04c84.atlassian.net`, so it cannot independently inspect the new site's Jira issue or app authorization state. Fresh browser acceptance, real linked Teamwork Graph records, Rovo agent discovery, MCP tool visibility and action invocation remain **not yet verified**.
+
+**Acceptance conclusion:** staging deployment and Jira installation are **PASS**. Live UI, granular Graph authorization/data, Rovo discovery and MCP invocation remain **PENDING**. No production install or scope consent was performed.
+
+---
+
+# Authoritative live probe update — 18 November 2026, 14:08 IST
+
+This entry supersedes earlier live-probe status where it conflicts. It records a read-only connector probe, not a Forge app browser acceptance.
+
+- The connected Atlassian account still exposes only `251fa04c84.atlassian.net`, which is a production tenant. No separate test site or organization is available through this connection.
+- Read-only Jira lookup of `DEMO-7` succeeded. It returned one related Jira work item, `DEMO-8`, and issue metadata from the Demo service space. This is a service-desk sample, not a representative Jira Software incident.
+- A fresh Teamwork Graph `detailLevel=full` probe restricted to target types `AtlassianGoal`, `ExternalDeployment`, and `ExternalPullRequest` returned **zero relationships**, with `hasNextPage=false`. This confirms no matching linked records were returned for this sample issue by this connector query. It does not prove that no such records exist elsewhere in the organization.
+- The four app Teamwork Graph scopes remain unapproved on a separate test site: `read:graph:issue:jira`, `read:graph:goal:atlassian`, `read:graph:deployment:external`, and `read:graph:pull-request:external`. No scope was changed or consented.
+- The refreshed Rovo/MCP candidate is PR [#9](https://github.com/251fa04c84-boop/traceback-context-engine/pull/9), head `e131a5b147bc1aa660a0a9059989d0d26899a0c8` for app implementation, plus documentation-only head `160f2b06a6a12c517e870c58f98bd6e67c7250bf`. Exact app-head push/PR CI passed 4,159 tests, and authenticated Forge CLI lint passed on push. Latest documentation-head CI is running separately.
+- PR #9 has not been installed or deployed. Rovo discovery, Rovo Studio MCP visibility, external MCP OAuth 2.1 consent, and live action invocation remain unverified.
+- No production Jira data was modified, no production scope was approved, and no app was installed or upgraded in this probe.
+
+**Acceptance conclusion:** Teamwork Graph code paths have automated coverage and the connector can inspect Jira context, but real goal/deployment/pull-request retrieval through the TraceBack Forge app remains **not accepted**. A separate test site, organization-admin approval, and representative linked test records are still required.
+
+---
+
 # Authoritative follow-up — 17 November 2026, 15:38 UTC
 
 This entry supersedes older build/version summaries below; older entries remain as history.

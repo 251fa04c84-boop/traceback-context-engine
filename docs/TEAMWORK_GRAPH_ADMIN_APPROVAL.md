@@ -1,11 +1,11 @@
-> **Permission and live-acceptance snapshot — 18 November 2026, 12:25 IST.** No Teamwork Graph scopes have been changed or granted. The only connected Atlassian tenant remains `251fa04c84.atlassian.net`, a production site. The four granular scopes remain unapproved. The app's current core tests pass (4,137/4,137 on [CI #44254554894](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44254554894)), but this is not a Forge-panel Graph acceptance test. Last confirmed app deployment is development version 2.44.0. No real linked goal, deployment or external pull request has been accepted through the Forge panel.
->
-> The manual test-site workflow is now core-only and safety-tested. A separate Atlassian developer site and an authorized organization administrator are still required. Do not grant organization-wide Graph scopes on the connected production tenant.
->
-> **Permission boundary status — 18 November 2026.** No Teamwork Graph scope has been granted or changed. The only connected site is `251fa04c84.atlassian.net`, a production tenant. The four granular Graph scopes remain unapproved. Do not use this tenant for the new Graph-scope acceptance or grant organization-wide access without explicit organization/security-owner approval. A separate developer/test site and an authorized organization administrator are still required for safe live validation.
->
-> Core code/docs CI passed on head `ae5555a37069b02a0fd6a8f2cdc370735741a164` (4,131 tests, 0 failures), but this docs-only run did not deploy the app or validate Graph access. Last confirmed Forge development deployment is version 2.44.0; no real linked goal, deployment or external PR has been accepted through the Forge panel. Read-only connector probing of DEMO-7/DEMO-8 is not a substitute for the app's own live Graph acceptance.
->
+> **Current staging snapshot — 20 November 2026.** The connected Atlassian resource is `brand7.atlassian.net` (cloud ID `f3a80fda-b810-47e6-806b-ba68cca6507a`). Read-only inventory confirms exactly one Jira Software project, **My Kanban Space (KAN)**, project key `KAN`, ID `10000`, one board (**KAN board**, ID `1`) and **zero issues**. A JQL search for project KAN returns no issues. The JiraSpace Teamwork Graph lookup through the ChatGPT Atlassian connector returned zero relationships; this is not a Forge app runtime test.
+
+> **Forge staging install:** workflow [#44271541973](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44271541973) deployed Forge app version **2.0.0** from source branch `codegeist/rovo-integrated` and installed it on `brand7.atlassian.net` in the Forge staging environment. The CLI listed the four read-only Graph scopes but did not use `--confirm-scopes`; administrator consent and effective runtime access remain unverified.
+
+> **Permission status:** the connected ChatGPT Jira integration has read/write product access, but this is not evidence that the Forge app's Graph scopes are approved. Do not grant scopes on production tenant `251fa04c84.atlassian.net`. No test issue, goal, deployment, pull request or relationship has been fabricated or created.
+
+> **Safe next step:** have an authorized staging tester provide an existing issue key with genuine linked evidence, or explicitly approve creation of one clearly labelled test issue in KAN and link authentic records. Then have a staging organization/site administrator review the four read-only Graph scopes. The connected tools expose issue creation in KAN but do not expose Jira project creation. Do not fabricate goals, deployments or pull requests.
+
 # Teamwork Graph administrator approval request
 
 > **Use a separate Atlassian test organization with test data.** Do not approve these scopes on a production organization unless the organization's security/data owner has explicitly reviewed and approved that use.
@@ -46,10 +46,10 @@ TraceBack adds a read-only **Investigate** panel to Jira issues. It shows the is
 
 ## Current status
 
-The four granular scopes remain unchecked/disabled on the only Atlassian site currently connected to this ChatGPT account. That site is a production Jira tenant. No scope has been changed. Core application code revision `abc24d51b2b2d0053a1e9adc20a16734a0f10dde` was deployed to Forge development as version **2.44.0** by [CI run #44103273512](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44103273512); later core pushes were documentation-only and correctly skipped redundant redeployment. This confirms a development deployment, not browser acceptance, Teamwork Graph access, a separate test site, or a judge installation. Do not enable these scopes on the connected production tenant.
+The four granular scopes are **not confirmed as approved or runtime-usable**. The separate staging site `brand7.atlassian.net` is connected to the ChatGPT Atlassian integration, and Forge app version 2.0.0 is installed there. Jira Software project `KAN` is visible but contains zero issues, so the app cannot yet be exercised against a real test issue. The older development deployment version 2.44.0 and its CI record are historical and do not describe the current staging install. Do not enable these scopes on production.
 
 
-## Latest environment verification — 17 November 2026
+## Historical environment verification — 17 November 2026 (superseded by the 18 November staging snapshot above)
 
 The connected Atlassian account currently exposes exactly one site, `251fa04c84.atlassian.net`. Its two visible Jira projects are both service-desk projects (`DEMO` and `TCE`); `TCE` has no issues. There is no separate test organization or Jira Software project available through this connection. The site is a production tenant, so this request is **not** permission to enable the scopes there. Forge development version 2.44.0 is deployed on that site, but a fresh browser acceptance pass is not recorded.
 

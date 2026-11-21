@@ -1,3 +1,17 @@
+## Current upstream package recheck — 18 November 2026, 14:08 IST
+
+The exact-head Rovo candidate CI [#44261385532](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44261385532) reran the committed lockfile audit. It still reports **13 vulnerable package entries: 9 high, 4 moderate, 0 critical**. The same run passed **4,159 tests, 0 failures, 0 skipped**, syntax/frontend checks, and authenticated Forge CLI lint (No issues found).
+
+The audit package list remains:
+- High: `@atlaskit/adf-schema`, `@atlaskit/adf-schema-generator`, `@atlaskit/adf-utils`, `@atlaskit/editor-json-transformer`, `@atlaskit/editor-prosemirror`, `@atlaskit/forge-react-types`, `@forge/bridge`, `@forge/react`, and `prosemirror-view`.
+- Moderate: `@forge/api`, `@forge/manifest`, `glob`, and `minimatch`.
+
+A fresh public npm registry check on 18 November shows the latest stable Atlassian Forge releases are still `@forge/api@8.5.0`, `@forge/bridge@7.3.0`, `@forge/react@12.5.0`, and `@forge/manifest@13.9.0`. Those match the app's current declared dependency lines; the current npm audit still flags the installed tree. Sources: [@forge/api](https://www.npmjs.com/package/%40forge/api), [@forge/bridge](https://www.npmjs.com/package/%40forge/bridge), [@forge/react](https://www.npmjs.com/package/%40forge/react), [@forge/manifest](https://www.npmjs.com/package/%40forge/manifest).
+
+The latest Forge package listings show prerelease `next`/experimental versions, but no stable patched release was identified in this check. Do not substitute prereleases in a production dependency tree without explicit Atlassian support and full compatibility testing. npm's suggested automatic fixes still propose major downgrades (including `@forge/bridge@5.5.0`, `@forge/react@11.4.0`, and `@forge/api@6.1.1`), which are not acceptable blind fixes.
+
+**Current decision:** the core/rovo-integrated lockfile is still not audit-clean. The isolated dependency candidate's zero-vulnerability result remains a separate, cross-major override experiment, not the supported fix. Keep issue #6 open and PR #2 isolated. Next safe step is upstream Atlassian confirmation or a stable compatible Forge/Atlaskit release; then regenerate the lockfile and repeat npm audit, dependency-tree checks, tests, Forge lint, development deploy, and live test-site acceptance.
+ 
 > **Fresh package-level audit diagnosis — 18 November 2026, 12:30 IST.** I inspected the raw npm audit JSON printed by exact code/test CI run [#44254554894](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44254554894), rather than relying only on the aggregate count. It reports 13 vulnerable package entries: 9 high, 4 moderate, 0 critical.
 >
 > The high findings form one Atlaskit/Forge UI dependency chain: `@atlaskit/adf-schema`, `@atlaskit/adf-schema-generator`, `@atlaskit/adf-utils`, `@atlaskit/editor-json-transformer`, `@atlaskit/editor-prosemirror`, `@atlaskit/forge-react-types`, and `prosemirror-view`. The root ProseMirror advisory is [GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w), fixed at `prosemirror-view@1.42.3`; the current audit's automatic fix suggestion points to `@forge/bridge@5.5.0`, a major downgrade from the app's declared `^7.3.0`. npm also suggests `@forge/react@11.4.0` for the affected UI chain, a major downgrade from declared `^12.5.0`. Neither is an acceptable blind fix.
@@ -344,3 +358,16 @@ TraceBack's current `manifest.yml` declares `app.runtime.name: nodejs24.x`; it d
 The Forge-managed runtime advisory note above was committed as `4b421fa7847f35fb8e0db4f72f6faef991f64d64`. Its push workflow [#44250805927](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44250805927) completed successfully. The job installed Node.js **24.22.2** on the GitHub Actions runner (the workflow requests Node.js 24), completed `npm ci`, ran the dependency audit, all **4,131 tests**, syntax checks, and frontend bundle compilation. The audit still reports **9 high, 4 moderate, 0 critical** vulnerabilities. The Forge CLI validation and deployment steps were skipped in this documentation-only run; this run does not verify the Forge-managed app runtime's patch level or constitute a new app deployment/live acceptance.
 
 Atlassian's current Forge CLI setup documentation requires Node.js **22.23.4 or later** on the 22.x line, or **24.22.1 or later** on the 24.x line. The observed CI runner version 24.22.2 satisfies that local CLI requirement. This is distinct from the Forge-hosted app runtime selected by `manifest.yml`, whose exact patch version remains platform-managed and unverified from this repository.
+
+
+## External upstream confirmation and escalation evidence — 18 November 2026
+
+A public Atlassian Developer Community thread independently reports the same upstream dependency condition observed in this repository: Forge UI Kit applications using `@forge/react` and `@forge/bridge` receive `@atlaskit/editor-prosemirror`, whose published 9.0.0 dependency graph pins vulnerable `prosemirror-view@1.41.5` even when the application does not directly use ProseMirror editing. The thread reports that overriding `prosemirror-view` to the patched 1.42.3 line removed the high-severity audit findings in a clean test tree. A participant recommends an Atlassian Ecosystem Support Request because the vulnerable pin originates in Atlassian-owned packages. This is community reproduction and advice, not a formal Atlassian support statement.
+
+Reference: https://community.developer.atlassian.com/t/forge-react-bridge-dependencies-pin-vulnerable-prosemirror-view-1-41-5-ghsa-c8x8-7fp4-3x9w/103359
+
+The repository's isolated PR #11 goes further to `prosemirror-view@1.42.9`, with clean dependency-tree validation and 0 high / 6 moderate audit findings on its exact tested implementation commit. It remains a separate draft. This evidence supports keeping the narrow ProseMirror-only remediation as the preferred candidate for technical review; it does not justify merging without exact-head validation, runtime review, and an upstream compatibility decision.
+
+**Escalation action:** request written Atlassian guidance on (1) the Marketplace treatment of this transitive high-severity finding when the dependency is pinned by Atlassian's own Forge UI packages, (2) the supported patched dependency version or release ETA, and (3) whether a temporary documented mitigation/extension is available while the upstream pin is corrected. Attach the exact `npm ls prosemirror-view --all`, `npm audit --json`, lockfile, and CI evidence from PR #11. Do not claim that the community thread grants a Marketplace exception.
+
+**Decision unchanged:** main candidate baseline remains 9 high, 4 moderate, 0 critical; PR #11 remains draft/unmerged; the cross-major glob override experiment remains rejected for release. No dependency override is promoted to the release branch by this documentation update.
