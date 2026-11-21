@@ -3,8 +3,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { runTracebackInvestigationAction } = require('../src/domain/rovo-investigation-action');
+const { runIssueContextResolver } = require('../src/domain/issue-context-resolver');
 const { resolveActionIssueKey } = require('../src/domain/action-context');
-const { normalizeIssue } = require('../src/domain/incident');
+const { resolveIssueKey, normalizeIssue } = require('../src/domain/incident');
 const { buildInvestigationLeads } = require('../src/domain/investigation');
 const { buildIncidentTimeline } = require('../src/domain/timeline');
 const { buildEvidenceCoverage } = require('../src/domain/evidence-coverage');
@@ -36,6 +37,7 @@ const issuePayload = {
   }
 };
 
+const cloudId = 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e';
 const graphFixtures = [
   {
     name: 'available linked evidence',
@@ -115,7 +117,7 @@ function route(strings, ...values) {
 }
 
 for (const fixture of graphFixtures) {
-  test('keeps Jira panel and Rovo evidence outputs identical for ' + fixture.name, async () => {
+  test('compares actual Jira panel resolver and Rovo action outputs for ' + fixture.name, async () => {
     const calls = { asUser: 0, asApp: 0, jira: 0, graph: 0 };
     const api = {
       asUser() {
@@ -132,54 +134,72 @@ for (const fixture of graphFixtures) {
         throw new Error('Investigation must never use app-level authorization.');
       }
     };
-
-    const result = await runTracebackInvestigationAction({
-      payload: {
-        context: {
-          cloudId: 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e',
-          jira: { issueKey: 'PAY-123' }
-        }
-      },
+    const dependencies = {
       api,
       route,
-      fetchJiraIssue: async (request) => {
+      fetchJiraIssue: async (request, timeoutMs) => {
+        assert.equal(timeoutMs, 8000);
         await request();
         return issuePayload;
       },
       defaultJiraRequestTimeoutMs: 8000,
-      resolveActionIssueKey,
       normalizeIssue,
-      fetchTeamworkGraphEvidence: async (client, issueId, cloudId) => {
+      fetchTeamworkGraphEvidence: async (client, issueId, requestedCloudId) => {
         calls.graph += 1;
         assert.equal(client, api);
         assert.equal(issueId, '10042');
-        assert.equal(cloudId, 'c0e47565-a2b1-472f-bd30-5c1e3684bb1e');
+        assert.equal(requestedCloudId, cloudId);
         return fixture.graph;
+      }
+    };
+
+    // Exercise the same production function used by the actual Jira issue panel.
+    const panelIncident = await runIssueContextResolver({
+      ...dependencies,
+      payload: {},
+      context: { cloudId, extension: { issue: { key: 'PAY-123' } } },
+      resolveIssueKey
+    });
+
+    // Exercise the production Rovo action independently against the same source fixtures.
+    const rovoResult = await runTracebackInvestigationAction({
+      ...dependencies,
+      payload: {
+        context: {
+          cloudId,
+          jira: { issueKey: 'PAY-123' }
+        }
       },
+      resolveActionIssueKey,
       buildInvestigationLeads,
       buildIncidentTimeline,
       buildEvidenceCoverage
     });
 
-    // The Jira issue panel derives these three views from the resolver's
-    // normalized issue and Graph payload. Rovo must expose the same results.
-    const panelInputs = {
-      issue: result,
-      relatedWorkItems: result.relatedWorkItems,
-      teamworkGraph: result.teamworkGraph
-    };
-    const panelLeads = buildInvestigationLeads(panelInputs);
-    const panelTimeline = buildIncidentTimeline(panelInputs);
-    const panelCoverage = buildEvidenceCoverage(panelInputs);
+    const panelLeads = buildInvestigationLeads({
+      issue: panelIncident,
+      relatedWorkItems: panelIncident.relatedWorkItems,
+      teamworkGraph: panelIncident.teamworkGraph
+    });
+    const panelTimeline = buildIncidentTimeline({
+      issue: panelIncident,
+      teamworkGraph: panelIncident.teamworkGraph
+    });
+    const panelCoverage = buildEvidenceCoverage({
+      issue: panelIncident,
+      teamworkGraph: panelIncident.teamworkGraph
+    });
 
-    assert.deepEqual(result.investigationLeads, panelLeads);
-    assert.deepEqual(result.incidentTimeline, panelTimeline);
-    assert.deepEqual(result.evidenceCoverage, panelCoverage);
-    assert.equal(calls.asUser, 1);
+    assert.deepEqual(rovoResult.investigationLeads, panelLeads);
+    assert.deepEqual(rovoResult.incidentTimeline, panelTimeline);
+    assert.deepEqual(rovoResult.evidenceCoverage, panelCoverage);
+    assert.equal(calls.asUser, 2);
     assert.equal(calls.asApp, 0);
-    assert.equal(calls.jira, 1);
-    assert.equal(calls.graph, 1);
-    assert.equal(result.key, 'PAY-123');
-    assert.equal(result.teamworkGraph.status, fixture.graph.status);
+    assert.equal(calls.jira, 2);
+    assert.equal(calls.graph, 2);
+    assert.equal(panelIncident.key, 'PAY-123');
+    assert.equal(rovoResult.key, 'PAY-123');
+    assert.equal(panelIncident.teamworkGraph.status, fixture.graph.status);
+    assert.equal(rovoResult.teamworkGraph.status, fixture.graph.status);
   });
 }
