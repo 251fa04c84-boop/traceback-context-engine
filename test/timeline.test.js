@@ -94,3 +94,45 @@ test('preserves partial evidence without pretending the timeline is complete', (
   assert.equal(timeline[1].sourceType, 'deployment');
   assert.equal(timeline[1].provenance, 'Deployment createdAt timestamp from Atlassian Teamwork Graph.');
 });
+
+
+test('accepts Jira timezone offsets but rejects ambiguous non-ISO date strings', () => {
+  const timeline = buildIncidentTimeline({
+    issue: {
+      key: 'PAY-43',
+      created: '2026-11-21T10:00:00.000+0000',
+      updated: '2026-11-21T15:30:00+05:30'
+    },
+    teamworkGraph: {
+      deployments: [{ id: 'dep-bad', createdAt: '2026-11-21' }],
+      pullRequests: [{ id: 'pr-bad', createdAt: 'yesterday' }]
+    }
+  });
+
+  assert.equal(timeline.length, 1);
+  assert.equal(timeline[0].occurredAt, '2026-11-21T10:00:00.000Z');
+  assert.equal(timeline[0].eventType, 'issue-created');
+});
+
+test('does not show a last-updated marker when it represents the same instant as creation', () => {
+  const timeline = buildIncidentTimeline({
+    issue: {
+      key: 'PAY-44',
+      created: '2026-11-21T10:00:00Z',
+      updated: '2026-11-21T15:30:00+05:30'
+    },
+    teamworkGraph: {
+      deployments: [{
+        id: 'dep-same',
+        createdAt: '2026-11-21T10:00:00Z',
+        updatedAt: '2026-11-21T15:30:00+05:30'
+      }],
+      pullRequests: []
+    }
+  });
+
+  assert.deepEqual(timeline.map((event) => event.eventType), [
+    'deployment-created',
+    'issue-created'
+  ]);
+});
