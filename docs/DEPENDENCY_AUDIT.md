@@ -1,3 +1,30 @@
+## Current-head ProseMirror-only remediation validation — 18 November 2026, 14:36 IST
+
+The narrow remediation was carried onto the current Rovo application base in draft PR [#12](https://github.com/251fa04c84-boop/traceback-context-engine/pull/12), head `0b9ea00a2553ea912a0c7a4d3732af227486b80b`.
+
+Exact-head PR CI [#44326084189](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44326084189) completed successfully:
+- `npm ci` installed 403 packages and audited 404.
+- `npm ls prosemirror-view --all` confirmed all reported copies resolve to `prosemirror-view@1.42.9`; npm marks the override explicitly.
+- **4,159 tests passed, 0 failed**.
+- Syntax and frontend checks passed.
+- npm audit reports **6 moderate, 0 high, 0 critical** vulnerabilities. The CI log includes the complete parsed package report.
+- Forge CLI validation and deployment were skipped by the PR workflow condition. No staging/browser acceptance occurred.
+
+The six affected package entries and the npm-reported fix suggestions are:
+
+| Package | Severity | Advisory / dependency path | npm suggested fix |
+| --- | --- | --- | --- |
+| `@forge/api` | Moderate | Via `@forge/manifest` | `@forge/api@6.1.1` (major downgrade) |
+| `@forge/bridge` | Moderate | Via `@forge/manifest` | `@forge/bridge@5.5.0` (major downgrade) |
+| `@forge/manifest` | Moderate | Via `glob` | `@forge/api@6.1.1` (major downgrade) |
+| `@forge/react` | Moderate | Via `@forge/bridge` | `@forge/react@11.4.0` (major downgrade) |
+| `glob` | Moderate | [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4), plus transitive `minimatch` | No safe in-range fix reported |
+| `minimatch` | Moderate | [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) | No safe in-range fix reported |
+
+These are six package entries, not necessarily six independent root causes: the Forge package findings are propagated through the dependency chain. npm's suggested direct Forge fixes are major downgrades and are not safe to apply blindly. The audit JSON also reports `glob` affected through 14.0.1 and `minimatch` affected through 11.0.0; this narrow candidate does not override either package. This is a meaningful reduction from the baseline's 9 high / 4 moderate findings, but it is **not audit-clean**. Do not claim zero vulnerabilities or Marketplace security compliance.
+
+The candidate changes only the `prosemirror-view@1.42.9` override, matching lockfile entries, and CI dependency-tree validation/branch coverage. It does not include the experimental `glob@14` override. PR #12 remains draft and unmerged pending independent dependency compatibility review, exact audit JSON review, authenticated Forge CLI lint, and controlled staging acceptance.
+
 ## Current upstream package recheck — 18 November 2026, 14:08 IST
 
 The exact-head Rovo candidate CI [#44261385532](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44261385532) reran the committed lockfile audit. It still reports **13 vulnerable package entries: 9 high, 4 moderate, 0 critical**. The same run passed **4,159 tests, 0 failures, 0 skipped**, syntax/frontend checks, and authenticated Forge CLI lint (No issues found).
@@ -371,3 +398,48 @@ The repository's isolated PR #11 goes further to `prosemirror-view@1.42.9`, with
 **Escalation action:** request written Atlassian guidance on (1) the Marketplace treatment of this transitive high-severity finding when the dependency is pinned by Atlassian's own Forge UI packages, (2) the supported patched dependency version or release ETA, and (3) whether a temporary documented mitigation/extension is available while the upstream pin is corrected. Attach the exact `npm ls prosemirror-view --all`, `npm audit --json`, lockfile, and CI evidence from PR #11. Do not claim that the community thread grants a Marketplace exception.
 
 **Decision unchanged:** main candidate baseline remains 9 high, 4 moderate, 0 critical; PR #11 remains draft/unmerged; the cross-major glob override experiment remains rejected for release. No dependency override is promoted to the release branch by this documentation update.
+
+
+## Upstream Forge stable-release recheck — 18 November 2026
+
+Checked the public npm package pages for the exact direct Forge dependencies in this candidate. The latest stable tags shown on the registry remain the versions already declared by the app:
+
+| Package | App range | Latest stable shown by npm | Assessment |
+| --- | --- | --- | --- |
+| `@forge/api` | `^8.5.0` | `8.5.0` | No newer stable release shown |
+| `@forge/bridge` | `^7.3.0` | `7.3.0` | `7.3.1-next` exists, but is prerelease, not a stable security fix |
+| `@forge/react` | `^12.5.0` | `12.5.0` | `12.5.1-next` exists, but is prerelease, not a stable security fix |
+| `@forge/manifest` (transitive) | lockfile resolves `13.9.0` | `13.9.0` | No newer stable release shown |
+
+Registry references (checked 18 November 2026):
+- https://www.npmjs.com/package/%40forge/api
+- https://www.npmjs.com/package/%40forge/bridge?activeTab=versions
+- https://www.npmjs.com/package/%40forge/react?activeTab=versions
+- https://www.npmjs.com/package/%40forge/manifest
+
+The registry pages therefore do not currently show a newer stable Forge package release that can be applied as a compatible in-range remediation for the remaining `glob`/`minimatch` findings. Do not adopt `next`/experimental Forge packages or major downgrades merely to silence npm audit. Recheck stable package metadata before release; this is a dated registry snapshot, not a promise that no upstream fix will ship later.
+
+
+## Exact-head Forge CI event clarification — 18 November 2026
+
+GitHub Actions run [#44329499653](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44329499653) completed successfully for head `fb22c5e3bf99a60ecc1de61989367b6362f48b19`, but its event is `pull_request`. The workflow intentionally gates authenticated Forge CLI lint behind `github.event_name != 'pull_request'`, so the Forge lint step was skipped in this run; it must not be reported as a successful Forge validation. The workflow is configured to run on pushes to `security/**`, where the authenticated lint step can execute using repository secrets. No deployment is configured for this security branch. The candidate remains draft and unmerged pending that push-event validation and controlled staging acceptance.
+
+
+## Application-surface compatibility review — 18 November 2026
+
+The current application source was inspected to determine whether an app-level ProseMirror editor regression test is applicable to this candidate.
+
+- `package.json` declares Forge UI Kit dependencies (`@forge/react`, `@forge/bridge`, and Forge API/resolver packages); it does not declare ProseMirror as an application dependency.
+- `src/frontend/index.jsx` renders Forge UI Kit components through `ForgeReconciler`. It contains no ProseMirror editor, editable document surface, paste handler, or direct ProseMirror import.
+- The `prosemirror-view` dependency is therefore transitive through Atlassian's Forge/Atlaskit UI dependency graph, rather than an editor instantiated by TraceBack's own frontend.
+
+**Test applicability decision:** a browser/editor paste regression test cannot be meaningfully added to this app because there is no app-owned ProseMirror editing surface to exercise. The existing candidate CI still verifies the installed dependency tree, all 4,159 automated tests, syntax checks and frontend bundle compilation. The upstream XSS advisory concerns attacker-supplied HTML paste into a ProseMirror editor; this patch updates the transitive package version but does not create or validate an editor feature in TraceBack.
+
+This closes the *app-level editor test applicability investigation*, not the broader runtime acceptance gate. Forge UI Kit rendering in an authenticated staging site, authenticated Forge CLI validation on a push event, and the remaining six moderate audit findings still require separate decisions/evidence. PR #12 remains draft and unmerged.
+
+
+## CI event correction and Forge-validation trigger — 18 November 2026
+
+Correction to the earlier PR comment: GitHub's run metadata confirms run #44331631221 was triggered by **`pull_request`**, not `push`. Its successful result proves lockfile install, dependency-tree validation, tests, syntax/frontend lint, and the audit snapshot; it does **not** prove authenticated Forge CLI lint. The Forge CLI step was skipped by the workflow's explicit pull-request event guard.
+
+The workflow on this branch includes `security/**` in its push trigger, and `manifest.yml` contains the existing app ID. A subsequent commit to this security branch is therefore needed to exercise the authenticated Forge CLI step. No production or staging deployment is configured for this branch. Do not interpret a PR check as a push-event Forge validation.
