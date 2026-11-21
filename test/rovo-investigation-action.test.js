@@ -68,7 +68,7 @@ test('runs the action as the invoking user and passes the documented Jira contex
   assert.equal(calls.asUser, 1);
   assert.equal(calls.asApp, 0);
   assert.equal(calls.jira.length, 1);
-  assert.match(calls.jira[0].url, /\\/issue\\/PAY-123\\?/);
+  assert.ok(calls.jira[0].url.includes('/issue/PAY-123?'));
   assert.deepEqual(calls.jira[0].options, { headers: { Accept: 'application/json' } });
   assert.equal(calls.graph[0].client, deps.api);
   assert.equal(calls.graph[0].issueId, '10001');
@@ -88,7 +88,7 @@ test('uses an explicit issue key only when it matches active Jira context', asyn
     }
   });
   assert.equal(calls.jira.length, 1);
-  assert.match(calls.jira[0].url, /\\/issue\\/PAY-123\\?/);
+  assert.ok(calls.jira[0].url.includes('/issue/PAY-123?'));
 });
 
 test('rejects a mismatched issue key before making any Jira or Graph request', async () => {
