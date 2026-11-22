@@ -60,3 +60,48 @@ The latest PR #24 exact-head CI run [#44922332097](https://github.com/251fa04c84
 No Jira or Confluence data, links, permissions, or scopes were changed. No app was deployed, installed, or upgraded. The Forge runtime, Rovo action, external MCP invocation, and two-user permission boundary remain unverified.
 
 **Remaining external prerequisite:** the staging owner/admin must make one genuine non-production Jira incident with authentic linked Teamwork Graph records and two approved test users available, and separately confirm the four read-only Graph scopes for the staging installation. Do not use production data or fabricate linked records.
+
+
+## Follow-up verification — 22 November 2026 (PR #24 candidate)
+
+Candidate branch: `docs/codegeist-judge-package-2026-11-21`  
+Candidate head: `80dd8c6f3b07dbb77706cd2a8302d4c8e797e396`  
+PR: https://github.com/251fa04c84-boop/traceback-context-engine/pull/24
+
+### Exact-head CI
+
+Workflow [#44981401866](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44981401866) completed successfully with `head_sha` equal to the candidate head above.
+
+The actual job log confirms:
+- Committed-lockfile `npm ci`: passed.
+- ProseMirror dependency-tree validation: passed; resolved `prosemirror-view@1.42.9`.
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**, including the new Rovo Graph-unavailable fallback regression.
+- `npm run lint:syntax`: passed.
+- `npm run lint:frontend`: passed.
+- Candidate dependency audit: **0 high, 6 moderate, 0 critical**.
+- Forge CLI validation and development deployment: skipped by pull-request event conditions.
+
+This is exact PR-head CI, not Forge installation or live runtime acceptance.
+
+### Rovo failure-mode regression
+
+The new test in `test/rovo-investigation-action.test.js` verifies that when the Teamwork Graph service returns an explicit unavailable state during a Rovo action:
+- the Jira issue is still returned;
+- the action does not use app-level authorization;
+- no Graph records are fabricated;
+- the unavailable status and warning remain visible;
+- timeline and evidence coverage consume the unavailable state.
+
+This verifies the fallback contract under a controlled test. It does not prove a live Rovo action can query Teamwork Graph successfully.
+
+### Staging recheck boundary
+
+The latest read-only connector-side inspection of `brand7.atlassian.net` still found Jira project `KAN` with zero issues. Confluence space `SD` returned four page targets through the connected Teamwork Graph connector. This is not Forge-app runtime evidence. No real Jira incident or linked Graph deployment/pull-request/goal data is available for acceptance, and no permitted/restricted user pair has been supplied.
+
+### Current decision
+
+PR #24 remains open, draft and unmerged. The six moderate dependency findings remain open; no forced major override or vulnerability waiver was applied. Forge runtime, Rovo invocation, external MCP OAuth/tool invocation, and two-user permission isolation remain unverified. No app installation/upgrade, scope approval, Jira/Confluence mutation, or production action was performed.
+
+### Minimum staging-owner prerequisite
+
+The staging owner must identify one genuine non-production Jira incident with authentic linked Teamwork Graph records, provide two approved test users with different access to at least one linked record, and confirm the four declared read-only Graph scopes for the staging installation. Do not manufacture incident data or use production.
