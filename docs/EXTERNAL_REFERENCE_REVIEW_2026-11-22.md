@@ -43,13 +43,19 @@ Recommended future contract for each candidate:
 
 Do not adopt another project's numeric weights or thresholds without a TraceBack-specific labelled evaluation set. In particular, a generic ±48-hour window, service-prefix heuristic, or PR-size proxy is not validated for this app's current Graph fields.
 
-### 3. Preserve uncertainty as first-class data
+### 3. Capture incident onset and the post-onset window carefully
+
+Change Suspects highlights two useful workflow details: incident onset can differ from issue creation time, and later changes (rollbacks or hotfixes) can be important counter-evidence. It also supports several investigation windows and uses recorded deployment time when available instead of treating resolution time as deployment time.
+
+For TraceBack, an editable onset time is a possible future enhancement only if it is clearly attributed to the user who supplied it, stored with timezone/precision, and never silently replaces the Jira creation timestamp. A post-onset change should be shown as a later event, not ranked as a pre-onset cause. TraceBack must not add the competitor's “mark cause” write action while its product contract remains read-only; at most it can link to the source Jira record and let the user make changes in Jira under their own permissions.
+
+### 4. Preserve uncertainty as first-class data
 
 Repowise's change metadata keeps unavailable values null/unknown rather than inferring them. TraceBack should continue to distinguish available, empty, partial, and unavailable Graph states. An empty or permission-filtered Graph result must never be translated into “no related changes exist.”
 
 The existing coverage model correctly distinguishes sources TraceBack queried from telemetry, logs, traces, alerts, feature flags, and runtime configuration that it does not query. Keep that boundary visible in both panel and Rovo output.
 
-### 4. Use a deterministic core and shared agent surfaces
+### 5. Use a deterministic core and shared agent surfaces
 
 TWG CLI's agent-first design supports concise, outcome-oriented Rovo/MCP tool descriptions. The same TraceBack evidence contract should power the Jira panel, Rovo action, and MCP tool. Every surface should disclose the current evidence state, source links, and authorization boundary.
 
@@ -69,7 +75,7 @@ Do not install TWG CLI as a runtime dependency or use it to bypass Forge's asUse
 
 ## Strategic positioning for Codegeist
 
-TraceBack should differentiate on **defensible investigation evidence and honest uncertainty**, not on claiming autonomous root-cause detection. Incident Time Machine's broad historical-memory workflow and other Codegeist incident projects make “AI incident triage” alone a crowded claim. The sharper story is:
+TraceBack should differentiate on **defensible investigation evidence and honest uncertainty**, not on claiming autonomous root-cause detection. Change Suspects already occupies the focused pre-incident change-ranking workflow, while Incident Time Machine emphasizes historical incident memory and other Codegeist projects explore automation and recurring-incident grouping. “AI incident triage” alone is therefore a crowded claim. The sharper story is:
 
 1. Start from the Jira issue the responder is actually viewing.
 2. Retrieve linked work context under that user's permissions.
