@@ -116,3 +116,12 @@ The remaining P0 blockers require staging-owner/admin participation, not additio
 ### Release posture
 
 Keep PR #24 draft and unmerged. No production deployment, install/upgrade, scope approval, data mutation, or fabricated evidence. A successful CI run is a code-quality gate, not competition readiness by itself.
+
+
+### CI provenance correction — 22 November 2026
+
+A review of the raw logs for PR runs #44981401866 and #44981590219 found that GitHub checked out the synthetic `refs/pull/24/merge` commit, even though each run's metadata recorded the PR head SHA. Their passing test results are valid for the tested merge result, but they must **not** be described as tests executed on the PR head commit itself.
+
+To close this evidence gap, `.github/workflows/ci.yml` now explicitly checks out `github.event.pull_request.head.sha` for pull-request events (and `github.sha` for push events), then verifies `git rev-parse HEAD` against that expected SHA before installing dependencies or running tests. The resulting new CI run must pass before this workflow correction is considered accepted. Until then, exact-head validation is pending.
+
+This correction does not change the app runtime, manifest, dependency tree or deployment configuration. It does not install, deploy, merge or grant scopes.
