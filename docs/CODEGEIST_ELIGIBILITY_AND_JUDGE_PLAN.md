@@ -60,3 +60,59 @@ Do not record this demo until the exact build used in the recording has passed C
 ## Release decision
 
 The candidate remains draft. Do not merge, deploy to production, approve new scopes, install/upgrade on the connected production tenant, or create artificial Jira/Confluence records to make the demo look complete. A separate authorized staging site and genuine linked records are required for the remaining acceptance work.
+
+
+## Strategic update — 22 November 2026
+
+### Verified engineering baseline
+
+- Current PR #24 head: `cfd9f36a42f56e6c499885fb1889d9c9e6bffb21`.
+- Exact PR-head workflow [#44981590219](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44981590219) completed successfully. The actual job log confirms lockfile installation, ProseMirror dependency validation, syntax lint, frontend compilation and **4,193 tests passed, 0 failed, 0 skipped**.
+- Candidate dependency audit remains **0 high, 6 moderate, 0 critical**. This is not a clean audit and not a vulnerability waiver.
+- Forge CLI validation and development deployment were skipped on the pull-request event. This run does not prove a Forge deployment or live app runtime.
+- PR #24 remains draft, open and unmerged.
+
+### Prize strategy — optimize for proof, not category count
+
+The rules permit at most one grand prize and one bonus prize per submission. Therefore, do not dilute the judge narrative by presenting every category as an equal target.
+
+1. **Primary: Apps for Software Teams.** Lead with the incident-response workflow and the concrete problem: reconstructing delivery context without making unsupported causal claims.
+2. **Bonus candidate: Best Teamwork Graph.** This is the strongest differentiated bonus if, and only if, real Graph records are returned in Forge runtime and the permitted/restricted-user comparison passes.
+3. **Best Agents and Atlassian MCP: supporting product breadth.** Demonstrate the same action through Rovo and MCP only after live discovery, invocation and permission-boundary acceptance. Do not present a declared manifest module as a verified integration.
+4. **Marketplace: not a current target.** No listing or Marketplace review ticket is evidenced. Do not spend critical staging time on it before the core installable journey is proven.
+
+### Judge-proof narrative
+
+The single memorable claim should be: **“TraceBack helps incident responders see what the delivery evidence supports, what it does not support, and exactly what to verify next.”**
+
+Demonstrate it in this order:
+- Start with one genuine incident and a short, credible responder pain point.
+- Show original Jira and linked Graph source records with provenance.
+- Show how the timeline and deterministic leads narrow the next checks without claiming root cause.
+- Deliberately show one missing/partial/unavailable source and explain why it is not equivalent to an empty source.
+- Compare the same investigation through the Jira panel and Rovo; add MCP only if it has passed a real invocation.
+- Show the restricted user's result and prove inaccessible records are not leaked.
+
+Do not spend demo time on architecture slides, generic AI claims, simulated Graph data, or unverified product capabilities. Keep a sanitized evidence log tying every demo screen to the installed version, commit, user role and observed result.
+
+### Next gate sequence
+
+| Priority | Gate | Exit evidence |
+|---|---|---|
+| P0 | Exact-head CI | Run #44981590219 successful on current head; recorded above |
+| P0 | Dependency decision | Upstream-compatible patched tree or explicit owner-approved risk decision; no force override |
+| P0 | Real staging incident | Existing, approved issue with authentic linked Graph records |
+| P0 | Scope and permission check | Admin-confirmed read scopes and permitted/restricted-user test results |
+| P1 | Forge app runtime | Installed candidate SHA/version and successful panel result |
+| P1 | Rovo parity | Live action result compared with panel for the same user and issue |
+| P1 | MCP proof | Admin enablement, OAuth, discovery and invocation evidence |
+| P2 | User study | 5–8 engineers, raw anonymized observations, no unsupported impact claims |
+| P2 | Submission package | Install link, setup guide, public demo under five minutes, exact build identity |
+
+### Current blocker ownership
+
+The remaining P0 blockers require staging-owner/admin participation, not additional speculative code. The staging snapshot records project KAN with zero issues; connector-side Confluence/Graph results are not a substitute for Forge runtime evidence. Do not create synthetic issues or linked records. Ask the staging owner for a genuine incident, two approved test users with different access, and explicit confirmation of the four read-only Teamwork Graph scopes.
+
+### Release posture
+
+Keep PR #24 draft and unmerged. No production deployment, install/upgrade, scope approval, data mutation, or fabricated evidence. A successful CI run is a code-quality gate, not competition readiness by itself.
