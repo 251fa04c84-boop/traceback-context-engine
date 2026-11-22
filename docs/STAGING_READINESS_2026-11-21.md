@@ -43,3 +43,20 @@ No Jira issue, project, Confluence page, relationship, or other test record was 
 Primary grand-prize category remains **Apps for Software Teams**. The preferred bonus target remains **Best Teamwork Graph**, but only after authentic linked records are retrieved in the installed Rovo path and the permission tests pass. Best Agents and Best Atlassian MCP remain conditional opportunities requiring real discovery and invocation evidence.
 
 Until those gates pass, the demo must label Rovo/MCP as unverified or show the honest Jira-only fallback with Graph marked unavailable/partial. Do not claim bonus eligibility, runtime integration success, or root-cause detection from temporal proximity.
+
+
+## Follow-up connector-side Teamwork Graph read — 22 November 2026
+
+A fresh read-only check through the connected Atlassian account confirmed:
+
+- The accessible-resources call still returns only `brand7.atlassian.net`.
+- Jira project inventory still contains only `KAN` (My Kanban Space, ID `10000`), with `totalIssueCount: 0`.
+- The Confluence `SD` space is readable through Teamwork Graph. A `getGraphContext` request for that space returned the `space_has_documents` relationship with four Confluence page targets and no further page of results.
+- The connector therefore has **some Teamwork Graph read access** on this tenant. This is connector-side access only; it does not prove that the Forge app's `api.asUser().requestTeamworkGraph()` call has effective scopes or works in an installed app runtime.
+- No genuine Jira incident or linked goal, external deployment, or pull-request record is available for TraceBack acceptance. No two-user permission comparison can be run without approved test accounts.
+
+The latest PR #24 exact-head CI run [#44922332097](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44922332097) completed successfully on `66a62fb2660aad58746863adf17c818c7d4012eb`: 4,192 tests passed, 0 failed, 0 skipped; committed-lockfile installation, ProseMirror dependency-tree validation, audit reporting, syntax checks, and frontend compilation completed. The audit reported six moderate findings and zero high/critical findings on this candidate. Forge CLI validation and development deployment were skipped because this was a pull-request event.
+
+No Jira or Confluence data, links, permissions, or scopes were changed. No app was deployed, installed, or upgraded. The Forge runtime, Rovo action, external MCP invocation, and two-user permission boundary remain unverified.
+
+**Remaining external prerequisite:** the staging owner/admin must make one genuine non-production Jira incident with authentic linked Teamwork Graph records and two approved test users available, and separately confirm the four read-only Graph scopes for the staging installation. Do not use production data or fabricate linked records.
