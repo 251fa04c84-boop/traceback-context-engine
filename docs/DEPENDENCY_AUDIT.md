@@ -1,3 +1,26 @@
+## Latest exact-head audit snapshot — 23 November 2026
+
+This snapshot was captured from PR #24's successful exact-head CI run [#45103568177](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103568177), application commit `aa62ac5c22e73e8b93e33d03c91c512bccf96905`.
+
+- `npm ci` completed from the committed lockfile.
+- `npm ls prosemirror-view --all` passed; the resolved tree uses `prosemirror-view@1.42.9`.
+- The audit reported **0 critical, 0 high, 6 moderate** vulnerable package entries.
+- Exact locked package versions in the audited tree:
+  - `@forge/api@8.5.0`
+  - `@forge/bridge@7.3.0`
+  - `@forge/manifest@13.9.0`
+  - `@forge/react@12.5.0`
+  - `glob@13.0.7`
+  - `minimatch@10.2.6`
+- The direct Forge package entries are affected through the current `@forge/manifest` / `@forge/bridge` dependency chain. The `glob` finding references [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4); the `minimatch` finding references [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249).
+- npm's broad suggested fixes still point to major downgrades, including `@forge/api@6.1.1`, `@forge/bridge@5.5.0`, and `@forge/react@11.4.0`. The audit marks these as semver-major changes. They were not applied.
+- The exact run passed **4,193 tests, 0 failed, 0 skipped**, JavaScript syntax checks, and frontend bundle compilation.
+- Forge CLI lint, development deployment, staging deployment, and site installation were skipped by pull-request workflow conditions. This is not live Forge, Jira panel, Rovo, Teamwork Graph runtime, or MCP acceptance evidence.
+
+**Decision:** keep the supported Forge major lines and the narrow ProseMirror remediation. Do not run `npm audit fix --force`, downgrade Forge packages, or force a `glob@14` override outside the declared `@forge/manifest` range. Track the six moderate entries as an open dependency risk until Atlassian publishes a compatible release or provides written compatibility guidance. Re-run the complete audit, tests, Forge lint, and staging runtime checks after a supported update.
+
+---
+
 ## Latest exact-head audit snapshot — 21 November 2026
 
 This snapshot was captured from the successful PR #19 validation run [#44916569914](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44916569914), exact application commit `345de19c801ee2a8ed314246ae392ed31b0c8250`.
