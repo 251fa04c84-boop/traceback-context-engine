@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DEV=".github/workflows/forge-dev-deploy.yml"
+STAGING=".github/workflows/forge-test-site-deploy.yml"
+
+fail() {
+  echo "Deployment safety check failed: $1" >&2
+  exit 1
+}
+
+if grep -Eq 'npx[[:space:]]+--yes[[:space:]]+@forge/cli@[^[:space:]]+[[:space:]]+install([[:space:]]|$)' "$DEV"; then
+  fail "the development workflow must never install an app on a Jira site"
+fi
+if grep -Eq -- '--site|--upgrade|--confirm-scopes' "$DEV"; then
+  fail "the development workflow must not target a site, upgrade an installation, or consent to scopes"
+fi
+grep -Fq 'deploy --non-interactive -e development' "$DEV" || fail "the development workflow must deploy only to Forge development"
+
+grep -Fq 'default: brand7.atlassian.net' "$STAGING" || fail "the staging workflow must default to the connected staging tenant"
+grep -Fq 'TARGET_SITE" != "brand7.atlassian.net"' "$STAGING" || fail "the staging workflow must reject every target except brand7.atlassian.net"
+grep -Fq 'TARGET_SITE" == "251fa04c84.atlassian.net"' "$STAGING" || fail "the production tenant must be explicitly blocked"
+grep -Fq 'CONFIRM_TEST_SITE_INSTALL' "$STAGING" || fail "the staging workflow must require explicit test-site confirmation"
+grep -Fq 'CONFIRM_NOT_PRODUCTION_SITE' "$STAGING" || fail "the staging workflow must require explicit non-production confirmation"
+grep -Fq 'install --site "$TARGET_SITE" --product jira --non-interactive' "$STAGING" || fail "the staging install must use only the validated target"
+grep -Fq -- '-e staging' "$STAGING" || fail "the staging workflow must not install into Forge production"
+if grep -Eq -- '--confirm-scopes' "$STAGING"; then
+  fail "the staging workflow must never auto-consent to scopes"
+fi
+
+echo "Deployment safety checks passed: development has no site install; staging is restricted to brand7.atlassian.net."

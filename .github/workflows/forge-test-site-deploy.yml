@@ -16,9 +16,12 @@ on:
           - codegeist/rovo-integrated
         default: codegeist/forge-foundation
       target_site:
-        description: Free Atlassian developer-site domain only (example.atlassian.net; no https://)
+        description: Exact connected staging tenant only
         required: true
-        type: string
+        type: choice
+        options:
+          - brand7.atlassian.net
+        default: brand7.atlassian.net
       confirm_test_site_install:
         description: I confirm this is a separate free developer/test site, not a customer or production site
         required: true
@@ -96,6 +99,10 @@ jobs:
           fi
           if [[ "$TARGET_SITE" == "251fa04c84.atlassian.net" ]]; then
             echo "::error title=Production tenant blocked::This workflow cannot install to the connected production Jira tenant."
+            exit 1
+          fi
+          if [[ "$TARGET_SITE" != "brand7.atlassian.net" ]]; then
+            echo "::error title=Unapproved staging target::This workflow is restricted to the connected staging tenant brand7.atlassian.net."
             exit 1
           fi
           if [[ "$CONFIRM_TEST_SITE_INSTALL" != "true" || "$CONFIRM_NOT_PRODUCTION_SITE" != "true" ]]; then
