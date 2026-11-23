@@ -58,7 +58,7 @@ check_local_markdown_links() {
     fi
 
     [[ -e "$resolved" ]] || fail "broken local Markdown link in $source_file: $target"
-  done < <(grep -Eo '\\]\([^)]*\\)' "$source_file" | sed -E 's/^\\]\\(([^)]*)\\)$/\\1/')
+  done < <(grep -Eo '\]\([^)]*\)' "$source_file" | sed -E 's/^\]\(([^)]*)\)$/\1/')
 }
 
 for document in "$README" "$DEV_GUIDE" "$STAGING_GUIDE" "$STAGING_READINESS"; do
