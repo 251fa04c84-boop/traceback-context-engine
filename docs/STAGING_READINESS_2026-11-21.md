@@ -128,7 +128,7 @@ Workflow [#44982282405](https://github.com/251fa04c84-boop/traceback-context-eng
 - npm audit: **0 high, 6 moderate, 0 critical**.
 - Forge CLI lint and Forge development deployment were skipped by pull-request event conditions. No Forge runtime or site install is implied by this run.
 
-The six moderate package entries are `@forge/api`, `@forge/bridge`, `@forge/manifest`, `@forge/react`, `glob`, and `minimatch`. The current candidate does not have an audit-clean dependency tree. GitHub Dependabot and code-scanning alert endpoints were not available through the connected GitHub read tool, so this is npm audit evidence from the actual CI log, not a complete GitHub security-alert inventory.
+The six npm audit package entries are affected paths through `@forge/api`, `@forge/bridge`, `@forge/manifest`, `@forge/react`, `glob`, and `minimatch`; the raw report traces them to two moderate root advisories, GHSA-3g3m-2fjr-6pw4 (`glob`) and GHSA-g3hv-75wg-m249 (`minimatch`). The current candidate does not have an audit-clean dependency tree. GitHub Dependabot and code-scanning alert endpoints were not available through the connected GitHub read tool, so this is npm audit evidence from the actual CI log, not a complete GitHub security-alert inventory.
 
 ### Fresh staging tenant evidence
 
@@ -143,11 +143,11 @@ The Confluence result proves connector-side access to some Teamwork Graph contex
 
 The connected Atlassian operation catalog did not expose a read-only Forge installation inventory operation in this check. The previously recorded staging app version `2.0.0` is therefore historical evidence, not a freshly reverified installation/version or scope-grant status.
 
-### Safety hardening in this change
+### Safety hardening completed — 23 November 2026
 
-- The Forge development workflow previously contained a manual `forge install` path targeting `251fa04c84.atlassian.net`, which is the production/earlier TraceBack tenant. The workflow is being changed to deploy only to the Forge `development` environment and to contain no Jira site install/upgrade command.
-- The separate staging workflow is being restricted to the exact connected staging tenant `brand7.atlassian.net`; it remains manual and is not dispatched by this automation.
-- Focused workflow-safety tests are being added for both boundaries.
+Commit `4677f3e3dc00e47ad4793a5777ef613eb208a2e0` removes the production-site installation path from the Forge development workflow. It now deploys only to the Forge `development` environment and contains no Jira site install/upgrade command. The separate staging workflow is restricted in both its input choices and shell validation to the exact connected staging tenant `brand7.atlassian.net`; it remains manual and was not dispatched.
+
+Focused workflow-safety tests cover the absence of any site-install command in the development workflow, the development-only deploy target, no automatic scope consent, and the exact staging target. Exact-head CI [#45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853) passed on commit `4677f3e3dc00e47ad4793a5777ef613eb208a2e0`: 4,193 passed, 0 failed, 0 skipped; `npm ci`, ProseMirror validation, audit reporting, syntax lint, and frontend lint passed. Forge CLI validation and development deployment were skipped by pull-request event conditions.
 
 No workflow was dispatched. No Forge deployment, app installation/upgrade, scope approval, Jira/Confluence mutation, or production action was performed.
 

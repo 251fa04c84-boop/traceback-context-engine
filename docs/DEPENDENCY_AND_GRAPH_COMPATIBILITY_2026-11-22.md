@@ -75,3 +75,37 @@ A focused regression test was added to `test/rovo-investigation-action.test.js` 
 ## Release decision
 
 The candidate remains draft. No deployment, installation, scope approval, production action, dependency override, or vulnerability waiver was performed. The six moderate candidate findings and all live staging acceptance gates remain open.
+
+
+## Stable-package and advisory recheck — 23 November 2026
+
+The exact lockfile on PR #24 head `4677f3e3dc00e47ad4793a5777ef613eb208a2e0` resolves:
+
+| Package | Locked version | Declared dependency path |
+| --- | ---: | --- |
+| `@forge/api` | 8.5.0 | Depends on `@forge/manifest ^13.9.0` |
+| `@forge/bridge` | 7.3.0 | Depends on `@forge/manifest 13.9.0` |
+| `@forge/manifest` | 13.9.0 | Declares `glob ^13.0.0` |
+| `@forge/react` | 12.5.0 | Depends on `@forge/bridge ^7.3.0` |
+| `glob` | 13.0.7 | Declares `minimatch ^10.2.2` |
+| `minimatch` | 10.2.6 | Transitive matcher under `glob` |
+
+The 23 November npm registry pages still list `@forge/api@8.5.0`, `@forge/bridge@7.3.0`, `@forge/manifest@13.9.0`, and `@forge/react@12.5.0` as the stable versions. The candidate already uses those versions. The current latest stable matcher releases are `glob@14.0.6` and `minimatch@11.0.9`, but both are outside the lockfile's parent-declared major ranges.
+
+The exact CI audit report for [run #45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853) reports six moderate package paths, zero high, and zero critical. Its raw JSON traces the package paths to two root advisories:
+
+- [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4): `glob` versions `>=9.0.0 <=14.0.1`; first fixed release `14.0.2`.
+- [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249): `minimatch` versions `>=7.0.0 <11.0.1`; first fixed release `11.0.1`.
+
+The six npm audit entries are dependency paths through the four Forge packages and the two matcher packages; they are not six distinct Forge CVEs. npm's suggested fixes for the Forge package paths are semver-major changes and do not represent safe compatible upgrades for the current application.
+
+**Decision:** do not change the lockfile, add cross-major overrides, or apply `npm audit fix --force`. The current stable Forge parent packages still declare the older matcher major ranges. Keep the two moderate advisories visible, retain the upstream escalation, and request an Atlassian-supported `@forge/manifest` dependency update or explicit compatibility guidance before changing the matcher majors.
+
+Package-version references checked on 23 November:
+
+- [@forge/api](https://www.npmjs.com/package/%40forge/api)
+- [@forge/bridge](https://www.npmjs.com/package/%40forge/bridge)
+- [@forge/manifest](https://www.npmjs.com/package/%40forge/manifest)
+- [@forge/react](https://www.npmjs.com/package/%40forge/react)
+- [glob](https://www.npmjs.com/package/glob)
+- [minimatch](https://www.npmjs.com/package/minimatch)

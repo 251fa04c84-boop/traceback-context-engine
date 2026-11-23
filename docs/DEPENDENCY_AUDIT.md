@@ -408,3 +408,19 @@ The repository's isolated PR #11 goes further to `prosemirror-view@1.42.9`, with
 **Escalation action:** request written Atlassian guidance on (1) the Marketplace treatment of this transitive high-severity finding when the dependency is pinned by Atlassian's own Forge UI packages, (2) the supported patched dependency version or release ETA, and (3) whether a temporary documented mitigation/extension is available while the upstream pin is corrected. Attach the exact `npm ls prosemirror-view --all`, `npm audit --json`, lockfile, and CI evidence from PR #11. Do not claim that the community thread grants a Marketplace exception.
 
 **Decision unchanged:** main candidate baseline remains 9 high, 4 moderate, 0 critical; PR #11 remains draft/unmerged; the cross-major glob override experiment remains rejected for release. No dependency override is promoted to the release branch by this documentation update.
+
+
+## Exact-head recheck — 23 November 2026
+
+GitHub Actions [run #45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853) checked out exact PR head `4677f3e3dc00e47ad4793a5777ef613eb208a2e0` (the job log printed the same SHA), completed `npm ci`, validated the ProseMirror tree, reported the npm audit, ran all tests, and completed syntax and frontend checks.
+
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- `npm run lint:syntax`: passed.
+- `npm run lint:frontend`: passed.
+- npm audit: **6 moderate, 0 high, 0 critical**.
+
+The raw audit JSON lists six affected dependency paths. They collapse to two root advisories: glob cancellation traversal (GHSA-3g3m-2fjr-6pw4) and minimatch pattern-amplification denial of service (GHSA-g3hv-75wg-m249). The four Forge package rows are parent dependency paths through `@forge/manifest` and `@forge/bridge`, not four independent Forge CVEs.
+
+The lockfile uses `@forge/manifest@13.9.0` → `glob@13.0.7` → `minimatch@10.2.6`. The parent ranges require the 13.x and 10.x matcher lines. The patched matcher releases are on major versions 14 and 11 respectively; npm's proposed Forge-package fixes are also semver-major. No lockfile or override change was made. Keep the findings open pending an upstream-compatible release or written compatibility guidance.
+
+Forge CLI validation, development deployment, and site installation were not performed by this pull-request run.

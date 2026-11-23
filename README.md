@@ -78,7 +78,7 @@ Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to 
 
 ## Dependency security
 
-The current evidence-ledger/security candidate exact-head CI reports **0 high, 6 moderate, 0 critical** after the narrow `prosemirror-view@1.42.9` fix; all ProseMirror view entries resolve to 1.42.9. Six moderate package entries remain across Forge packages, glob and minimatch. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the exact-head record and [docs/UPSTREAM_DEPENDENCY_ESCALATION.md](docs/UPSTREAM_DEPENDENCY_ESCALATION.md) for the prepared Atlassian escalation packet. This is not an audit-clean result. Do not apply `npm audit fix --force` or out-of-range overrides without compatibility testing.
+Exact-head CI reports **0 high, 6 moderate, 0 critical** after the narrow `prosemirror-view@1.42.9` fix; all ProseMirror view entries resolve to 1.42.9. The six npm audit entries are affected dependency paths rooted in two moderate advisories (`glob` and `minimatch`), not six independent Forge CVEs. The current Forge packages are already at their latest stable versions, while the fixes require major overrides outside the declared `@forge/manifest` → `glob` → `minimatch` ranges. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) and [docs/DEPENDENCY_AND_GRAPH_COMPATIBILITY_2026-11-22.md](docs/DEPENDENCY_AND_GRAPH_COMPATIBILITY_2026-11-22.md). This is not an audit-clean result. Do not apply `npm audit fix --force` or out-of-range overrides without compatibility testing.
 
 ## Jira installation and acceptance
 
@@ -99,4 +99,4 @@ Live acceptance requires a genuine non-production Jira incident with authentic l
 
 ## Codegeist submission status
 
-PR #24 remains open, draft, and unmerged. Exact-head CI passed on the pre-hardening commit `577dd3ea12b312d783f43113393026c95396edac`; the production-install safety changes in the current commit require their own CI run. Passing CI does not establish Forge staging runtime acceptance. Keep the submission blocked until the real-incident, linked-Graph, administrator-scope, Rovo/MCP, and two-user permission gates have evidence.
+PR #24 remains open, draft, and unmerged. Exact-head CI run [#45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853) passed on `4677f3e3dc00e47ad4793a5777ef613eb208a2e0`: 4,193 tests passed, zero failed/skipped, and syntax/frontend checks passed. Forge lint and development deployment were skipped by PR-event conditions. Passing CI does not establish Forge staging runtime acceptance. Keep the submission blocked until the real-incident, linked-Graph, administrator-scope, Rovo/MCP, and two-user permission gates have evidence.
