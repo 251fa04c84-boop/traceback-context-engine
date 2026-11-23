@@ -156,3 +156,17 @@ No workflow was dispatched. No Forge deployment, app installation/upgrade, scope
 There is no genuine Jira issue in staging, no incident-specific Jira-to-Graph relationship evidence, and no approved pair of users with different access to a linked record. Effective Forge scope approval/runtime access is also unverified.
 
 **Minimum staging-owner action:** provide one existing genuine non-production Jira incident with authentic linked Teamwork Graph records, two approved staging users with different access to at least one linked record, and confirmation of the four read-only Graph scopes for the intended staging installation. Do not create synthetic records to satisfy this gate.
+
+
+## Latest documentation head and CI — 23 November 2026
+
+The current PR #24 head is `e181e14f9996067413e26ab9d3d27e4b6aa9e591`. Exact-head workflow [#45103358815](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103358815) completed successfully and the raw job log confirms the runner checked out that exact SHA.
+
+- `npm ci`: passed.
+- ProseMirror dependency-tree validation: passed.
+- npm audit: 6 moderate, 0 high, 0 critical.
+- `npm test`: 4,193 passed, 0 failed, 0 skipped.
+- Syntax and frontend checks: passed.
+- Forge CLI validation and development deployment: skipped by pull-request event conditions.
+
+This latest commit is documentation-only relative to the safety-hardening code commit `4677f3e3dc00e47ad4793a5777ef613eb208a2e0`, which also passed exact-head CI in [#45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853). No staging runtime, Rovo, MCP, or site installation is proven by either run.

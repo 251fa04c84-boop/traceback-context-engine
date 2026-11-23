@@ -64,7 +64,7 @@ References:
 
 ## Automation consent safeguard — 17 November 2026
 
-The Forge development deployment workflow no longer uses the CLI `--confirm-scopes` option. Future CI runs may deploy code and attempt to upgrade the existing development installation, but they will not automatically consent to newly requested scopes. Any scope change must be reviewed and approved explicitly by the responsible Atlassian organization administrator. The app manifest still requests the same four read-only Teamwork Graph scopes; this workflow update does not grant or revoke them.
+The Forge development deployment workflow does not use the CLI `--confirm-scopes` option and now deploys only to the Forge `development` environment. It contains no Jira site install/upgrade command. The separate staging workflow remains manual, is restricted to `brand7.atlassian.net`, and was not dispatched in this run. Any scope change must be reviewed and approved explicitly by the responsible Atlassian organization administrator. The app manifest still requests the same four read-only Teamwork Graph scopes; these workflow changes do not grant or revoke them.
 
 
 ## Fresh status qualification — 23 November 2026
