@@ -48,7 +48,7 @@ check_local_markdown_links() {
     esac
 
     target="${target%%#*}"
-    target="${target%%\\?*}"
+    target="${target%%\?*}"
     [[ -z "$target" ]] && continue
 
     if [[ "$target" == /* ]]; then
