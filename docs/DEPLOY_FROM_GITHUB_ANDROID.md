@@ -49,4 +49,4 @@ A successful run is development-environment deployment evidence only. It is not 
 
 Before any future staging runtime acceptance, the staging owner must provide a genuine non-production Jira incident with authentic linked Teamwork Graph records, two approved test users with different access to at least one linked record, and confirmation that the four read-only Graph scopes are approved for the staging installation. Do not fabricate records or use production data.
 
-See [docs/STAGING_READINESS_2026-11-21.md](STAGING_READINESS_2026-11-21.md), [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](TEAMWORK_GRAPH_ADMIN_APPROVAL.md), and [docs/DEMO_SCRIPT.md](DEMO_SCRIPT.md) for the current acceptance boundary and judge-demo plan.
+See [docs/STAGING_READINESS_2026-11-23.md](STAGING_READINESS_2026-11-21.md), [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](TEAMWORK_GRAPH_ADMIN_APPROVAL.md), and [docs/DEMO_SCRIPT.md](DEMO_SCRIPT.md) for the current acceptance boundary and judge-demo plan.

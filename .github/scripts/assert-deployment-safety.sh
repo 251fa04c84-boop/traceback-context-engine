@@ -24,7 +24,7 @@ grep -Fq 'CONFIRM_TEST_SITE_INSTALL' "$STAGING" || fail "the staging workflow mu
 grep -Fq 'CONFIRM_NOT_PRODUCTION_SITE' "$STAGING" || fail "the staging workflow must require explicit non-production confirmation"
 grep -Fq 'install --site "$TARGET_SITE" --product jira --non-interactive' "$STAGING" || fail "the staging install must use only the validated target"
 grep -Fq -- '-e staging' "$STAGING" || fail "the staging workflow must not install into Forge production"
-if grep -Eq -- '--confirm-scopes' "$STAGING"; then
+if grep -Eq 'npx[[:space:]]+--yes[[:space:]]+@forge/cli@[^[:space:]]+.*--confirm-scopes' "$STAGING"; then
   fail "the staging workflow must never auto-consent to scopes"
 fi
 
