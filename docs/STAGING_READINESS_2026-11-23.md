@@ -10,6 +10,8 @@ The connected production/earlier TraceBack tenant is `251fa04c84.atlassian.net`;
 
 ## Forge configuration and permission boundary
 
+Static comparison of `manifest.yml` on the two staging-workflow source branches (`codegeist/forge-foundation` and `codegeist/rovo-integrated`) and the current panel/Rovo parity branch (`test/real-panel-rovo-parity-2026-11-21`) found the same app ID, `ari:cloud:ecosystem::app/b7cbb6a8-de78-4ba8-91fb-48733c1c2157`, and the same requested scope set. All five scopes are read-only; no write, delete, or manage scope is present. This verifies only the committed manifest configuration, not the effective scopes granted to an installed Forge app.
+
 The app manifest on the active candidate requests `read:jira-work` plus four read-only Teamwork Graph scopes:
 
 - `read:graph:issue:jira`
