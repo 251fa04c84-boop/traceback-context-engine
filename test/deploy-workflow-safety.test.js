@@ -17,32 +17,37 @@ test('Forge development deployment pins GitHub Actions and disables package-mana
   assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node)@v\d/);
 });
 
-test('Forge install workflow never automatically confirms or consents to scopes', () => {
+test('Forge development deployment only deploys to the development environment and never installs a site', () => {
+  assert.match(workflow, /deploy --non-interactive -e development/);
+  assert.match(workflow, /does not install or upgrade the app on any Jira site/i);
+  assert.doesNotMatch(workflow, /npx\s+--yes\s+@forge\/cli@[^\s]+\s+install\b/i);
+  assert.doesNotMatch(workflow, /--site\s/);
+  assert.doesNotMatch(workflow, /--upgrade\b/);
+  assert.doesNotMatch(workflow, /confirm_development_site_install|install_mode/);
+});
+
+test('Forge development deployment never auto-consents to or claims administrator scope approval', () => {
   assert.doesNotMatch(workflow, /--confirm-scopes/);
+  assert.doesNotMatch(workflow, /confirm_admin_scope_approval|CONFIRM_ADMIN_SCOPE_APPROVAL/);
 });
 
-test('deployment requires explicit confirmation of prior organization-admin scope approval', () => {
-  assert.match(workflow, /confirm_admin_scope_approval:/);
-  assert.match(workflow, /CONFIRM_ADMIN_SCOPE_APPROVAL/);
-  assert.match(workflow, /CONFIRM_ADMIN_SCOPE_APPROVAL" != "true"/);
+test('registration requires explicit confirmation only when no app ID exists', () => {
+  assert.match(workflow, /confirm_no_existing_registration:/);
+  assert.match(workflow, /CONFIRM_NO_EXISTING_REGISTRATION/);
+  assert.match(workflow, /ACCEPT_FORGE_TERMS/);
+  assert.match(workflow, /if grep -Eq '\^  id:' manifest\.yml/);
 });
 
-test('deployment requires a separate explicit target-site installation confirmation', () => {
-  assert.match(workflow, /confirm_development_site_install:/);
-  assert.match(workflow, /CONFIRM_DEVELOPMENT_SITE_INSTALL" != "true"/);
-});
-
-test('manual deployment is restricted to the intended Forge application branch', () => {
+test('manual development deployment is restricted to the intended Forge application branch', () => {
   assert.match(workflow, /SOURCE_BRANCH" != "codegeist\/forge-foundation"/);
 });
 
 test('push events only validate the workflow definition and cannot deploy', () => {
   assert.match(workflow, /validate-workflow-on-push:/);
   assert.match(workflow, /if: github\.event_name == 'push'/);
-  assert.match(workflow, /register-lint-deploy-install:/);
+  assert.match(workflow, /register-lint-deploy-development:/);
   assert.match(workflow, /if: github\.event_name == 'workflow_dispatch'/);
 });
-
 
 const testSiteWorkflow = fs.readFileSync(
   path.join(__dirname, '..', '.github', 'workflows', 'forge-test-site-deploy.yml'),
@@ -61,11 +66,12 @@ test('test-site deployment is restricted to the maintained core branch', () => {
   assert.doesNotMatch(testSiteWorkflow, /codegeist\/rovo-investigator/);
 });
 
-test('test-site deployment rejects the connected production tenant and requires two explicit confirmations', () => {
+test('test-site deployment rejects production and any site other than the connected staging tenant', () => {
+  assert.match(testSiteWorkflow, /type: choice[\s\S]*brand7\.atlassian\.net/);
   assert.match(testSiteWorkflow, /TARGET_SITE" == "251fa04c84\.atlassian\.net"/);
+  assert.match(testSiteWorkflow, /TARGET_SITE" != "brand7\.atlassian\.net"/);
   assert.match(testSiteWorkflow, /CONFIRM_TEST_SITE_INSTALL" != "true"/);
   assert.match(testSiteWorkflow, /CONFIRM_NOT_PRODUCTION_SITE" != "true"/);
-  assert.match(testSiteWorkflow, /TARGET_SITE" =~ \^\[a-z0-9\]/);
 });
 
 test('test-site deployment never auto-consents to Forge scopes or targets production', () => {

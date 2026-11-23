@@ -65,3 +65,12 @@ References:
 ## Automation consent safeguard — 17 November 2026
 
 The Forge development deployment workflow no longer uses the CLI `--confirm-scopes` option. Future CI runs may deploy code and attempt to upgrade the existing development installation, but they will not automatically consent to newly requested scopes. Any scope change must be reviewed and approved explicitly by the responsible Atlassian organization administrator. The app manifest still requests the same four read-only Teamwork Graph scopes; this workflow update does not grant or revoke them.
+
+
+## Fresh status qualification — 23 November 2026
+
+The historical 20 November note records Forge staging app version `2.0.0` on `brand7.atlassian.net`. During the 23 November read-only recheck, the connected Atlassian operation catalog did not expose an operation to inventory installed Forge apps or their granted scopes. The installation version and effective scope state were therefore **not independently reverified** in this run.
+
+The connector can read Teamwork Graph context for Confluence space `SD` (four page targets), but this is connector-side access only. The staging Jira project `KAN` still has zero issues, and a JiraSpace lookup using project ID `10000` did not resolve to an ARI. No incident-specific Forge Graph runtime test is possible without a genuine Jira issue and linked records.
+
+No scope approval, installation, upgrade, deployment, or Jira/Confluence mutation was performed on 23 November. Do not interpret connector product access or a historical app installation record as proof of current Forge scope consent or runtime access.

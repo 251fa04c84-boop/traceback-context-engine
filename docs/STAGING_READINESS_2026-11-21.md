@@ -105,3 +105,54 @@ PR #24 remains open, draft and unmerged. The six moderate dependency findings re
 ### Minimum staging-owner prerequisite
 
 The staging owner must identify one genuine non-production Jira incident with authentic linked Teamwork Graph records, provide two approved test users with different access to at least one linked record, and confirm the four declared read-only Graph scopes for the staging installation. Do not manufacture incident data or use production.
+
+
+## Fresh read-only recheck — 23 November 2026, 08:11 IST
+
+### Repository and pull request
+
+- PR [#24](https://github.com/251fa04c84-boop/traceback-context-engine/pull/24) is still **open, draft, and unmerged**.
+- Current PR head at the start of this recheck was `577dd3ea12b312d783f43113393026c95396edac` on `docs/codegeist-judge-package-2026-11-21`; base is `test/real-panel-rovo-parity-2026-11-21` at `3c2760c41ac31bc317036f43c66c58d829e12ea7`.
+- No submitted reviews or inline review threads were returned.
+- The selected base branch compares to `main` as diverged: it is 402 commits ahead and 1 commit behind. Do not retarget or merge automatically; the intended promotion path needs an explicit review.
+
+### Exact-head CI evidence
+
+Workflow [#44982282405](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44982282405) completed successfully on exact head `577dd3ea12b312d783f43113393026c95396edac`. The raw job log confirms the checkout assertion printed that exact SHA.
+
+- Committed-lockfile `npm ci`: passed.
+- ProseMirror dependency-tree validation: passed; resolved `prosemirror-view@1.42.9`.
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- `npm run lint:syntax`: passed.
+- `npm run lint:frontend`: passed.
+- npm audit: **0 high, 6 moderate, 0 critical**.
+- Forge CLI lint and Forge development deployment were skipped by pull-request event conditions. No Forge runtime or site install is implied by this run.
+
+The six moderate package entries are `@forge/api`, `@forge/bridge`, `@forge/manifest`, `@forge/react`, `glob`, and `minimatch`. The current candidate does not have an audit-clean dependency tree. GitHub Dependabot and code-scanning alert endpoints were not available through the connected GitHub read tool, so this is npm audit evidence from the actual CI log, not a complete GitHub security-alert inventory.
+
+### Fresh staging tenant evidence
+
+Read-only inspection of `brand7.atlassian.net` on 23 November returned:
+
+- Accessible Jira projects: exactly one, **My Kanban Space (KAN)**, ID `10000`, Jira Software, with `totalIssueCount: 0`.
+- JQL `project = KAN ORDER BY created DESC`: zero issues.
+- Teamwork Graph context for Confluence space `SD`: resolved its space ARI and returned four `space_has_documents` page targets, with no next page.
+- Teamwork Graph context for JiraSpace identifier `10000`: failed with `Could not resolve '10000' to an ARI`.
+
+The Confluence result proves connector-side access to some Teamwork Graph context only. It does not prove that TraceBack's Forge `api.asUser().requestTeamworkGraph()` succeeds, nor does it provide a real Jira incident for TraceBack to investigate.
+
+The connected Atlassian operation catalog did not expose a read-only Forge installation inventory operation in this check. The previously recorded staging app version `2.0.0` is therefore historical evidence, not a freshly reverified installation/version or scope-grant status.
+
+### Safety hardening in this change
+
+- The Forge development workflow previously contained a manual `forge install` path targeting `251fa04c84.atlassian.net`, which is the production/earlier TraceBack tenant. The workflow is being changed to deploy only to the Forge `development` environment and to contain no Jira site install/upgrade command.
+- The separate staging workflow is being restricted to the exact connected staging tenant `brand7.atlassian.net`; it remains manual and is not dispatched by this automation.
+- Focused workflow-safety tests are being added for both boundaries.
+
+No workflow was dispatched. No Forge deployment, app installation/upgrade, scope approval, Jira/Confluence mutation, or production action was performed.
+
+### Exact remaining blocker
+
+There is no genuine Jira issue in staging, no incident-specific Jira-to-Graph relationship evidence, and no approved pair of users with different access to a linked record. Effective Forge scope approval/runtime access is also unverified.
+
+**Minimum staging-owner action:** provide one existing genuine non-production Jira incident with authentic linked Teamwork Graph records, two approved staging users with different access to at least one linked record, and confirmation of the four read-only Graph scopes for the intended staging installation. Do not create synthetic records to satisfy this gate.
