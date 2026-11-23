@@ -3,6 +3,10 @@ set -euo pipefail
 
 DEV=".github/workflows/forge-dev-deploy.yml"
 STAGING=".github/workflows/forge-test-site-deploy.yml"
+README="README.md"
+DEV_GUIDE="docs/DEPLOY_FROM_GITHUB_ANDROID.md"
+STAGING_GUIDE="docs/DEPLOY_TO_TEST_SITE_ANDROID.md"
+STAGING_READINESS="docs/STAGING_READINESS_2026-11-23.md"
 
 fail() {
   echo "Deployment safety check failed: $1" >&2
@@ -28,4 +32,37 @@ if grep -Eq 'npx[[:space:]]+--yes[[:space:]]+@forge/cli@[^[:space:]]+.*--confirm
   fail "the staging workflow must never auto-consent to scopes"
 fi
 
-echo "Deployment safety checks passed: development has no site install; staging is restricted to brand7.atlassian.net."
+# Keep every local Markdown link in the public deployment/readiness guides resolvable.
+for path in "$README" "$DEV_GUIDE" "$STAGING_GUIDE" "$STAGING_READINESS"; do
+  [[ -f "$path" ]] || fail "required deployment/readiness document is missing: $path"
+done
+
+check_local_markdown_links() {
+  local source_file="$1"
+  local base_dir
+  base_dir="$(dirname "$source_file")"
+
+  while IFS= read -r target; do
+    case "$target" in
+      ""|http://*|https://*|mailto:*|//*|\#*) continue ;;
+    esac
+
+    target="${target%%#*}"
+    target="${target%%\\?*}"
+    [[ -z "$target" ]] && continue
+
+    if [[ "$target" == /* ]]; then
+      resolved=".${target}"
+    else
+      resolved="$base_dir/$target"
+    fi
+
+    [[ -e "$resolved" ]] || fail "broken local Markdown link in $source_file: $target"
+  done < <(grep -Eo '\\]\([^)]*\\)' "$source_file" | sed -E 's/^\\]\\(([^)]*)\\)$/\\1/')
+}
+
+for document in "$README" "$DEV_GUIDE" "$STAGING_GUIDE" "$STAGING_READINESS"; do
+  check_local_markdown_links "$document"
+done
+
+echo "Deployment safety checks passed: site-install boundaries are restricted and all local deployment/readiness links resolve."
