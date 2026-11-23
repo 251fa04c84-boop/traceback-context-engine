@@ -3,15 +3,25 @@ name: Deployment safety checks
 on:
   pull_request:
     paths:
+      - .github/workflows/deployment-safety.yml
       - .github/workflows/forge-dev-deploy.yml
       - .github/workflows/forge-test-site-deploy.yml
       - .github/scripts/assert-deployment-safety.sh
+      - README.md
+      - docs/DEPLOY_FROM_GITHUB_ANDROID.md
+      - docs/DEPLOY_TO_TEST_SITE_ANDROID.md
+      - docs/STAGING_READINESS_2026-11-23.md
   push:
     branches: [main]
     paths:
+      - .github/workflows/deployment-safety.yml
       - .github/workflows/forge-dev-deploy.yml
       - .github/workflows/forge-test-site-deploy.yml
       - .github/scripts/assert-deployment-safety.sh
+      - README.md
+      - docs/DEPLOY_FROM_GITHUB_ANDROID.md
+      - docs/DEPLOY_TO_TEST_SITE_ANDROID.md
+      - docs/STAGING_READINESS_2026-11-23.md
 
 permissions:
   contents: read
