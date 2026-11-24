@@ -478,3 +478,16 @@ The CI job's Forge CLI lint and development deployment steps were skipped by the
 The connected GitHub read tool rejected the repository Dependabot-alert and code-scanning-alert endpoints, and no dedicated alert-list operation is exposed. Therefore this section records the npm audit evidence only; it does not claim that GitHub has no separate alerts.
 
 **Decision unchanged:** keep the supported Forge major lines and the narrow ProseMirror remediation. Track the six moderate package entries as an open dependency risk. Reassess only when Atlassian publishes compatible stable dependency ranges or supplies written compatibility guidance, then rerun the full audit, tests, Forge lint, and staging runtime acceptance.
+
+
+## Follow-up exact-head audit confirmation — 24 November 2026
+
+The documentation-only candidate head `95c6181239613bc9aecef796b1542a3e82679c75` was validated by exact-head CI [#45320121311](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45320121311). The job log confirms the exact checkout and the same current dependency state:
+
+- `npm ci`: passed.
+- `npm ls prosemirror-view --all`: passed; resolved `prosemirror-view@1.42.9`.
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- Syntax lint and frontend bundle compilation: passed.
+- npm audit: **0 critical, 0 high, 6 moderate**.
+
+No dependency version or lockfile changed in this documentation update. The six moderate entries remain open; no major downgrade, forced override, or audit waiver was applied. Forge CLI validation and deployment were skipped on the pull-request event. GitHub Dependabot/code-scanning alert inventory remains unavailable through the connected read-only GitHub operation.
