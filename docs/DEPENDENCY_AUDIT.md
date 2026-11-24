@@ -447,3 +447,34 @@ The raw audit JSON lists six affected dependency paths. They collapse to two roo
 The lockfile uses `@forge/manifest@13.9.0` → `glob@13.0.7` → `minimatch@10.2.6`. The parent ranges require the 13.x and 10.x matcher lines. The patched matcher releases are on major versions 14 and 11 respectively; npm's proposed Forge-package fixes are also semver-major. No lockfile or override change was made. Keep the findings open pending an upstream-compatible release or written compatibility guidance.
 
 Forge CLI validation, development deployment, and site installation were not performed by this pull-request run.
+
+
+## Latest exact-head audit snapshot — 23 November 2026, PR #24 head
+
+The current PR #24 head at this snapshot is `3ae0b98e7f2a8f231c8796fd257b6e5fc67f25eb`. Exact-head CI [#45104749324](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45104749324) completed successfully, and the raw job log confirms the runner checked out that exact SHA.
+
+- Committed-lockfile `npm ci`: passed.
+- `npm ls prosemirror-view --all`: passed; resolved tree uses `prosemirror-view@1.42.9`.
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- `npm run lint:syntax`: passed.
+- `npm run lint:frontend`: passed.
+- npm audit: **0 critical, 0 high, 6 moderate** vulnerable package entries.
+
+The six package entries are:
+
+| Package | Locked version | Audit path |
+|---|---:|---|
+| `@forge/api` | 8.5.0 | affected through the current Forge manifest dependency chain |
+| `@forge/bridge` | 7.3.0 | affected through the current Forge manifest dependency chain |
+| `@forge/manifest` | 13.9.0 | transitive path through `glob` |
+| `@forge/react` | 12.5.0 | transitive path through `@forge/bridge` |
+| `glob` | 13.0.7 | GHSA-3g3m-2fjr-6pw4 |
+| `minimatch` | 10.2.6 | GHSA-g3hv-75wg-m249 |
+
+The raw audit output shows npm's broad fix suggestion would downgrade Forge SDK packages across major versions (including `@forge/api@6.1.1`, `@forge/bridge@5.5.0`, and `@forge/react@11.4.0`). Those changes were not applied. The required patched `glob@14` and `minimatch@11` majors also remain outside the current parent-package ranges. No `--force` override or unsupported downgrade was introduced.
+
+The CI job's Forge CLI lint and development deployment steps were skipped by the pull-request event conditions. This run is test/audit evidence only, not Forge runtime acceptance.
+
+The connected GitHub read tool rejected the repository Dependabot-alert and code-scanning-alert endpoints, and no dedicated alert-list operation is exposed. Therefore this section records the npm audit evidence only; it does not claim that GitHub has no separate alerts.
+
+**Decision unchanged:** keep the supported Forge major lines and the narrow ProseMirror remediation. Track the six moderate package entries as an open dependency risk. Reassess only when Atlassian publishes compatible stable dependency ranges or supplies written compatibility guidance, then rerun the full audit, tests, Forge lint, and staging runtime acceptance.
