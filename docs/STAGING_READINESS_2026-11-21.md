@@ -170,3 +170,54 @@ The current PR #24 head is `e181e14f9996067413e26ab9d3d27e4b6aa9e591`. Exact-hea
 - Forge CLI validation and development deployment: skipped by pull-request event conditions.
 
 This latest commit is documentation-only relative to the safety-hardening code commit `4677f3e3dc00e47ad4793a5777ef613eb208a2e0`, which also passed exact-head CI in [#45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853). No staging runtime, Rovo, MCP, or site installation is proven by either run.
+
+
+## Fresh read-only staging recheck — 24 November 2026, 08:56 IST
+
+### Jira inventory and incident availability
+
+The connected Atlassian resource list still exposes only the staging site `brand7.atlassian.net` for this project check. The Jira project inventory for that site returns exactly one visible project:
+
+- **My Kanban Space** (`KAN`), project ID `10000`, Jira Software, next-gen style.
+- Jira's project insight reports `totalIssueCount: 0`.
+- The project's six available issue types are Epic, Subtask, Task, Story, Feature, and Bug. There is no `Incident` issue type in this project.
+- JQL `project = KAN ORDER BY updated DESC` returns zero issues.
+- A JQL search for `issuetype = Incident` is rejected because Incident is not a configured issue type on this site. This is a schema-validation result, not evidence that an incident exists.
+- A site-wide Jira semantic search for incident/outage/deployment/rollback returns zero results.
+
+No issue was created or modified. Do not create a synthetic incident to satisfy this gate.
+
+### Teamwork Graph connector read
+
+- A full Teamwork Graph context read for Confluence space `SD` resolved the space ARI and returned four `space_has_documents` page targets, with no next page.
+- Hydrating those targets showed three blank Confluence templates and one unrelated RAJ BuildHybridAI execution tracker. No TraceBack incident, Jira incident, external deployment, or pull-request evidence was found.
+- A Confluence search for incident/deployment/rollback/postmortem returned only the unrelated RAJ tracker.
+- A Jira search for incident/outage/deployment/rollback returned no results.
+- A Teamwork Graph lookup for JiraSpace key `KAN` could not resolve that key to an ARI.
+
+This proves that the connected Atlassian connector can read some Teamwork Graph content (the Confluence space and its pages). It does **not** prove the Forge app's `api.asUser().requestTeamworkGraph()` runtime call, the app's effective scopes, or any Jira-to-Graph relationship access.
+
+### Forge installation and scope boundary
+
+The administrator-approval document contains a historical 18 November record that Forge app version `2.0.0` was installed on `brand7.atlassian.net` in the staging environment. That is historical evidence only; the connected read-only operation catalog does not expose a current Forge installation/version inventory or the app's effective scope grants. Do not present version 2.0.0 as freshly verified.
+
+The candidate's manual staging workflow still contains a `forge install` first-install path and a `forge install --upgrade all` path. No workflow was dispatched: the current task explicitly prohibits installing or upgrading an app on any site. No staging deployment was attempted because the available workflow couples it to those prohibited site-install operations. Production was not accessed.
+
+### Exact repository and CI evidence
+
+- PR [#24](https://github.com/251fa04c84-boop/traceback-context-engine/pull/24) remains open, draft, and unmerged. Current head at this check: `3ae0b98e7f2a8f231c8796fd257b6e5fc67f25eb`; base: `test/real-panel-rovo-parity-2026-11-21`.
+- Exact-head CI [#45104749324](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45104749324) completed successfully on that exact SHA. The job log confirms the exact checkout, committed-lockfile `npm ci`, ProseMirror tree validation at `prosemirror-view@1.42.9`, **4,193 tests passed, 0 failed, 0 skipped**, syntax lint, and frontend bundle compilation.
+- The same CI log reports npm audit **0 critical, 0 high, 6 moderate**. It is not an audit-clean dependency tree.
+- Forge CLI lint and development deployment were skipped by the pull-request event conditions. This run does not establish Forge runtime, Rovo, Teamwork Graph, or MCP acceptance.
+- PR [#25](https://github.com/251fa04c84-boop/traceback-context-engine/pull/25) remains open, draft, and unmerged. Its deployment-safety workflow [#45105021628](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45105021628) passed on `dc1820e7a34ab629f01b083bc8f1220a3f6a0058`; the actual log states that deployment safety checks passed and local deployment/readiness links resolve.
+- No PR #24 review submissions or inline review threads were returned.
+
+GitHub's connected read operation does not expose the Dependabot or code-scanning alert endpoints used in this check; the six moderate findings above are from the actual npm audit output in PR #24 CI. Do not infer that GitHub has no separate security alerts.
+
+### Current release decision
+
+The app remains **not staging-accepted**. The blockers are: no genuine Jira incident in the connected staging project; no authentic Jira-to-Teamwork-Graph deployment/PR/goal relationship to test; no freshly verified Forge installation/version or effective scope grant; and no approved pair of users with different visibility to a linked record. Rovo live invocation, external MCP OAuth/invocation, and panel/Rovo/MCP parity remain unverified.
+
+**Single minimum staging-owner action:** identify an existing genuine non-production Jira issue that represents a real incident and already has authentic linked Teamwork Graph records, then make the intended staging installation and two approved test identities available for a read-only acceptance run. The staging administrator must separately confirm the four declared read-only Graph scopes. Do not create synthetic Jira/Confluence/Graph data or use production data.
+
+No app deployment, installation, upgrade, scope approval, Jira/Confluence mutation, PR merge, or PR closure was performed during this recheck.
