@@ -221,3 +221,20 @@ The app remains **not staging-accepted**. The blockers are: no genuine Jira inci
 **Single minimum staging-owner action:** identify an existing genuine non-production Jira issue that represents a real incident and already has authentic linked Teamwork Graph records, then make the intended staging installation and two approved test identities available for a read-only acceptance run. The staging administrator must separately confirm the four declared read-only Graph scopes. Do not create synthetic Jira/Confluence/Graph data or use production data.
 
 No app deployment, installation, upgrade, scope approval, Jira/Confluence mutation, PR merge, or PR closure was performed during this recheck.
+
+
+## Post-documentation exact-head revalidation — 24 November 2026
+
+After the staging and dependency evidence updates in this document set, PR #24 advanced to exact head `95c6181239613bc9aecef796b1542a3e82679c75`. CI [#45320121311](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45320121311) completed successfully on that exact SHA.
+
+The raw job log confirms:
+- Exact event-commit checkout: passed (`95c6181239613bc9aecef796b1542a3e82679c75`).
+- Committed-lockfile `npm ci`: passed.
+- ProseMirror dependency-tree validation: passed (`prosemirror-view@1.42.9`).
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- `npm run lint:syntax`: passed.
+- `npm run lint:frontend`: passed.
+- npm audit: **0 critical, 0 high, 6 moderate**.
+- Forge CLI validation and development deployment: skipped by pull-request event conditions.
+
+This revalidates the documentation updates and current candidate snapshot. It still does not establish Forge installation inventory, effective app scopes, staging runtime, Rovo, external MCP, or two-user permission isolation. No site workflow was dispatched.
