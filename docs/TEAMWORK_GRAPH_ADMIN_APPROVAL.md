@@ -44,9 +44,17 @@ TraceBack adds a read-only **Investigate** panel to Jira issues. It shows the is
 4. Approve only the scopes required for the intended test. If any scope is not acceptable, leave it disabled; the app will report that category as unavailable.
 5. After approval, ask the app tester to verify the real returned records and source links in Jira's new issue view.
 
-## Current status
+## Current status — refreshed 24 November 2026
 
-The four granular scopes are **not confirmed as approved or runtime-usable**. The separate staging site `brand7.atlassian.net` is connected to the ChatGPT Atlassian integration, and Forge app version 2.0.0 is installed there. Jira Software project `KAN` is visible but contains zero issues, so the app cannot yet be exercised against a real test issue. The older development deployment version 2.44.0 and its CI record are historical and do not describe the current staging install. Do not enable these scopes on production.
+The four granular scopes are **not confirmed as approved or runtime-usable**. The historical 18 November workflow record reports that Forge app version `2.0.0` was installed on `brand7.atlassian.net` in the staging environment; that record is not a fresh installation/version check. The connected read-only Atlassian operation catalog does not expose a current Forge app installation inventory or the effective scope grants.
+
+The staging Jira project `KAN` (My Kanban Space, ID `10000`) still reports zero issues. Its configured issue types are Epic, Subtask, Task, Story, Feature, and Bug; it has no `Incident` issue type. A project-wide JQL search returns no issues, and a Jira semantic search for incident/outage/deployment/rollback returns no results. A JiraSpace Graph lookup by `KAN` could not resolve the project key to an ARI.
+
+The connected Teamwork Graph connector can read Confluence space `SD` and its four page targets. Hydration shows three blank templates and one unrelated RAJ execution tracker; no TraceBack incident or Jira-to-Graph deployment/pull-request/goal evidence is present. This is connector-side Graph access only and does not prove that the Forge app's current-user Graph call or the four app scopes work.
+
+The candidate's manual staging workflow contains both a first-install command and an upgrade command. It was not dispatched because the current safety instruction prohibits installing or upgrading an app on any site. No staging deployment, site installation/upgrade, scope approval, Jira/Confluence mutation, or production action was performed during this recheck.
+
+**Remaining prerequisite:** provide an existing genuine non-production Jira issue representing an incident with authentic linked Teamwork Graph records, two approved staging users with different access to at least one linked record, and administrator confirmation of the four read-only Graph scopes for the intended staging installation. Do not create synthetic incidents or grant these scopes on production.
 
 
 ## Historical environment verification — 17 November 2026 (superseded by the 18 November staging snapshot above)
