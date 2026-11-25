@@ -179,3 +179,62 @@ test('uses the same normalized Jira and current-user Graph evidence for the Rovo
     sourceId: 'PAY-123'
   }]);
 });
+
+
+test('keeps Jira investigation usable when Teamwork Graph is unavailable in a Rovo action', async () => {
+  const unavailableGraph = {
+    source: 'Atlassian Teamwork Graph',
+    status: 'unavailable',
+    goals: [],
+    deployments: [],
+    pullRequests: [],
+    warning: 'Teamwork Graph request failed or exceeded its time budget.',
+    truncatedCategories: []
+  };
+  let coverageInput;
+  let timelineInput;
+  const { dependencies: deps, calls } = dependencies({
+    fetchTeamworkGraphEvidence: async (client, issueId, cloudId) => {
+      calls.graph.push({ client, issueId, cloudId });
+      return unavailableGraph;
+    },
+    buildEvidenceCoverage: (input) => {
+      coverageInput = input;
+      return { issueKey: input.issue.key, graphStatus: input.teamworkGraph.status };
+    },
+    buildIncidentTimeline: (input) => {
+      timelineInput = input;
+      return [{ eventType: 'issue-created', sourceId: input.issue.key }];
+    }
+  });
+
+  const result = await runTracebackInvestigationAction({
+    ...deps,
+    payload: {
+      context: {
+        cloudId: 'cloud-123',
+        jira: { issueKey: 'PAY-123' }
+      }
+    }
+  });
+
+  assert.equal(calls.asUser, 1);
+  assert.equal(calls.asApp, 0);
+  assert.equal(calls.jira.length, 1);
+  assert.equal(calls.graph.length, 1);
+  assert.equal(result.key, 'PAY-123');
+  assert.equal(result.teamworkGraph.status, 'unavailable');
+  assert.deepEqual(result.teamworkGraph.goals, []);
+  assert.deepEqual(result.teamworkGraph.deployments, []);
+  assert.deepEqual(result.teamworkGraph.pullRequests, []);
+  assert.match(result.teamworkGraph.warning, /Teamwork Graph request failed/);
+  assert.equal(coverageInput.issue.key, 'PAY-123');
+  assert.equal(coverageInput.teamworkGraph.status, 'unavailable');
+  assert.equal(timelineInput.issue.key, 'PAY-123');
+  assert.equal(timelineInput.teamworkGraph.status, 'unavailable');
+  assert.deepEqual(result.evidenceCoverage, {
+    issueKey: 'PAY-123',
+    graphStatus: 'unavailable'
+  });
+  assert.match(result.accessBoundary, /invoking user/);
+});

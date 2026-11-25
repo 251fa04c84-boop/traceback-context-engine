@@ -1,66 +1,52 @@
-# Deploy TraceBack from GitHub Actions (phone-friendly)
+# Deploy TraceBack to the Forge development environment from GitHub Actions
 
-This workflow avoids Codespaces and a local terminal. It is a manual, consent-gated workflow stored on the repository's default `main` branch. It checks out the selected app branch, registers the Forge app only if `manifest.yml` has no app ID, runs Forge lint, deploys to the development environment, and installs to the development Jira site.
+This phone-friendly workflow can register the existing TraceBack Forge app only when its manifest has no app ID, run Forge lint, and deploy code to the Forge **development environment**.
 
-**Workflow:** [Forge development deploy](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-dev-deploy.yml)
+**It does not install or upgrade the app on any Jira site.** It does not grant or approve Teamwork Graph scopes, deploy to Forge production, or change a production tenant.
 
-## 1. Create an Atlassian Forge API token
+**Workflow:** [Forge development deploy (no Jira site install)](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-dev-deploy.yml)
 
-1. Open [Atlassian API tokens](https://id.atlassian.com/manage-profile/security/api-tokens).
-2. Choose **Create API token with scopes**.
-3. Give it a label such as `traceback-forge-github-actions`.
-4. Select **Forge** as the app.
-5. Keep the recommended Forge scopes unless Atlassian's current UI says otherwise.
-6. Create and copy the token. Do not paste it into chat, an issue, a commit, or a workflow file.
+## 1. GitHub Actions secrets
 
-## 2. Add two GitHub Actions secrets
-
-Open [Repository Actions secrets](https://github.com/251fa04c84-boop/traceback-context-engine/settings/secrets/actions).
-
-Create these repository secrets:
+The workflow expects two repository secrets:
 
 | Secret name | Value |
 | --- | --- |
-| `FORGE_EMAIL` | The email address for the Atlassian account that owns the Forge app |
-| `FORGE_API_TOKEN` | The Forge-scoped Atlassian API token you just created |
+| `FORGE_EMAIL` | Email address for the Atlassian account that owns the registered Forge app |
+| `FORGE_API_TOKEN` | Forge-scoped Atlassian API token |
 
-Never put the token in a normal repository variable or commit it to GitHub. Use the **Secrets** section.
+If the secrets are not already configured, an authorized repository maintainer must add them through [Repository Actions secrets](https://github.com/251fa04c84-boop/traceback-context-engine/settings/secrets/actions). Never paste the token into chat, an issue, a commit, a workflow input, or a source file.
 
-## 3. Run the development deployment workflow
+## 2. Manual development-environment deployment
+
+This workflow is manual. It is not triggered by pull-request CI.
 
 1. Open [Actions → Forge development deploy](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-dev-deploy.yml).
-2. Select **Run workflow**. Keep the workflow branch set to `main` (the workflow definition is on `main`).
-3. Set **source_branch** to `codegeist/forge-foundation`.
-4. If the manifest has no app ID, first check [Atlassian Developer Console → My apps](https://developer.atlassian.com/console/myapps/) for an existing TraceBack Context Engine registration. Select **confirm_no_existing_registration** only if no earlier registration exists. If it was registered before, stop and recover that existing app ID instead of registering a second time.
-5. On the first registration only, select **accept_forge_terms**. This is your explicit approval for the workflow to accept Atlassian's Forge CLI terms and register the app once.
-6. Select **confirm_readonly_scopes** only after reviewing the read-only scopes listed in the workflow. These allow Jira issue and linked Teamwork Graph reads. **Important:** Atlassian documents that installing apps with Teamwork Graph scopes requires an organization administrator because the scopes can access organization-wide data. Use only a test organization with test data unless you have an explicitly approved production path. If your Atlassian account is only a Jira site admin, ask an organization admin to run/approve this installation and grant the scopes.
-7. Choose **install** if this app has never been installed on `251fa04c84.atlassian.net`; choose **upgrade** only if it is already installed there.
-8. Leave **developer_space_id** empty unless the Forge CLI reports that you must choose a specific Developer Space. If it does, obtain the ID from the Atlassian Developer Console and run again only after checking whether registration already succeeded.
+2. Select **Run workflow** only when a development-environment code deployment is explicitly required.
+3. Keep the workflow definition branch on `main`.
+4. Set `source_branch` to `codegeist/forge-foundation`; the workflow rejects other source branches.
+5. If `manifest.yml` already contains `app.id`, the workflow skips registration. Do not re-register an existing app.
+6. Only if the manifest has no app ID, first inspect [Atlassian Developer Console → My apps](https://developer.atlassian.com/console/myapps/). Confirm the app has never been registered before selecting `confirm_no_existing_registration` and `accept_forge_terms`. If an earlier registration exists, stop and recover its existing app ID instead.
 
-## 4. What the workflow does
+There is no target-site, install-mode, or scope-approval input. The workflow has no `forge install` or `forge install --upgrade` command.
 
-- Verifies the two repository secrets are present.
-- Installs the Node 24 project dependencies and commits the generated `package-lock.json` so later CI runs can use reproducible `npm ci` installs.
-- Registers the Forge app only when `manifest.yml` has no `app.id`.
-- Immediately commits the generated app ID back to `codegeist/forge-foundation`.
-- Runs `forge lint`.
-- Deploys to the Forge `development` environment.
-- Installs or upgrades the app on the development Jira site using the selected mode.
+## 3. What the workflow does
 
-The workflow does not deploy to production, publish a Marketplace listing, or expose a judge installation link. Teamwork Graph is currently a Forge Preview API: curated queries are supported for new apps, but schemas and behavior may change before general availability, with Atlassian's documented minimum one-month deprecation notice.
+- Verifies the source branch and the existing Forge credentials.
+- Installs the committed lockfile with `npm ci` when present.
+- Registers the Forge app only if no `app.id` exists and the explicit registration confirmations are supplied.
+- Runs Forge CLI lint.
+- Deploys only to the Forge `development` environment.
+- Does not install or upgrade the app on any Jira or Confluence site.
 
-## Important recovery rule
+A successful run is development-environment deployment evidence only. It is not proof of Jira panel rendering, Rovo discovery, Teamwork Graph access, MCP OAuth, or two-user permission isolation.
 
-If the workflow reports that registration succeeded but the commit/push of the generated app ID failed, **do not run registration again**. Stop and report the workflow run URL so the existing app ID can be recovered and written into the branch. Re-registering would create a different app ID and disconnect the repository from the first registration.
+## 4. Production and staging boundaries
 
-If the workflow fails at lint, deployment, or installation, share the run URL and error step. Do not disable Forge validation or bypass scope approvals to force a green result.
+- `251fa04c84.atlassian.net` is the production/earlier TraceBack tenant. It is not a development or test target. This workflow no longer contains an installation command for it.
+- The connected staging tenant is `brand7.atlassian.net`. Read-only inspection on 23 November 2026 found Jira project `KAN` with zero issues. A separate Teamwork Graph connector read of Confluence space `SD` returned four page targets; that does not prove Forge runtime access.
+- The separate staging workflow is a manual, user/admin-controlled gate. This automation will not dispatch it, install/upgrade the app, create test records, or approve scopes.
 
-## After the development install
+Before any future staging runtime acceptance, the staging owner must provide a genuine non-production Jira incident with authentic linked Teamwork Graph records, two approved test users with different access to at least one linked record, and confirmation that the four read-only Graph scopes are approved for the staging installation. Do not fabricate records or use production data.
 
-Complete every test in [docs/ACCEPTANCE_TESTS.md](ACCEPTANCE_TESTS.md), especially:
-- Jira issue context and related Jira work in the new issue view.
-- Real Teamwork Graph goal, deployment and pull-request results where connected.
-- Empty, partial and unavailable graph states.
-- Source links and non-causal suggested next checks.
-
-Only after development acceptance passes should we deploy a production version and set distribution to **Sharing** in the Atlassian Developer Console. Atlassian requires a production deployment before generating a public installation link. The judge installation link is a separate final step; it is not the development-site install URL.
+See [docs/STAGING_READINESS_2026-11-21.md](STAGING_READINESS_2026-11-21.md), [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](TEAMWORK_GRAPH_ADMIN_APPROVAL.md), and [docs/DEMO_SCRIPT.md](DEMO_SCRIPT.md) for the current acceptance boundary and judge-demo plan.

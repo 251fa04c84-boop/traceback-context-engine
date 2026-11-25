@@ -1,62 +1,50 @@
-# Deploy TraceBack to a separate free Atlassian test site from Android
+# TraceBack staging acceptance — manual authorization required
 
-## Why this is the next acceptance step
+## Connected staging tenant
 
-The only Jira site currently connected to this project is a production tenant. The app's core code is deployed there only in Forge development version 2.44.0; a fresh browser acceptance pass is not recorded. Do not use that tenant to approve new Teamwork Graph scopes or test the Rovo/MCP candidate.
+The connected non-production Atlassian tenant is **`brand7.atlassian.net`**. The connected production/earlier TraceBack tenant is **`251fa04c84.atlassian.net`** and must never be used for staging acceptance.
 
-Atlassian provides free cloud developer sites for testing. The traditional developer bundle includes Jira Software (5 users), Jira Service Management (1 agent), and Confluence (5 users). See [Atlassian's developer signup](https://go.atlassian.com/cloud-dev) and [official developer-site guidance](https://community.atlassian.com/learning/lesson/set-up-your-local-forge-development-environment).
+A fresh read-only check on 23 November 2026 found:
 
-## 1. Create a separate free developer site
+- One Jira Software project: **My Kanban Space (KAN)**, ID `10000`.
+- The project currently contains **zero Jira issues**.
+- A JQL search for `project = KAN ORDER BY created DESC` returned no issues.
+- Teamwork Graph context for Confluence space `SD` returned four Confluence page targets through the connected Atlassian connector.
+- A JiraSpace Graph lookup using numeric project ID `10000` did not resolve to an ARI.
 
-1. Open [go.atlassian.com/cloud-dev](https://go.atlassian.com/cloud-dev) on your phone.
-2. Sign in with the same Atlassian account that owns the registered TraceBack Forge app.
-3. Create a **new** developer site. Do not select or reuse `251fa04c84.atlassian.net`.
-4. Choose Jira Software as one of the products and complete the setup wizard.
-5. Copy only the new site domain, for example `my-traceback-test.atlassian.net`. Do not send an API token or password.
+The connector-side Confluence result proves only that the connected Atlassian connector can read some Teamwork Graph context. It does not prove that TraceBack's Forge runtime can call `api.asUser().requestTeamworkGraph()` successfully.
 
-The new developer site is for development/testing only. Keep real customer or personal production data out of it.
+## Staging workflow boundary
 
-## 2. Run the isolated staging deployment from GitHub
+The repository contains a manually dispatched [Forge test-site deploy workflow](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-test-site-deploy.yml). Its target is restricted in the workflow itself and in the GitHub Actions input choices to the exact connected staging tenant `brand7.atlassian.net`; it rejects the production tenant and every other domain.
 
-The workflow is on the repository's default `main` branch, so it appears under GitHub Actions even though the app code lives on feature branches.
+The workflow can deploy to Forge `staging` and install or upgrade the app on the selected Jira site. **This automation will not dispatch that workflow and will not install or upgrade the app on any site.** A separate explicit user authorization and staging administrator action would be required before any future installation or upgrade. No such action is authorized by this run.
 
-1. Open [GitHub Actions → Forge test-site deploy](https://github.com/251fa04c84-boop/traceback-context-engine/actions/workflows/forge-test-site-deploy.yml).
-2. Tap **Run workflow**.
-3. After workflow PR [#10](https://github.com/251fa04c84-boop/traceback-context-engine/pull/10) is reviewed and merged into `main`, select **`codegeist/rovo-integrated`** to test the Rovo/MCP candidate, or **`codegeist/forge-foundation`** to test the core Jira panel. Until PR #10 is merged, the workflow offers only the core branch. The workflow enforces this two-branch allowlist in its shell validation as well as the UI choice.
-4. Enter the new developer site domain exactly, such as `my-traceback-test.atlassian.net`.
-5. Choose `install` for the first install. Choose `upgrade` only if TraceBack is already installed in the Forge **staging** environment on that test site.
-6. Check both confirmations: that the target is a separate developer/test site and that it is not `251fa04c84.atlassian.net`.
-7. Tap **Run workflow**.
+The development deployment workflow is separate: it deploys only to Forge `development` and contains no Jira site installation command.
 
-This workflow uses the existing `FORGE_EMAIL` and `FORGE_API_TOKEN` repository secrets. It checks out pinned GitHub Actions releases, runs the core unit tests, syntax checks and frontend bundle compilation, then runs Forge CLI lint. It deploys to Forge **staging**, not the development environment already installed on the connected production tenant. It never registers/re-registers the app, never deploys to Forge production, and never uses `--confirm-scopes`.
+## Exact acceptance prerequisites
 
-## 3. Review Teamwork Graph permissions
+Do not attempt live panel, Rovo, or MCP acceptance until the staging owner/admin supplies all of the following:
 
-The manifest requests these read-only scopes:
+1. One genuine non-production Jira incident key with authentic linked Teamwork Graph evidence (goal, external deployment, or external pull request); do not create or fabricate records for the demo.
+2. Two approved staging test accounts with intentionally different access to at least one linked record.
+3. Confirmation that the existing staging installation is the intended TraceBack app/version and that the four read-only Teamwork Graph scopes are approved for that staging installation:
+   - `read:graph:issue:jira`
+   - `read:graph:goal:atlassian`
+   - `read:graph:deployment:external`
+   - `read:graph:pull-request:external`
 
-- `read:graph:issue:jira`
-- `read:graph:goal:atlassian`
-- `read:graph:deployment:external`
-- `read:graph:pull-request:external`
+The Jira connector's read/write product access is not evidence that the Forge app has these scopes. The connected operation catalog did not expose a read-only Forge installation inventory operation in this check, so the previously recorded staging app version and effective scope state were not independently refreshed.
 
-After the test-site installation, an Atlassian organization administrator should review the app in Atlassian Administration / Connected apps and explicitly approve only the scopes needed for the test. Do not grant them on the connected production tenant. If the CLI install reports that administrator approval is required, stop; do not add a scope-confirmation flag or bypass the check.
+## Acceptance sequence after separate authorization
 
-See [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](TEAMWORK_GRAPH_ADMIN_APPROVAL.md) for the full request, data boundaries and current permission status. Allow about one minute after a scope change before repeating the app acceptance checks.
+When the prerequisites are satisfied and a user explicitly authorizes the staging installation step:
 
-## 4. Live acceptance after installation
+- Verify the Jira panel against the real incident as the permitted user.
+- Invoke the Rovo action on the same issue and compare normalized evidence, timeline, coverage, and source links.
+- Verify that Graph unavailable, empty, partial, and available states remain distinct.
+- Repeat as the restricted user and confirm that inaccessible object titles, URLs, and details are not exposed.
+- Test external MCP discovery, OAuth consent, and invocation separately; do not claim MCP acceptance from manifest presence alone.
+- Record sanitized runtime errors, request correlation IDs when available, exact app version, scope status, and the two-user comparison.
 
-- Open a Jira issue in the **new issue view** and open the **Investigate** panel.
-- Confirm Jira issue fields and linked Jira relationships.
-- Check Teamwork Graph available, empty, partial and unavailable states. Do not invent or fabricate linked deployments, goals or pull requests.
-- Open every source link and confirm it resolves to the actual source record.
-- Confirm every suggested next check cites a real record and never claims that timing or a relationship proves cause.
-- Enable Rovo on the test site, find **TraceBack Investigator**, and run a live investigation. Capture agent discovery, action invocation, evidence links and permission-boundary results.
-- Do not claim the Atlassian MCP bonus unless the site administrator explicitly enables the Preview MCP exposure, OAuth consent is completed, and an external MCP client successfully invokes the tool.
-
-## Important boundaries
-
-- The staging deployment is separate from the existing Forge development installation.
-- The workflow does not create the Atlassian developer site; you create it once in the browser.
-- The workflow does not approve Teamwork Graph scopes.
-- The workflow does not create a judge installation link or publish the app.
-- The public judge link still requires the separate production distribution process after acceptance. Do not start that process yet.
+Until then, keep PR #24 draft and unmerged. No Jira/Confluence data, scopes, site installations, or production environments should be changed to manufacture a green demo.

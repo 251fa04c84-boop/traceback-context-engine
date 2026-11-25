@@ -68,39 +68,35 @@ See [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.m
 
 ## Safe test-site deployment
 
-Use [docs/DEPLOY_TO_TEST_SITE_ANDROID.md](docs/DEPLOY_TO_TEST_SITE_ANDROID.md) to create a separate free Atlassian developer site and deploy the Rovo candidate to the isolated Forge staging environment from GitHub Actions. This does not touch the connected production Jira tenant and does not auto-consent to Teamwork Graph scopes.
+The connected staging tenant is `brand7.atlassian.net`. Read-only inspection currently finds Jira project `KAN` with zero issues; the connected Atlassian Teamwork Graph connector can read some Confluence context, but this is not Forge runtime proof.
+
+The staging installation workflow is a separate, manually dispatched, user/admin-controlled gate. It is restricted to the connected staging tenant and is not run by pull-request CI or this automation. Do not install or upgrade the app, create Jira/Confluence test data, or approve scopes automatically. See [docs/STAGING_READINESS_2026-11-21.md](docs/STAGING_READINESS_2026-11-21.md) for the exact prerequisites.
 
 ## Deploy without Codespaces
 
-Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register, lint, deploy, and install through a consent-gated GitHub Actions workflow. It uses repository secrets; never put an Atlassian API token in chat or source control. See [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the evidence-safe under-five-minute demo storyboard; it is a plan, not a recorded video. See [docs/ROVO_AGENT.md](docs/ROVO_AGENT.md) and [docs/JUDGE_INSTALLATION.md](docs/JUDGE_INSTALLATION.md) for the Rovo/MCP design and judge acceptance instructions.
+Use [docs/DEPLOY_FROM_GITHUB_ANDROID.md](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register the app only if needed, run Forge lint, and deploy to the Forge development environment. That workflow does not install or upgrade the app on any Jira site. It uses repository secrets; never put an Atlassian API token in chat or source control. See [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the evidence-safe under-five-minute demo storyboard; it is a plan, not a recorded video. See [docs/ROVO_AGENT.md](docs/ROVO_AGENT.md) and [docs/JUDGE_INSTALLATION.md](docs/JUDGE_INSTALLATION.md) for the Rovo/MCP design and judge acceptance instructions.
 
 ## Dependency security
 
-The current evidence-ledger/security candidate exact-head CI reports **0 high, 6 moderate, 0 critical** after the narrow `prosemirror-view@1.42.9` fix; all ProseMirror view entries resolve to 1.42.9. Six moderate package entries remain across Forge packages, glob and minimatch. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) for the exact-head record and [docs/UPSTREAM_DEPENDENCY_ESCALATION.md](docs/UPSTREAM_DEPENDENCY_ESCALATION.md) for the prepared Atlassian escalation packet. This is not an audit-clean result. Do not apply `npm audit fix --force` or out-of-range overrides without compatibility testing.
+Exact-head CI reports **0 high, 6 moderate, 0 critical** after the narrow `prosemirror-view@1.42.9` fix; all ProseMirror view entries resolve to 1.42.9. The six npm audit entries are affected dependency paths rooted in two moderate advisories (`glob` and `minimatch`), not six independent Forge CVEs. The current Forge packages are already at their latest stable versions, while the fixes require major overrides outside the declared `@forge/manifest` → `glob` → `minimatch` ranges. See [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) and [docs/DEPENDENCY_AND_GRAPH_COMPATIBILITY_2026-11-22.md](docs/DEPENDENCY_AND_GRAPH_COMPATIBILITY_2026-11-22.md). This is not an audit-clean result. Do not apply `npm audit fix --force` or out-of-range overrides without compatibility testing.
 
 ## Jira installation and acceptance
 
-Target development site: `251fa04c84.atlassian.net`.
+No Jira site installation is part of the Forge development deployment workflow.
 
-After registration, Forge lint, deployment, and installation:
+- `251fa04c84.atlassian.net` is the production/earlier TraceBack tenant, not a test target.
+- `brand7.atlassian.net` is the connected staging tenant. Its Jira Software project `KAN` currently has zero issues.
+- Connector-side Teamwork Graph access to Confluence space `SD` does not establish that the Forge app has effective Graph scopes or runtime access.
+- The staging workflow is manual and restricted to `brand7.atlassian.net`; this automation does not install/upgrade the app or approve scopes.
 
-1. Open a Jira issue in the **new issue view**.
-2. Open the **Investigate** issue-context panel.
-3. Confirm that the displayed Jira fields match the issue.
-4. Confirm that linked Jira work items are shown with the correct relationship, status, type, priority, and same-site link.
-5. Confirm that Teamwork Graph evidence is shown when linked goal, deployment, or pull-request records are visible to the current user.
-6. Confirm suggested next checks are derived from actual evidence state/timestamps and each lead links to the supporting record.
-7. Verify empty, partial, and unavailable states without hiding the Jira issue details.
-8. Open each source link and confirm it points to the expected Jira or HTTPS source record.
-
-The `jira:issueContext` module does not work in Jira's old issue view. Teamwork Graph is currently a Forge Preview feature, so its schema and availability may change under Atlassian's published preview policy.
+Live acceptance requires a genuine non-production Jira incident with authentic linked Teamwork Graph records, two approved users with different access to at least one linked record, and staging administrator confirmation of the four read-only Graph scopes. See [docs/DEPLOY_TO_TEST_SITE_ANDROID.md](docs/DEPLOY_TO_TEST_SITE_ANDROID.md) and [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md).
 
 ## Validation
 
 - GitHub Actions runs unit tests, JavaScript syntax checks, and a separate JSX compilation check.
 - Forge CLI lint is conditional on the app being registered; until then CI emits a warning instead of claiming Forge validation passed.
-- Live Jira installation, organization-administrator scope grants, and end-to-end Teamwork Graph retrieval still require a registered and deployed Forge app.
+- Live staging panel/Rovo/MCP acceptance, administrator scope confirmation, and two-user permission isolation remain unverified; CI does not install or upgrade any site.
 
 ## Codegeist submission status
 
-This branch is still under development and PR #1 remains a draft. Do not submit until app registration, Forge lint, deployment, installation, the live judge journey, and the public demo video have all been verified.
+PR #24 remains open, draft, and unmerged. The latest exact-head CI run [#45103358815](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103358815) passed on `e181e14f9996067413e26ab9d3d27e4b6aa9e591`: 4,193 tests passed, zero failed/skipped, and syntax/frontend checks passed. The preceding safety-hardening code commit `4677f3e3dc00e47ad4793a5777ef613eb208a2e0` also passed exact-head CI in [#45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853). Forge lint and development deployment were skipped by PR-event conditions. Passing CI does not establish Forge staging runtime acceptance. Keep the submission blocked until the real-incident, linked-Graph, administrator-scope, Rovo/MCP, and two-user permission gates have evidence.

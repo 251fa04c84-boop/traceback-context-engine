@@ -1,3 +1,50 @@
+## Latest exact-head audit snapshot — 24 November 2026
+
+This snapshot was captured from PR #24's exact-head CI run [#45320387074](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45320387074), application commit `e19372aefa9b59a170fb0f52f633726aa3de6128`. The workflow verified that it checked out this exact commit.
+
+- `npm ci` completed from the committed lockfile.
+- `npm ls prosemirror-view --all` passed; the resolved tree uses `prosemirror-view@1.42.9`.
+- The exact `npm audit --json` summary reports **6 moderate, 0 high, 0 critical** vulnerable package entries.
+- Locked versions in the audited tree:
+  - `@forge/api@8.5.0`
+  - `@forge/bridge@7.3.0`
+  - `@forge/manifest@13.9.0`
+  - `@forge/react@12.5.0`
+  - `glob@13.0.7`
+  - `minimatch@10.2.6`
+- The six package entries are all moderate. The Forge package chain is reported through `@forge/manifest` and `@forge/bridge`; the `glob` finding references [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4), and the `minimatch` finding references [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249).
+- npm's reported fix paths include major-version downgrades: `@forge/api@6.1.1`, `@forge/bridge@5.5.0`, and `@forge/react@11.4.0`. These are not compatible drop-in fixes for the current declared Forge major lines and were not applied.
+- The exact run passed **4,193 tests, 0 failed, 0 skipped**, `npm run lint:syntax`, and `npm run lint:frontend`.
+- Forge CLI lint and development deployment were skipped by pull-request conditions. This is not live Forge, Jira panel, Rovo, Teamwork Graph runtime, or MCP acceptance.
+- The connected GitHub operation catalog did not expose a Dependabot/code-scanning alert inventory in this run. This section records the exact npm audit result only; it must not be interpreted as a complete GitHub security-alert inventory.
+
+**Decision:** retain the current supported Forge major lines and the narrow ProseMirror remediation. Do not run `npm audit fix --force`, downgrade Forge packages, or force a transitive override outside the declared dependency range. Keep the six moderate findings open until a compatible upstream release or written Atlassian compatibility guidance is available. No dependency version was changed in this update.
+
+---
+
+## Latest exact-head audit snapshot — 23 November 2026
+
+This snapshot was captured from PR #24's successful exact-head CI run [#45103568177](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103568177), application commit `aa62ac5c22e73e8b93e33d03c91c512bccf96905`.
+
+- `npm ci` completed from the committed lockfile.
+- `npm ls prosemirror-view --all` passed; the resolved tree uses `prosemirror-view@1.42.9`.
+- The audit reported **0 critical, 0 high, 6 moderate** vulnerable package entries.
+- Exact locked package versions in the audited tree:
+  - `@forge/api@8.5.0`
+  - `@forge/bridge@7.3.0`
+  - `@forge/manifest@13.9.0`
+  - `@forge/react@12.5.0`
+  - `glob@13.0.7`
+  - `minimatch@10.2.6`
+- The direct Forge package entries are affected through the current `@forge/manifest` / `@forge/bridge` dependency chain. The `glob` finding references [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4); the `minimatch` finding references [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249).
+- npm's broad suggested fixes still point to major downgrades, including `@forge/api@6.1.1`, `@forge/bridge@5.5.0`, and `@forge/react@11.4.0`. The audit marks these as semver-major changes. They were not applied.
+- The exact run passed **4,193 tests, 0 failed, 0 skipped**, JavaScript syntax checks, and frontend bundle compilation.
+- Forge CLI lint, development deployment, staging deployment, and site installation were skipped by pull-request workflow conditions. This is not live Forge, Jira panel, Rovo, Teamwork Graph runtime, or MCP acceptance evidence.
+
+**Decision:** keep the supported Forge major lines and the narrow ProseMirror remediation. Do not run `npm audit fix --force`, downgrade Forge packages, or force a `glob@14` override outside the declared `@forge/manifest` range. Track the six moderate entries as an open dependency risk until Atlassian publishes a compatible release or provides written compatibility guidance. Re-run the complete audit, tests, Forge lint, and staging runtime checks after a supported update.
+
+---
+
 ## Latest exact-head audit snapshot — 21 November 2026
 
 This snapshot was captured from the successful PR #19 validation run [#44916569914](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/44916569914), exact application commit `345de19c801ee2a8ed314246ae392ed31b0c8250`.
@@ -408,3 +455,63 @@ The repository's isolated PR #11 goes further to `prosemirror-view@1.42.9`, with
 **Escalation action:** request written Atlassian guidance on (1) the Marketplace treatment of this transitive high-severity finding when the dependency is pinned by Atlassian's own Forge UI packages, (2) the supported patched dependency version or release ETA, and (3) whether a temporary documented mitigation/extension is available while the upstream pin is corrected. Attach the exact `npm ls prosemirror-view --all`, `npm audit --json`, lockfile, and CI evidence from PR #11. Do not claim that the community thread grants a Marketplace exception.
 
 **Decision unchanged:** main candidate baseline remains 9 high, 4 moderate, 0 critical; PR #11 remains draft/unmerged; the cross-major glob override experiment remains rejected for release. No dependency override is promoted to the release branch by this documentation update.
+
+
+## Exact-head recheck — 23 November 2026
+
+GitHub Actions [run #45103041853](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103041853) checked out exact PR head `4677f3e3dc00e47ad4793a5777ef613eb208a2e0` (the job log printed the same SHA), completed `npm ci`, validated the ProseMirror tree, reported the npm audit, ran all tests, and completed syntax and frontend checks.
+
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- `npm run lint:syntax`: passed.
+- `npm run lint:frontend`: passed.
+- npm audit: **6 moderate, 0 high, 0 critical**.
+
+The raw audit JSON lists six affected dependency paths. They collapse to two root advisories: glob cancellation traversal (GHSA-3g3m-2fjr-6pw4) and minimatch pattern-amplification denial of service (GHSA-g3hv-75wg-m249). The four Forge package rows are parent dependency paths through `@forge/manifest` and `@forge/bridge`, not four independent Forge CVEs.
+
+The lockfile uses `@forge/manifest@13.9.0` → `glob@13.0.7` → `minimatch@10.2.6`. The parent ranges require the 13.x and 10.x matcher lines. The patched matcher releases are on major versions 14 and 11 respectively; npm's proposed Forge-package fixes are also semver-major. No lockfile or override change was made. Keep the findings open pending an upstream-compatible release or written compatibility guidance.
+
+Forge CLI validation, development deployment, and site installation were not performed by this pull-request run.
+
+
+## Latest exact-head audit snapshot — 23 November 2026, PR #24 head
+
+The current PR #24 head at this snapshot is `3ae0b98e7f2a8f231c8796fd257b6e5fc67f25eb`. Exact-head CI [#45104749324](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45104749324) completed successfully, and the raw job log confirms the runner checked out that exact SHA.
+
+- Committed-lockfile `npm ci`: passed.
+- `npm ls prosemirror-view --all`: passed; resolved tree uses `prosemirror-view@1.42.9`.
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- `npm run lint:syntax`: passed.
+- `npm run lint:frontend`: passed.
+- npm audit: **0 critical, 0 high, 6 moderate** vulnerable package entries.
+
+The six package entries are:
+
+| Package | Locked version | Audit path |
+|---|---:|---|
+| `@forge/api` | 8.5.0 | affected through the current Forge manifest dependency chain |
+| `@forge/bridge` | 7.3.0 | affected through the current Forge manifest dependency chain |
+| `@forge/manifest` | 13.9.0 | transitive path through `glob` |
+| `@forge/react` | 12.5.0 | transitive path through `@forge/bridge` |
+| `glob` | 13.0.7 | GHSA-3g3m-2fjr-6pw4 |
+| `minimatch` | 10.2.6 | GHSA-g3hv-75wg-m249 |
+
+The raw audit output shows npm's broad fix suggestion would downgrade Forge SDK packages across major versions (including `@forge/api@6.1.1`, `@forge/bridge@5.5.0`, and `@forge/react@11.4.0`). Those changes were not applied. The required patched `glob@14` and `minimatch@11` majors also remain outside the current parent-package ranges. No `--force` override or unsupported downgrade was introduced.
+
+The CI job's Forge CLI lint and development deployment steps were skipped by the pull-request event conditions. This run is test/audit evidence only, not Forge runtime acceptance.
+
+The connected GitHub read tool rejected the repository Dependabot-alert and code-scanning-alert endpoints, and no dedicated alert-list operation is exposed. Therefore this section records the npm audit evidence only; it does not claim that GitHub has no separate alerts.
+
+**Decision unchanged:** keep the supported Forge major lines and the narrow ProseMirror remediation. Track the six moderate package entries as an open dependency risk. Reassess only when Atlassian publishes compatible stable dependency ranges or supplies written compatibility guidance, then rerun the full audit, tests, Forge lint, and staging runtime acceptance.
+
+
+## Follow-up exact-head audit confirmation — 24 November 2026
+
+The documentation-only candidate head `95c6181239613bc9aecef796b1542a3e82679c75` was validated by exact-head CI [#45320121311](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45320121311). The job log confirms the exact checkout and the same current dependency state:
+
+- `npm ci`: passed.
+- `npm ls prosemirror-view --all`: passed; resolved `prosemirror-view@1.42.9`.
+- `npm test`: **4,193 passed, 0 failed, 0 skipped**.
+- Syntax lint and frontend bundle compilation: passed.
+- npm audit: **0 critical, 0 high, 6 moderate**.
+
+No dependency version or lockfile changed in this documentation update. The six moderate entries remain open; no major downgrade, forced override, or audit waiver was applied. Forge CLI validation and deployment were skipped on the pull-request event. GitHub Dependabot/code-scanning alert inventory remains unavailable through the connected read-only GitHub operation.
