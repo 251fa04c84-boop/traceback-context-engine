@@ -2,11 +2,11 @@
 
 Evidence-backed incident investigation for Jira, built as an Atlassian Forge app.
 
-## Safe test-site deployment
+## Safe staging deployment
 
-The connected staging tenant is `brand7.atlassian.net`. Read-only inspection on 23 November 2026 found Jira project `KAN` with zero issues. A connector-side Teamwork Graph read of Confluence space `SD` returned four page targets, but this is not proof that the Forge app can query Graph at runtime.
+The connected staging tenant is `brand7.atlassian.net`. Read-only inspection on 25 November 2026 found one visible Jira project, `KAN`, with zero issues and no configured Incident issue type. A connector-side Teamwork Graph read of Confluence space `SD` returned four page targets (three templates and one RAJ execution tracker); this is not incident evidence or proof that the Forge app can query Graph at runtime.
 
-The staging workflow is manual, requires two explicit confirmations, and is restricted to `brand7.atlassian.net`. This automation does not dispatch it, install/upgrade the app, create test data, or approve scopes. See [staging readiness](docs/STAGING_READINESS_2026-11-23.md).
+The manual staging workflow deploys code only to the Forge `staging` environment after explicit confirmation. It does not install or upgrade the app on any Jira/Confluence site, target a site, or approve scopes. An already-existing staging installation is required for panel/Rovo runtime acceptance; its version and effective scope grants are not currently verifiable through the connected read-only Atlassian operation catalog. See [staging readiness](docs/STAGING_READINESS_2026-11-23.md).
 
 ## Development deployment
 
