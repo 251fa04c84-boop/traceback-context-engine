@@ -1,4 +1,4 @@
-name: Forge development deploy
+name: Forge development deploy (no Jira site install)
 
 on:
   push:
@@ -22,24 +22,6 @@ on:
         required: true
         type: boolean
         default: false
-      confirm_admin_scope_approval:
-        description: I confirm an Atlassian organization administrator has already approved the listed read-only scopes in Connected Apps for the target site
-        required: true
-        type: boolean
-        default: false
-      confirm_development_site_install:
-        description: I authorize installing or upgrading the Forge development environment on 251fa04c84.atlassian.net (the connected Jira site)
-        required: true
-        type: boolean
-        default: false
-      install_mode:
-        description: Choose install for first-time installation or upgrade if already installed on this Jira site
-        required: true
-        type: choice
-        options:
-          - install
-          - upgrade
-        default: install
       developer_space_id:
         description: Optional Developer Space ID if your Atlassian account has multiple spaces
         required: false
@@ -62,7 +44,7 @@ jobs:
       - name: Confirm GitHub accepted the workflow definition
         run: echo "Forge development deployment workflow syntax was accepted by GitHub."
 
-  register-lint-deploy-install:
+  register-lint-deploy-development:
     if: github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
@@ -74,9 +56,6 @@ jobs:
       SOURCE_BRANCH: ${{ inputs.source_branch }}
       ACCEPT_FORGE_TERMS: ${{ inputs.accept_forge_terms }}
       CONFIRM_NO_EXISTING_REGISTRATION: ${{ inputs.confirm_no_existing_registration }}
-      CONFIRM_ADMIN_SCOPE_APPROVAL: ${{ inputs.confirm_admin_scope_approval }}
-      CONFIRM_DEVELOPMENT_SITE_INSTALL: ${{ inputs.confirm_development_site_install }}
-      INSTALL_MODE: ${{ inputs.install_mode }}
       DEVELOPER_SPACE_ID: ${{ inputs.developer_space_id }}
     steps:
       - name: Check out the selected app branch
@@ -91,24 +70,16 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
-      - name: Verify required secrets and explicit confirmations
+      - name: Verify required secrets and source branch
         shell: bash
         run: |
           set -euo pipefail
           if [[ "$SOURCE_BRANCH" != "codegeist/forge-foundation" ]]; then
-            echo "::error title=Unexpected source branch::This deployment workflow is restricted to codegeist/forge-foundation."
+            echo "::error title=Unexpected source branch::This development deployment workflow is restricted to codegeist/forge-foundation."
             exit 1
           fi
           if [[ -z "$FORGE_EMAIL" || -z "$FORGE_API_TOKEN" ]]; then
             echo "::error title=Forge credentials missing::Add FORGE_EMAIL and FORGE_API_TOKEN as GitHub Actions repository secrets before running this workflow."
-            exit 1
-          fi
-          if [[ "$CONFIRM_ADMIN_SCOPE_APPROVAL" != "true" ]]; then
-            echo "::error title=Organization administrator approval required::An Atlassian organization administrator must grant the read-only Jira and Teamwork Graph scopes in Connected Apps before this workflow runs."
-            exit 1
-          fi
-          if [[ "$CONFIRM_DEVELOPMENT_SITE_INSTALL" != "true" ]]; then
-            echo "::error title=Development-site installation confirmation required::Confirm the target Jira site before installing or upgrading."
             exit 1
           fi
 
@@ -172,15 +143,8 @@ jobs:
       - name: Validate Forge manifest and app source
         run: npx --yes @forge/cli@15.1.0 lint
 
-      - name: Deploy to Forge development environment
+      - name: Deploy to Forge development environment only
         run: npx --yes @forge/cli@15.1.0 deploy --non-interactive -e development
 
-      - name: Install on the development Jira site without automatic scope consent
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ "$INSTALL_MODE" == "upgrade" ]]; then
-            npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive --upgrade all -e development
-          else
-            npx --yes @forge/cli@15.1.0 install --site 251fa04c84.atlassian.net --product jira --non-interactive -e development
-          fi
+      - name: Confirm no Jira site installation is performed
+        run: echo "Development environment deployment complete; this workflow does not install or upgrade the app on any Jira site."

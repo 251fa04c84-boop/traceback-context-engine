@@ -1,0 +1,37 @@
+name: Deployment safety checks
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/deployment-safety.yml
+      - .github/workflows/forge-dev-deploy.yml
+      - .github/workflows/forge-test-site-deploy.yml
+      - .github/scripts/assert-deployment-safety.sh
+      - README.md
+      - docs/DEPLOY_FROM_GITHUB_ANDROID.md
+      - docs/DEPLOY_TO_TEST_SITE_ANDROID.md
+      - docs/STAGING_READINESS_2026-11-23.md
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/deployment-safety.yml
+      - .github/workflows/forge-dev-deploy.yml
+      - .github/workflows/forge-test-site-deploy.yml
+      - .github/scripts/assert-deployment-safety.sh
+      - README.md
+      - docs/DEPLOY_FROM_GITHUB_ANDROID.md
+      - docs/DEPLOY_TO_TEST_SITE_ANDROID.md
+      - docs/STAGING_READINESS_2026-11-23.md
+
+permissions:
+  contents: read
+
+jobs:
+  assert-deployment-boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Assert development and staging boundaries
+        shell: bash
+        run: bash .github/scripts/assert-deployment-safety.sh

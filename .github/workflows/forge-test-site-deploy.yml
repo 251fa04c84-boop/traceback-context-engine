@@ -1,4 +1,4 @@
-name: Forge test-site deploy
+name: Forge staging deploy (no Jira site install)
 
 on:
   push:
@@ -8,35 +8,18 @@ on:
   workflow_dispatch:
     inputs:
       source_branch:
-        description: App branch to deploy to the isolated staging environment
+        description: Existing TraceBack app branch to deploy to the Forge staging environment
         required: true
         type: choice
         options:
           - codegeist/forge-foundation
           - codegeist/rovo-integrated
         default: codegeist/forge-foundation
-      target_site:
-        description: Free Atlassian developer-site domain only (example.atlassian.net; no https://)
-        required: true
-        type: string
-      confirm_test_site_install:
-        description: I confirm this is a separate free developer/test site, not a customer or production site
+      confirm_staging_deploy:
+        description: I authorize deploying code to the Forge staging environment only; no site installation or upgrade will occur
         required: true
         type: boolean
         default: false
-      confirm_not_production_site:
-        description: I confirm this is not 251fa04c84.atlassian.net
-        required: true
-        type: boolean
-        default: false
-      install_mode:
-        description: Install for first-time setup, or upgrade an existing staging install
-        required: true
-        type: choice
-        options:
-          - install
-          - upgrade
-        default: install
 
 permissions:
   contents: read
@@ -51,9 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Confirm GitHub accepted the workflow definition
-        run: echo "Forge test-site deployment workflow syntax was accepted by GitHub."
+        run: echo "Forge staging deployment workflow syntax was accepted by GitHub."
 
-  deploy-to-test-site:
+  deploy-to-staging:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -61,10 +44,7 @@ jobs:
       FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
       FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
       SOURCE_BRANCH: ${{ inputs.source_branch }}
-      TARGET_SITE: ${{ inputs.target_site }}
-      CONFIRM_TEST_SITE_INSTALL: ${{ inputs.confirm_test_site_install }}
-      CONFIRM_NOT_PRODUCTION_SITE: ${{ inputs.confirm_not_production_site }}
-      INSTALL_MODE: ${{ inputs.install_mode }}
+      CONFIRM_STAGING_DEPLOY: ${{ inputs.confirm_staging_deploy }}
     steps:
       - name: Check out selected candidate branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -78,7 +58,7 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
-      - name: Verify credentials, site safety and explicit confirmations
+      - name: Verify credentials, source branch and explicit staging confirmation
         shell: bash
         run: |
           set -euo pipefail
@@ -87,19 +67,11 @@ jobs:
             exit 1
           fi
           if [[ "$SOURCE_BRANCH" != "codegeist/forge-foundation" && "$SOURCE_BRANCH" != "codegeist/rovo-integrated" ]]; then
-            echo "::error title=Unapproved source branch::Only the maintained core and reviewed Rovo/MCP candidate branches may be installed to the isolated staging site."
+            echo "::error title=Unapproved source branch::Only the maintained core and reviewed Rovo/MCP candidate branches may be deployed to Forge staging."
             exit 1
           fi
-          if [[ ! "$TARGET_SITE" =~ ^[a-z0-9][a-z0-9-]*\.atlassian\.net$ ]]; then
-            echo "::error title=Invalid target site::Enter only a site domain such as example.atlassian.net; do not include https:// or a path."
-            exit 1
-          fi
-          if [[ "$TARGET_SITE" == "251fa04c84.atlassian.net" ]]; then
-            echo "::error title=Production tenant blocked::This workflow cannot install to the connected production Jira tenant."
-            exit 1
-          fi
-          if [[ "$CONFIRM_TEST_SITE_INSTALL" != "true" || "$CONFIRM_NOT_PRODUCTION_SITE" != "true" ]]; then
-            echo "::error title=Explicit test-site confirmation required::Confirm both test-site and non-production-site checkboxes before continuing."
+          if [[ "$CONFIRM_STAGING_DEPLOY" != "true" ]]; then
+            echo "::error title=Explicit staging deployment confirmation required::Confirm a Forge staging environment deployment before continuing."
             exit 1
           fi
           if ! grep -Eq '^  id:' manifest.yml; then
@@ -125,17 +97,8 @@ jobs:
       - name: Validate Forge manifest and source
         run: npx --yes @forge/cli@15.1.0 lint
 
-      - name: Deploy selected branch to isolated Forge staging environment
+      - name: Deploy selected branch to the Forge staging environment only
         run: npx --yes @forge/cli@15.1.0 deploy --non-interactive -e staging
 
-      - name: Install to the separate developer site without automatic scope consent
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ "$INSTALL_MODE" == "upgrade" ]]; then
-            npx --yes @forge/cli@15.1.0 install --site "$TARGET_SITE" --product jira --non-interactive --upgrade all -e staging
-          else
-            npx --yes @forge/cli@15.1.0 install --site "$TARGET_SITE" --product jira --non-interactive -e staging
-          fi
-          echo "Installed the selected branch to $TARGET_SITE in the Forge staging environment."
-          echo "No --confirm-scopes flag was used. Any Teamwork Graph scope approval remains an explicit administrator action."
+      - name: Confirm no Jira or Confluence site installation is performed
+        run: echo "Forge staging deployment complete; this workflow does not install or upgrade the app on any site or approve scopes."

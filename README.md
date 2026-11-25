@@ -2,12 +2,16 @@
 
 Evidence-backed incident investigation for Jira, built as an Atlassian Forge app.
 
-## Safe test-site deployment
+## Safe staging deployment
 
-Use [docs/DEPLOY_TO_TEST_SITE_ANDROID.md](docs/DEPLOY_TO_TEST_SITE_ANDROID.md) to create a separate free Atlassian developer site and deploy the Rovo candidate to the isolated Forge staging environment from GitHub Actions. This does not touch the connected production Jira tenant and does not auto-consent to Teamwork Graph scopes.
+The connected staging tenant is `brand7.atlassian.net`. Read-only inspection on 25 November 2026 found one visible Jira project, `KAN`, with zero issues and no configured Incident issue type. A connector-side Teamwork Graph read of Confluence space `SD` returned four page targets (three templates and one RAJ execution tracker); this is not incident evidence or proof that the Forge app can query Graph at runtime.
 
-The workflow is manual and requires explicit confirmation of a separate test-site target. It uses the existing GitHub Actions Forge credentials and does not register or re-register the app.
+The manual staging workflow deploys code only to the Forge `staging` environment after explicit confirmation. It does not install or upgrade the app on any Jira/Confluence site, target a site, or approve scopes. An already-existing staging installation is required for panel/Rovo runtime acceptance; its version and effective scope grants are not currently verifiable through the connected read-only Atlassian operation catalog. See [staging readiness](docs/STAGING_READINESS_2026-11-23.md).
+
+## Development deployment
+
+Use the [development deployment guide](docs/DEPLOY_FROM_GITHUB_ANDROID.md) to register the app only if necessary, run Forge lint, and deploy to the Forge development environment. The development workflow has no Jira site install/upgrade command and does not target `251fa04c84.atlassian.net`.
 
 ## Project status
 
-See [docs/CODEGEIST_SUBMISSION_DRAFT.md](docs/CODEGEIST_SUBMISSION_DRAFT.md), [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md), and [docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md](docs/TEAMWORK_GRAPH_ADMIN_APPROVAL.md) for current validation and acceptance boundaries.
+See the [staging acceptance guide](docs/DEPLOY_TO_TEST_SITE_ANDROID.md) and [staging readiness record](docs/STAGING_READINESS_2026-11-23.md) for the current validation and acceptance boundaries.
