@@ -21,6 +21,9 @@ for workflow in "$DEV" "$STAGING"; do
   if grep -Eq -- '--site|--upgrade|--confirm-scopes' "$workflow"; then
     fail "$workflow must not target a site, upgrade an installation, or consent to scopes"
   fi
+  if grep -Eq 'deploy[[:space:]].*(-e[[:space:]]+production|--environment(=|[[:space:]])production)' "$workflow"; then
+    fail "$workflow must never deploy to Forge production"
+  fi
 done
 
 grep -Fq 'deploy --non-interactive -e development' "$DEV" || fail "the development workflow must deploy only to Forge development"
