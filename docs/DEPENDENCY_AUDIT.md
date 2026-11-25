@@ -1,3 +1,27 @@
+## Latest exact-head audit snapshot — 24 November 2026
+
+This snapshot was captured from PR #24's exact-head CI run [#45320387074](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45320387074), application commit `e19372aefa9b59a170fb0f52f633726aa3de6128`. The workflow verified that it checked out this exact commit.
+
+- `npm ci` completed from the committed lockfile.
+- `npm ls prosemirror-view --all` passed; the resolved tree uses `prosemirror-view@1.42.9`.
+- The exact `npm audit --json` summary reports **6 moderate, 0 high, 0 critical** vulnerable package entries.
+- Locked versions in the audited tree:
+  - `@forge/api@8.5.0`
+  - `@forge/bridge@7.3.0`
+  - `@forge/manifest@13.9.0`
+  - `@forge/react@12.5.0`
+  - `glob@13.0.7`
+  - `minimatch@10.2.6`
+- The six package entries are all moderate. The Forge package chain is reported through `@forge/manifest` and `@forge/bridge`; the `glob` finding references [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4), and the `minimatch` finding references [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249).
+- npm's reported fix paths include major-version downgrades: `@forge/api@6.1.1`, `@forge/bridge@5.5.0`, and `@forge/react@11.4.0`. These are not compatible drop-in fixes for the current declared Forge major lines and were not applied.
+- The exact run passed **4,193 tests, 0 failed, 0 skipped**, `npm run lint:syntax`, and `npm run lint:frontend`.
+- Forge CLI lint and development deployment were skipped by pull-request conditions. This is not live Forge, Jira panel, Rovo, Teamwork Graph runtime, or MCP acceptance.
+- The connected GitHub operation catalog did not expose a Dependabot/code-scanning alert inventory in this run. This section records the exact npm audit result only; it must not be interpreted as a complete GitHub security-alert inventory.
+
+**Decision:** retain the current supported Forge major lines and the narrow ProseMirror remediation. Do not run `npm audit fix --force`, downgrade Forge packages, or force a transitive override outside the declared dependency range. Keep the six moderate findings open until a compatible upstream release or written Atlassian compatibility guidance is available. No dependency version was changed in this update.
+
+---
+
 ## Latest exact-head audit snapshot — 23 November 2026
 
 This snapshot was captured from PR #24's successful exact-head CI run [#45103568177](https://github.com/251fa04c84-boop/traceback-context-engine/actions/runs/45103568177), application commit `aa62ac5c22e73e8b93e33d03c91c512bccf96905`.
